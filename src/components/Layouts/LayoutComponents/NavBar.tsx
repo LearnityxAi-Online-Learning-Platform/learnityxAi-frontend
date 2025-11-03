@@ -64,15 +64,15 @@ export default function NavBar(): JSX.Element {
                 {/* Main Navbar */}
                 <div className="flex items-center justify-between h-14 sm:h-16 md:h-20 gap-2 sm:gap-3 md:gap-4">
                     {/* Left Section - Logo */}
-                    <div className="flex items-center flex-shrink-0">
+                    <div className="flex items-center shrink-0">
                         <Link href="/" className={`flex items-center ${styles.logo}`}>
                             <Image
                                 src="/logo/logo.png"
                                 alt="LearnityxAi"
                                 width={150}
-                                height={40}
+                                height={150}
                                 priority
-                                className="h-7 sm:h-8 md:h-10 w-auto"
+                                className="h-7 sm:h-18 md:h-18 w-auto"
                             />
                         </Link>
 
@@ -121,7 +121,7 @@ export default function NavBar(): JSX.Element {
                             <input
                                 type="text"
                                 placeholder="What do you want to learn?"
-                                className={`w-full px-4 pr-12 py-2.5 rounded-full text-sm font-medium transition-all outline-none ${styles.searchInput}`}
+                                className={`w-full px-4 pr-12 py-3.5 rounded-full text-sm font-medium transition-all outline-none ${styles.searchInput}`}
                                 aria-label="Search courses"
                             />
                             <button

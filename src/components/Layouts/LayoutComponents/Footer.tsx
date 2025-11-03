@@ -95,8 +95,8 @@ export default function Footer() {
                                     src="/logo/logo.png"
                                     alt="LearnityxAi"
                                     width={240}
-                                    height={64}
-                                    className="h-14 md:h-16 w-auto"
+                                    height={240}
+                                    className="h-18 md:h-28 w-auto"
                                 />
                             </Link>
                             <p className={`text-sm md:text-base mb-6 leading-relaxed max-w-sm ${styles.brandDescription}`}>

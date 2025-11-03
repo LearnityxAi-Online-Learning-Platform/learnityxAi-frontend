@@ -25,9 +25,7 @@ export function ThemeProvider({
     defaultTheme = 'light',
     storageKey = 'learnityx-theme',
 }: ThemeProviderProps) {
-    // Use lazy initialization to read from localStorage only once on mount
     const [theme, setThemeState] = useState<Theme>(() => {
-        // Server-side rendering guard
         if (typeof window === 'undefined') {
             return defaultTheme;
         }
@@ -37,26 +35,26 @@ export function ThemeProvider({
             return stored;
         }
 
-        // Check system preference
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         return prefersDark ? 'dark' : 'light';
     });
 
-    // Apply theme to document
+    // Apply theme to document - SIMPLIFIED AND SYNCHRONOUS
     useEffect(() => {
         const root = document.documentElement;
 
-        // Remove both classes first
+        // Remove both classes first (synchronously)
         root.classList.remove('light', 'dark');
 
-        // Add the current theme class
+        // Add the current theme class immediately
         root.classList.add(theme);
 
-        // Set data attribute for alternative selectors
+        // Set data attribute
         root.setAttribute('data-theme', theme);
 
         // Save to localStorage
         localStorage.setItem(storageKey, theme);
+
     }, [theme, storageKey]);
 
     // Listen for system theme changes
@@ -65,21 +63,14 @@ export function ThemeProvider({
 
         const handleChange = (e: MediaQueryListEvent) => {
             const stored = localStorage.getItem(storageKey);
-            // Only update if user hasn't manually set a preference
             if (!stored) {
                 setThemeState(e.matches ? 'dark' : 'light');
             }
         };
 
-        // Modern browsers
         if (mediaQuery.addEventListener) {
             mediaQuery.addEventListener('change', handleChange);
             return () => mediaQuery.removeEventListener('change', handleChange);
-        }
-        // Fallback for older browsers
-        else if (mediaQuery.addListener) {
-            mediaQuery.addListener(handleChange);
-            return () => mediaQuery.removeListener(handleChange);
         }
     }, [storageKey]);
 
@@ -100,7 +91,6 @@ export function ThemeProvider({
     return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
-// Hook to use theme context
 export function useTheme() {
     const context = useContext(ThemeContext);
 
@@ -111,9 +101,7 @@ export function useTheme() {
     return context;
 }
 
-// Hook to get current theme without requiring provider (useful for server components)
 export function useSystemTheme(): Theme {
-    // Use lazy initialization to avoid setState in effect
     const [theme, setTheme] = useState<Theme>(() => {
         if (typeof window === 'undefined') {
             return 'light';

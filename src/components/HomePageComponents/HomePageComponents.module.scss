@@ -8,6 +8,10 @@
 .header {
     background-color: var(--color-background);
     transition: background-color var(--transition-normal);
+    -webkit-transition: background-color var(--transition-normal);
+    -moz-transition: background-color var(--transition-normal);
+    -ms-transition: background-color var(--transition-normal);
+    -o-transition: background-color var(--transition-normal);
 }
 
 // Gradient overlay for subtle depth

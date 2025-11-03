@@ -147,17 +147,27 @@
 }
 
 // Ensure smooth transitions when switching themes
-* {
-    transition-property: background-color, border-color, color, fill, stroke;
-    transition-duration: var(--transition-fast);
-    transition-timing-function: ease-in-out;
+// Only apply to specific elements to avoid performance issues
+:root {
+    transition: background-color var(--transition-fast) ease-in-out;
 }
 
-// Prevent transition on elements that shouldn't animate
-*:where([type="checkbox"],
-    [type="radio"],
-    [type="range"],
-    progress,
-    input[type="color"]) {
-    transition: none;
+body {
+    transition: background-color var(--transition-fast) ease-in-out,
+                color var(--transition-fast) ease-in-out;
+}
+
+// Apply transitions only to commonly themed elements
+a,
+button,
+input,
+textarea,
+select,
+.card,
+[class*="card"],
+[class*="button"],
+[class*="surface"] {
+    transition: background-color var(--transition-fast) ease-in-out,
+                color var(--transition-fast) ease-in-out,
+                border-color var(--transition-fast) ease-in-out;
 }
