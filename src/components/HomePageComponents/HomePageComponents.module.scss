@@ -1,0 +1,860 @@
+// HomePageComponents.module.scss
+// ONLY COLOR HANDLING - All layout/spacing/sizing uses Tailwind classes
+
+// ==========================================
+// HEADER COLORS
+// ==========================================
+
+.header {
+    background-color: var(--color-background);
+    transition: background-color var(--transition-normal);
+    -webkit-transition: background-color var(--transition-normal);
+    -moz-transition: background-color var(--transition-normal);
+    -ms-transition: background-color var(--transition-normal);
+    -o-transition: background-color var(--transition-normal);
+}
+
+// Gradient overlay for subtle depth
+.gradientOverlay {
+    background: radial-gradient(circle at 20% 50%,
+            rgba(65, 105, 225, 0.03) 0%,
+            transparent 50%);
+
+    :global(.dark) & {
+        background: radial-gradient(circle at 20% 50%,
+                rgba(107, 143, 238, 0.05) 0%,
+                transparent 50%);
+    }
+}
+
+// ==========================================
+// BADGE COLORS
+// ==========================================
+
+.badge {
+    background-color: var(--color-surface);
+    border-color: var(--color-border-light);
+    box-shadow: var(--shadow-sm);
+    transition: background-color var(--transition-normal),
+        border-color var(--transition-normal),
+        box-shadow var(--transition-normal);
+
+    &:hover {
+        border-color: var(--color-primary-light);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+    }
+}
+
+// ==========================================
+// TEXT COLORS
+// ==========================================
+
+.headingText {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.gradientText {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subtitle {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.pricing {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+// ==========================================
+// CTA BUTTON COLORS
+// ==========================================
+
+.ctaButton {
+    color: var(--color-text-inverse);
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-lg);
+    transition: box-shadow var(--transition-normal),
+        transform var(--transition-normal),
+        filter var(--transition-normal);
+
+    &:hover {
+        box-shadow: var(--shadow-xl);
+        filter: brightness(1.05);
+    }
+
+    &:active {
+        box-shadow: var(--shadow-lg);
+    }
+
+    :global(.dark) & {
+        box-shadow: 0 10px 20px -5px rgba(107, 143, 238, 0.3),
+            0 5px 10px -5px rgba(139, 92, 246, 0.2);
+
+        &:hover {
+            box-shadow: 0 15px 30px -5px rgba(107, 143, 238, 0.4),
+                0 10px 15px -5px rgba(139, 92, 246, 0.3);
+        }
+    }
+}
+
+// ==========================================
+// GUARANTEE TEXT COLORS
+// ==========================================
+
+.guarantee {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.guaranteeHighlight {
+    color: var(--color-primary);
+    transition: color var(--transition-normal);
+
+    &:hover {
+        color: var(--color-primary-light);
+    }
+
+    :global(.dark) & {
+        color: var(--color-primary-light);
+
+        &:hover {
+            color: var(--color-primary);
+        }
+    }
+}
+
+// ==========================================
+// GEOMETRIC SHAPE COLORS
+// ==========================================
+
+.geometricShape {
+    background: var(--gradient-primary);
+    opacity: 0.08;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+
+    :global(.dark) & {
+        opacity: 0.12;
+    }
+}
+
+.shapeInner {
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+    background: var(--gradient-accent);
+    opacity: 0.5;
+    border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%;
+}
+
+// ==========================================
+// STATS SECTION COLORS
+// ==========================================
+
+.statsSection {
+    background-color: var(--color-background);
+    transition: background-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-background);
+    }
+}
+
+.statsHeading {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.brandLogoCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-sm);
+    transition: background-color var(--transition-normal),
+        border-color var(--transition-normal),
+        box-shadow var(--transition-normal),
+        transform var(--transition-normal);
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        box-shadow: var(--shadow-md);
+        border-color: var(--color-border);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+        box-shadow: none;
+
+        &:hover {
+            background-color: var(--color-surface-hover);
+            border-color: var(--color-border-dark);
+        }
+    }
+}
+
+.brandLogoImage {
+    filter: grayscale(20%) opacity(0.7);
+    transition: filter var(--transition-normal);
+
+    .brandLogoCard:hover & {
+        filter: grayscale(0%) opacity(1);
+    }
+
+    :global(.dark) & {
+        filter: grayscale(30%) opacity(0.5) brightness(1.2);
+
+        .brandLogoCard:hover & {
+            filter: grayscale(0%) opacity(0.8) brightness(1.3);
+        }
+    }
+}
+
+// ==========================================
+// GUIDANCE SECTION COLORS
+// ==========================================
+
+.guidanceSection {
+    background-color: var(--color-background-secondary);
+    transition: background-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-background-secondary);
+    }
+}
+
+.guidanceHeading {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.featureCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-sm);
+    transition: background-color var(--transition-normal),
+        border-color var(--transition-normal),
+        box-shadow var(--transition-normal),
+        transform var(--transition-normal);
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        border-color: var(--color-border);
+        box-shadow: var(--shadow-md);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+
+        &:hover {
+            background-color: var(--color-surface-hover);
+            border-color: var(--color-border-dark);
+        }
+    }
+}
+
+.iconContainer {
+    background: var(--gradient-primary);
+    transition: transform var(--transition-normal);
+
+    &:hover {
+        transform: scale(1.05);
+    }
+}
+
+.icon {
+    color: var(--color-text-inverse);
+    transition: color var(--transition-normal);
+}
+
+.featureTitle {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.featureDescription {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+// ==========================================
+// RECOMMENDED COURSES SECTION COLORS
+// ==========================================
+
+.recommendedSection {
+    background-color: var(--color-background);
+    transition: background-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-background);
+    }
+}
+
+.recommendedHeading {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.gradientText {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.recommendedSubheading {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.viewAllButton {
+    color: var(--color-text-inverse);
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-2px);
+    }
+
+    :global(.dark) & {
+        box-shadow: 0 4px 12px rgba(107, 143, 238, 0.3);
+
+        &:hover {
+            box-shadow: 0 8px 20px rgba(107, 143, 238, 0.4);
+        }
+    }
+}
+
+.courseCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        border-color: var(--color-primary-light);
+        box-shadow: var(--shadow-xl);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+        &:hover {
+            background-color: var(--color-surface-hover);
+            border-color: var(--color-primary);
+            box-shadow: 0 12px 30px rgba(107, 143, 238, 0.2);
+        }
+    }
+}
+
+.imageOverlay {
+    background: linear-gradient(to bottom,
+            transparent 0%,
+            transparent 50%,
+            rgba(0, 0, 0, 0.3) 100%);
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+
+    .courseCard:hover & {
+        opacity: 1;
+    }
+}
+
+.categoryBadge {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-normal);
+
+    .courseCard:hover & {
+        transform: scale(1.05);
+    }
+}
+
+.trendingBadge {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: var(--color-success);
+    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-normal);
+
+    .courseCard:hover & {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    :global(.dark) & {
+        background-color: rgba(20, 20, 20, 0.95);
+        color: var(--color-success-light);
+    }
+}
+
+.courseContent {
+    background-color: transparent;
+}
+
+.instructorName {
+    color: var(--color-primary);
+    transition: color var(--transition-normal);
+
+    :global(.dark) & {
+        color: var(--color-primary-light);
+    }
+}
+
+.courseName {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+
+    .courseCard:hover & {
+        color: var(--color-primary);
+    }
+
+    :global(.dark) & {
+        .courseCard:hover & {
+            color: var(--color-primary-light);
+        }
+    }
+}
+
+.clockIcon {
+    color: var(--color-text-tertiary);
+    transition: color var(--transition-normal);
+
+    .courseCard:hover & {
+        color: var(--color-primary);
+    }
+
+    :global(.dark) & {
+        .courseCard:hover & {
+            color: var(--color-primary-light);
+        }
+    }
+}
+
+.duration {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.divider {
+    background-color: var(--color-border-light);
+    transition: background-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-border);
+    }
+}
+
+.starIcon {
+    color: #F59E0B;
+}
+
+.ratingText {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.enrollmentText {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+
+    :global(.dark) & {
+        color: var(--color-text-tertiary);
+    }
+}
+
+// ==========================================
+// TESTIMONIALS SECTION COLORS
+// ==========================================
+
+.testimonialsSection {
+    background-color: var(--color-background-secondary);
+    transition: background-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-background-secondary);
+    }
+}
+
+.testimonialsHeading {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.testimonialsSubheading {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.testimonialCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        border-color: var(--color-primary-light);
+        box-shadow: var(--shadow-xl);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+        &:hover {
+            background-color: var(--color-surface-hover);
+            border-color: var(--color-primary);
+            box-shadow: 0 12px 30px rgba(107, 143, 238, 0.2);
+        }
+    }
+}
+
+.quoteIcon {
+    color: var(--color-primary);
+    transition: color var(--transition-normal);
+
+    :global(.dark) & {
+        color: var(--color-primary-light);
+    }
+}
+
+.testimonialText {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+    line-height: 1.7;
+}
+
+.avatar {
+    border: 3px solid var(--color-border-light);
+    box-shadow: var(--shadow-sm);
+    transition: border-color var(--transition-normal);
+
+    .testimonialCard:hover & {
+        border-color: var(--color-primary);
+    }
+
+    :global(.dark) & {
+        border-color: var(--color-border);
+
+        .testimonialCard:hover & {
+            border-color: var(--color-primary-light);
+        }
+    }
+}
+
+.testimonialName {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.testimonialRole {
+    color: var(--color-text-tertiary);
+    transition: color var(--transition-normal);
+}
+
+.ctaText {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+// ==========================================
+// FAQ SECTION COLORS
+// ==========================================
+
+.faqSection {
+    background-color: var(--color-background);
+    transition: background-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-background);
+    }
+}
+
+.faqHeading {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.faqSubheading {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.faqCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        border-color: var(--color-primary-light);
+        box-shadow: var(--shadow-lg);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+        &:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 8px 20px rgba(107, 143, 238, 0.15);
+        }
+    }
+}
+
+.faqQuestion {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+
+    button:hover & {
+        color: var(--color-primary);
+    }
+
+    :global(.dark) & {
+        button:hover & {
+            color: var(--color-primary-light);
+        }
+    }
+}
+
+.faqIconWrapper {
+    background-color: var(--color-background-secondary);
+    transition: background-color var(--transition-normal), transform var(--transition-normal);
+
+    button:hover & {
+        background: var(--gradient-primary);
+        transform: scale(1.05);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-background-secondary);
+    }
+}
+
+.faqIcon {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+
+    button:hover & {
+        color: var(--color-text-inverse);
+    }
+
+    :global(.dark) & {
+        color: var(--color-text-tertiary);
+
+        button:hover & {
+            color: var(--color-text-inverse);
+        }
+    }
+}
+
+.faqDivider {
+    background-color: var(--color-border-light);
+    transition: background-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-border);
+    }
+}
+
+.faqAnswer {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.faqCtaCard {
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-lg);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        box-shadow: var(--shadow-xl);
+        transform: translateY(-2px);
+    }
+
+    :global(.dark) & {
+        box-shadow: 0 10px 25px rgba(107, 143, 238, 0.2);
+
+        &:hover {
+            box-shadow: 0 15px 35px rgba(107, 143, 238, 0.3);
+        }
+    }
+}
+
+.faqCtaHeading {
+    color: var(--color-text-inverse);
+    transition: color var(--transition-normal);
+}
+
+.faqCtaText {
+    color: rgba(255, 255, 255, 0.9);
+    transition: color var(--transition-normal);
+}
+
+.faqCtaButton {
+    background-color: var(--color-surface);
+    color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        box-shadow: var(--shadow-lg);
+        background-color: var(--color-text-inverse);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        color: var(--color-primary-light);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+    }
+}
+
+// ==========================================
+// ANIMATIONS
+// ==========================================
+
+// ==========================================
+// TESTIMONIALS SECTION COLORS
+// ==========================================
+
+.testimonialsSection {
+    background-color: var(--color-background-secondary);
+    transition: background-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-background-secondary);
+    }
+}
+
+.testimonialsHeading {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.testimonialsSubheading {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.testimonialCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        border-color: var(--color-primary-light);
+        box-shadow: var(--shadow-xl);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+        &:hover {
+            background-color: var(--color-surface-hover);
+            border-color: var(--color-primary);
+            box-shadow: 0 12px 30px rgba(107, 143, 238, 0.2);
+        }
+    }
+}
+
+.quoteIcon {
+    color: var(--color-primary);
+    transition: color var(--transition-normal);
+
+    :global(.dark) & {
+        color: var(--color-primary-light);
+    }
+}
+
+.testimonialText {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+    line-height: 1.7;
+}
+
+.avatar {
+    border: 3px solid var(--color-border-light);
+    box-shadow: var(--shadow-sm);
+    transition: border-color var(--transition-normal);
+
+    .testimonialCard:hover & {
+        border-color: var(--color-primary);
+    }
+
+    :global(.dark) & {
+        border-color: var(--color-border);
+
+        .testimonialCard:hover & {
+            border-color: var(--color-primary-light);
+        }
+    }
+}
+
+.testimonialName {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.testimonialRole {
+    color: var(--color-text-tertiary);
+    transition: color var(--transition-normal);
+}
+
+.ctaText {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.ctaButton {
+    color: var(--color-text-inverse);
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-lg);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        box-shadow: var(--shadow-xl);
+        filter: brightness(1.05);
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    :global(.dark) & {
+        box-shadow: 0 10px 20px -5px rgba(107, 143, 238, 0.3),
+            0 5px 10px -5px rgba(139, 92, 246, 0.2);
+
+        &:hover {
+            box-shadow: 0 15px 30px -5px rgba(107, 143, 238, 0.4),
+                0 10px 15px -5px rgba(139, 92, 246, 0.3);
+        }
+    }
+}

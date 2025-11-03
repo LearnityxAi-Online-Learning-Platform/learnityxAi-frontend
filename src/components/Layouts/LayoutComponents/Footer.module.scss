@@ -1,3 +1,333 @@
-// src/commponents/Layouts/Footer.module.scss
-@import '@/theme/theme.scss';
+// Footer.module.scss - Colors Only
+// All layout, spacing, and sizing handled by Tailwind CSS
 
+// ==========================================
+// FOOTER CONTAINER
+// ==========================================
+
+.footer {
+    background-color: var(--color-background);
+    transition: background-color var(--transition-normal);
+}
+
+// ==========================================
+// NEWSLETTER SECTION COLORS
+// ==========================================
+
+.newsletterSection {
+    background: var(--gradient-primary);
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 80% 50%, rgba(139, 92, 246, 0.3) 0%, transparent 50%);
+        pointer-events: none;
+    }
+}
+
+.newsletterHeading {
+    color: var(--color-text-inverse);
+    transition: color var(--transition-normal);
+}
+
+.newsletterText {
+    color: rgba(255, 255, 255, 0.9);
+    transition: color var(--transition-normal);
+}
+
+.newsletterInput {
+    color: var(--color-text-primary);
+    background-color: var(--color-surface);
+    border: 2px solid transparent;
+    transition: all var(--transition-normal);
+
+    &::placeholder {
+        color: var(--color-text-tertiary);
+    }
+
+    &:focus {
+        background-color: var(--color-surface);
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 4px rgba(0, 217, 255, 0.1);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+
+        &:focus {
+            background-color: var(--color-surface-hover);
+            border-color: var(--color-accent);
+        }
+    }
+}
+
+.newsletterButton {
+    color: var(--color-primary);
+    background-color: var(--color-surface);
+    border: 2px solid transparent;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        background-color: var(--color-text-inverse);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        color: var(--color-primary-light);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+    }
+}
+
+.newsletterDisclaimer {
+    color: rgba(255, 255, 255, 0.7);
+    transition: color var(--transition-normal);
+}
+
+// ==========================================
+// MAIN FOOTER COLORS
+// ==========================================
+
+.mainFooter {
+    background-color: var(--color-background-secondary);
+    transition: background-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-background-secondary);
+    }
+}
+
+// ==========================================
+// BRAND SECTION COLORS
+// ==========================================
+
+.logo {
+    transition: opacity var(--transition-normal);
+
+    &:hover {
+        opacity: 0.85;
+    }
+}
+
+.brandDescription {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.contactLink {
+    color: var(--color-text-secondary);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        color: var(--color-primary);
+
+        .contactIconWrapper {
+            background-color: var(--color-primary);
+            transform: scale(1.05);
+
+            .contactIcon {
+                color: var(--color-text-inverse);
+            }
+        }
+    }
+
+    :global(.dark) & {
+        &:hover {
+            color: var(--color-primary-light);
+
+            .contactIconWrapper {
+                background-color: var(--color-primary-light);
+            }
+        }
+    }
+}
+
+.contactIconWrapper {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    transition: all var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+    }
+}
+
+.contactIcon {
+    color: var(--color-text-tertiary);
+    transition: color var(--transition-normal);
+}
+
+.socialLink {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    color: var(--color-text-secondary);
+    transition: all var(--transition-normal);
+
+    svg {
+        transition: all var(--transition-normal);
+    }
+
+    &:hover {
+        background: var(--gradient-primary);
+        border-color: transparent;
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: var(--shadow-md);
+        color: #ffffff;
+
+        svg {
+            fill: #ffffff;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+    }
+
+    &:active {
+        transform: translateY(-1px) scale(1.02);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+
+        &:hover {
+            background: var(--gradient-primary);
+            border-color: transparent;
+            box-shadow: 0 8px 16px rgba(107, 143, 238, 0.3);
+            color: #ffffff;
+
+            svg {
+                fill: #ffffff;
+                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+            }
+        }
+    }
+}
+
+// ==========================================
+// FOOTER LINKS COLORS
+// ==========================================
+
+.footerHeading {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.footerLink {
+    color: var(--color-text-secondary);
+    transition: all var(--transition-normal);
+    position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--gradient-primary);
+        transition: width var(--transition-normal);
+    }
+
+    &:hover {
+        color: var(--color-primary);
+        transform: translateX(4px);
+
+        &::after {
+            width: 100%;
+        }
+    }
+
+    :global(.dark) & {
+        &:hover {
+            color: var(--color-primary-light);
+        }
+    }
+}
+
+// ==========================================
+// APP DOWNLOAD BUTTONS COLORS
+// ==========================================
+
+.appButton {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    color: var(--color-text-primary);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        border-color: var(--color-primary);
+        box-shadow: var(--shadow-md);
+        transform: translateX(4px);
+    }
+
+    &:active {
+        transform: translateX(2px);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+
+        &:hover {
+            background-color: var(--color-surface-hover);
+            border-color: var(--color-primary-light);
+            box-shadow: 0 4px 12px rgba(107, 143, 238, 0.15);
+        }
+    }
+}
+
+// ==========================================
+// BOTTOM FOOTER COLORS
+// ==========================================
+
+.bottomFooter {
+    background-color: var(--color-background-tertiary);
+    border-top: 1px solid var(--color-border);
+    transition: background-color var(--transition-normal), border-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-background-tertiary);
+        border-color: var(--color-border);
+    }
+}
+
+.copyrightText {
+    color: var(--color-text-tertiary);
+    transition: color var(--transition-normal);
+}
+
+.legalLink {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+
+    &:hover {
+        color: var(--color-primary);
+    }
+
+    :global(.dark) & {
+        &:hover {
+            color: var(--color-primary-light);
+        }
+    }
+}
+
+.legalDivider {
+    color: var(--color-text-tertiary);
+    transition: color var(--transition-normal);
+}

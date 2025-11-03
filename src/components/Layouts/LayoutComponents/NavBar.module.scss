@@ -1,1 +1,184 @@
-// src/components/Layouts/LayoutComponents/NavBar-Footer.module.scss
+// NavBar.module.scss - Colors Only
+// All layout, spacing, and sizing handled by Tailwind CSS
+
+// Navigation Bar
+.navbar {
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+}
+
+// Logo
+.logo {
+    &:hover {
+        opacity: 0.85;
+    }
+}
+
+// Mobile Menu Button
+.mobileMenuBtn {
+    color: var(--color-text-primary);
+    background-color: transparent;
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        color: var(--color-primary);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+// Explore Button
+.exploreBtn {
+    color: var(--color-text-primary);
+    background-color: transparent;
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        color: var(--color-primary);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+    }
+}
+
+// Explore Dropdown
+.exploreDropdown {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+}
+
+.dropdownItem {
+    color: var(--color-text-primary);
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        color: var(--color-primary);
+    }
+}
+
+// Search Input
+.searchInput {
+    color: var(--color-text-primary);
+    background-color: var(--color-background-secondary);
+    border: 1px solid var(--color-border);
+
+    &::placeholder {
+        color: var(--color-text-tertiary);
+    }
+
+    &:focus {
+        background-color: var(--color-surface);
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.1);
+    }
+}
+
+// Search Button
+.searchBtn {
+    color: var(--color-text-inverse);
+    background-color: var(--color-primary);
+
+    &:hover {
+        background-color: var(--color-primary-dark);
+        transform: scale(1.05);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+// Desktop Auth Buttons
+.loginBtn {
+    color: var(--color-primary);
+    background-color: transparent;
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        color: var(--color-primary-dark);
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+.joinBtn {
+    color: var(--color-text-inverse);
+    background: var(--gradient-primary);
+    border: 2px solid var(--color-primary);
+    box-shadow: var(--shadow-sm);
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        background: var(--gradient-secondary);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+// Mobile Menu
+.mobileMenu {
+    background-color: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+}
+
+.mobileSection {
+    border-bottom: 1px solid var(--color-border);
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.mobileLink {
+    color: var(--color-text-primary);
+    background-color: transparent;
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        color: var(--color-primary);
+    }
+}
+
+// Mobile Auth Buttons
+.mobileLoginBtn {
+    color: var(--color-primary);
+    background-color: transparent;
+    border: 2px solid var(--color-primary);
+
+    &:hover {
+        background-color: var(--color-primary);
+        color: var(--color-text-inverse);
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+.mobileJoinBtn {
+    color: var(--color-text-inverse);
+    background: var(--gradient-primary);
+    border: 2px solid var(--color-primary);
+    box-shadow: var(--shadow-sm);
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        background: var(--gradient-secondary);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
