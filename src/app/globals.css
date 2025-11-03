@@ -249,23 +249,34 @@
    OPTIMIZED THEME TRANSITIONS
    ================================ */
 
-/* Apply theme transitions ONLY to html element for instant theme switching */
-html {
-  transition: background-color 0.15s ease-in-out;
+/* Apply theme transitions synchronously to all elements for instant switching */
+
+
+html *,
+html *::before,
+html *::after {
+  transition: background-color 0.2s ease-in-out,
+              color 0.2s ease-in-out,
+              border-color 0.2s ease-in-out,
+              box-shadow 0.2s ease-in-out,
+              fill 0.2s ease-in-out,
+              stroke 0.2s ease-in-out;
 }
 
-html * {
-  transition: background-color 0.15s ease-in-out,
-              color 0.15s ease-in-out,
-              border-color 0.15s ease-in-out,
-              box-shadow 0.15s ease-in-out,
-              fill 0.15s ease-in-out,
-              stroke 0.15s ease-in-out;
+/* Scrollbar transitions - synchronized with a slight delay to match other elements */
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-thumb {
+  transition: background-color 0.2s ease-in-out 0.02s,
+              border-color 0.2s ease-in-out 0.02s;
 }
 
 /* Disable transitions on initial page load */
 html.loading,
-html.loading * {
+html.loading *,
+html.loading *::before,
+html.loading *::after,
+html.loading ::-webkit-scrollbar-track,
+html.loading ::-webkit-scrollbar-thumb {
   transition: none !important;
 }
 
@@ -323,7 +334,7 @@ html.loading * {
     opacity: 0.5;
   }
 
-  /* Scrollbar Styling */
+  /* Scrollbar Styling - Synchronized with theme transitions */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
