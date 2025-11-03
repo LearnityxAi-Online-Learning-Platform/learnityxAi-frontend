@@ -163,9 +163,9 @@
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
   /* Transitions */
-  --transition-fast: 150ms ease-in-out;
-  --transition-normal: 250ms ease-in-out;
-  --transition-slow: 350ms ease-in-out;
+  --transition-fast: 100ms ease-in-out;
+  --transition-normal: 150ms ease-in-out;
+  --transition-slow: 200ms ease-in-out;
 
   /* Border Radius */
   --radius-sm: 0.25rem;
@@ -246,20 +246,25 @@
 }
 
 /* ================================
-   SIMPLIFIED THEME TRANSITIONS
+   OPTIMIZED THEME TRANSITIONS
    ================================ */
 
-/* Apply uniform transitions to all elements */
-* {
-  transition: background-color 0.2s ease-in-out,
-              color 0.2s ease-in-out,
-              border-color 0.2s ease-in-out,
-              box-shadow 0.2s ease-in-out,
-              fill 0.2s ease-in-out,
-              stroke 0.2s ease-in-out;
+/* Apply theme transitions ONLY to html element for instant theme switching */
+html {
+  transition: background-color 0.15s ease-in-out;
+}
+
+html * {
+  transition: background-color 0.15s ease-in-out,
+              color 0.15s ease-in-out,
+              border-color 0.15s ease-in-out,
+              box-shadow 0.15s ease-in-out,
+              fill 0.15s ease-in-out,
+              stroke 0.15s ease-in-out;
 }
 
 /* Disable transitions on initial page load */
+html.loading,
 html.loading * {
   transition: none !important;
 }

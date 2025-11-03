@@ -39,11 +39,12 @@ export function ThemeProvider({
         return prefersDark ? 'dark' : 'light';
     });
 
-    // Apply theme to document - SIMPLIFIED AND SYNCHRONOUS
+    // Apply theme to document - OPTIMIZED FOR INSTANT SWITCHING
     useEffect(() => {
         const root = document.documentElement;
 
-        // Remove both classes first (synchronously)
+        // Apply theme changes synchronously for instant visual update
+        // Remove both classes first
         root.classList.remove('light', 'dark');
 
         // Add the current theme class immediately
