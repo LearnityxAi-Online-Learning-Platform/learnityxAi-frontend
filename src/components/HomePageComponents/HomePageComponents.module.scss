@@ -572,6 +572,164 @@
 }
 
 // ==========================================
+// FAQ SECTION COLORS
+// ==========================================
+
+.faqSection {
+    background-color: var(--color-background);
+    transition: background-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-background);
+    }
+}
+
+.faqHeading {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.faqSubheading {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.faqCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        border-color: var(--color-primary-light);
+        box-shadow: var(--shadow-lg);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+        &:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 8px 20px rgba(107, 143, 238, 0.15);
+        }
+    }
+}
+
+.faqQuestion {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+
+    button:hover & {
+        color: var(--color-primary);
+    }
+
+    :global(.dark) & {
+        button:hover & {
+            color: var(--color-primary-light);
+        }
+    }
+}
+
+.faqIconWrapper {
+    background-color: var(--color-background-secondary);
+    transition: background-color var(--transition-normal), transform var(--transition-normal);
+
+    button:hover & {
+        background: var(--gradient-primary);
+        transform: scale(1.05);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-background-secondary);
+    }
+}
+
+.faqIcon {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+
+    button:hover & {
+        color: var(--color-text-inverse);
+    }
+
+    :global(.dark) & {
+        color: var(--color-text-tertiary);
+
+        button:hover & {
+            color: var(--color-text-inverse);
+        }
+    }
+}
+
+.faqDivider {
+    background-color: var(--color-border-light);
+    transition: background-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-border);
+    }
+}
+
+.faqAnswer {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.faqCtaCard {
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-lg);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        box-shadow: var(--shadow-xl);
+        transform: translateY(-2px);
+    }
+
+    :global(.dark) & {
+        box-shadow: 0 10px 25px rgba(107, 143, 238, 0.2);
+
+        &:hover {
+            box-shadow: 0 15px 35px rgba(107, 143, 238, 0.3);
+        }
+    }
+}
+
+.faqCtaHeading {
+    color: var(--color-text-inverse);
+    transition: color var(--transition-normal);
+}
+
+.faqCtaText {
+    color: rgba(255, 255, 255, 0.9);
+    transition: color var(--transition-normal);
+}
+
+.faqCtaButton {
+    background-color: var(--color-surface);
+    color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        box-shadow: var(--shadow-lg);
+        background-color: var(--color-text-inverse);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        color: var(--color-primary-light);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+    }
+}
+
+// ==========================================
 // ANIMATIONS
 // ==========================================
 
