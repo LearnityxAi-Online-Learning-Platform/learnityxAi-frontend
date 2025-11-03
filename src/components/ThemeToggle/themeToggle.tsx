@@ -17,23 +17,34 @@ export function ThemeToggle({ className = '', showLabel = false }: ThemeTogglePr
     return (
         <button
             onClick={toggleTheme}
-            className={`${styles.toggle} ${className}`}
+            className={`flex items-center gap-2 p-2 rounded-lg transition-all hover:scale-105 active:scale-95 ${styles.toggle} ${className}`}
             aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
             title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+            type="button"
         >
-            <span className={styles.iconWrapper}>
+            <span className="relative w-5 h-5 flex items-center justify-center">
                 <Sun
-                    className={`${styles.icon} ${styles.sunIcon} ${!isDark ? styles.active : ''}`}
-                    size={20}
+                    className={`absolute transition-all duration-300 ${
+                        !isDark 
+                            ? 'opacity-100 rotate-0 scale-100' 
+                            : 'opacity-0 rotate-90 scale-0'
+                    } ${styles.sunIcon}`}
+                    size={18}
+                    strokeWidth={2.5}
                 />
                 <Moon
-                    className={`${styles.icon} ${styles.moonIcon} ${isDark ? styles.active : ''}`}
-                    size={20}
+                    className={`absolute transition-all duration-300 ${
+                        isDark 
+                            ? 'opacity-100 rotate-0 scale-100' 
+                            : 'opacity-0 -rotate-90 scale-0'
+                    } ${styles.moonIcon}`}
+                    size={18}
+                    strokeWidth={2.5}
                 />
             </span>
 
             {showLabel && (
-                <span className={styles.label}>
+                <span className={`text-sm font-medium ${styles.label}`}>
                     {isDark ? 'Dark' : 'Light'}
                 </span>
             )}
