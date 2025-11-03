@@ -137,7 +137,6 @@
     background: var(--gradient-primary);
     opacity: 0.08;
     border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-    animation: morphShape 8s ease-in-out infinite;
 
     :global(.dark) & {
         opacity: 0.12;
@@ -152,7 +151,6 @@
     background: var(--gradient-accent);
     opacity: 0.5;
     border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%;
-    animation: morphShape 10s ease-in-out infinite reverse;
 }
 
 // ==========================================
@@ -474,5 +472,227 @@
 
     :global(.dark) & {
         color: var(--color-text-tertiary);
+    }
+}
+
+// ==========================================
+// TESTIMONIALS SECTION COLORS
+// ==========================================
+
+.testimonialsSection {
+    background-color: var(--color-background-secondary);
+    transition: background-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-background-secondary);
+    }
+}
+
+.testimonialsHeading {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.testimonialsSubheading {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.testimonialCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        border-color: var(--color-primary-light);
+        box-shadow: var(--shadow-xl);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+        &:hover {
+            background-color: var(--color-surface-hover);
+            border-color: var(--color-primary);
+            box-shadow: 0 12px 30px rgba(107, 143, 238, 0.2);
+        }
+    }
+}
+
+.quoteIcon {
+    color: var(--color-primary);
+    transition: color var(--transition-normal);
+
+    :global(.dark) & {
+        color: var(--color-primary-light);
+    }
+}
+
+.testimonialText {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+    line-height: 1.7;
+}
+
+.avatar {
+    border: 3px solid var(--color-border-light);
+    box-shadow: var(--shadow-sm);
+    transition: border-color var(--transition-normal);
+
+    .testimonialCard:hover & {
+        border-color: var(--color-primary);
+    }
+
+    :global(.dark) & {
+        border-color: var(--color-border);
+
+        .testimonialCard:hover & {
+            border-color: var(--color-primary-light);
+        }
+    }
+}
+
+.testimonialName {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.testimonialRole {
+    color: var(--color-text-tertiary);
+    transition: color var(--transition-normal);
+}
+
+.ctaText {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+// ==========================================
+// ANIMATIONS
+// ==========================================
+
+// ==========================================
+// TESTIMONIALS SECTION COLORS
+// ==========================================
+
+.testimonialsSection {
+    background-color: var(--color-background-secondary);
+    transition: background-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-background-secondary);
+    }
+}
+
+.testimonialsHeading {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.testimonialsSubheading {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.testimonialCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        border-color: var(--color-primary-light);
+        box-shadow: var(--shadow-xl);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+        &:hover {
+            background-color: var(--color-surface-hover);
+            border-color: var(--color-primary);
+            box-shadow: 0 12px 30px rgba(107, 143, 238, 0.2);
+        }
+    }
+}
+
+.quoteIcon {
+    color: var(--color-primary);
+    transition: color var(--transition-normal);
+
+    :global(.dark) & {
+        color: var(--color-primary-light);
+    }
+}
+
+.testimonialText {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+    line-height: 1.7;
+}
+
+.avatar {
+    border: 3px solid var(--color-border-light);
+    box-shadow: var(--shadow-sm);
+    transition: border-color var(--transition-normal);
+
+    .testimonialCard:hover & {
+        border-color: var(--color-primary);
+    }
+
+    :global(.dark) & {
+        border-color: var(--color-border);
+
+        .testimonialCard:hover & {
+            border-color: var(--color-primary-light);
+        }
+    }
+}
+
+.testimonialName {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.testimonialRole {
+    color: var(--color-text-tertiary);
+    transition: color var(--transition-normal);
+}
+
+.ctaText {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.ctaButton {
+    color: var(--color-text-inverse);
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-lg);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        box-shadow: var(--shadow-xl);
+        filter: brightness(1.05);
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    :global(.dark) & {
+        box-shadow: 0 10px 20px -5px rgba(107, 143, 238, 0.3),
+            0 5px 10px -5px rgba(139, 92, 246, 0.2);
+
+        &:hover {
+            box-shadow: 0 15px 30px -5px rgba(107, 143, 238, 0.4),
+                0 10px 15px -5px rgba(139, 92, 246, 0.3);
+        }
     }
 }
