@@ -1,7 +1,6 @@
-
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ThemeProvider } from "@/components/contexts/ThemeContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,11 +24,42 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Blocking script to prevent flash and apply theme instantly */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const storageKey = 'learnityx-theme';
+                  const stored = localStorage.getItem(storageKey);
+                  const theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                  const root = document.documentElement;
+
+                  // Add loading class to prevent transitions on initial load
+                  root.classList.add('loading');
+
+                  // Apply theme immediately
+                  root.classList.add(theme);
+                  root.setAttribute('data-theme', theme);
+
+                  // Remove loading class after a brief moment to enable transitions
+                  setTimeout(() => {
+                    root.classList.remove('loading');
+                  }, 50);
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
