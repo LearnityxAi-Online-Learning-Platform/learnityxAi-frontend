@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Star, Clock, TrendingUp, ArrowRight } from 'lucide-react';
 import styles from './HomePageComponents.module.scss';
 
@@ -22,6 +23,8 @@ interface Course {
 }
 
 export default function RecommendedCourses(): React.JSX.Element {
+    const router = useRouter();
+
     // Sample courses data - replace with actual API data
     const courses: Course[] = [
         {
@@ -111,7 +114,7 @@ export default function RecommendedCourses(): React.JSX.Element {
     };
 
     return (
-        <section className={`${styles.recommendedSection} py-16 sm:py-20 lg:py-24`}>
+        <section className={`${styles.recommendedSection} py-8 sm:py-10 lg:py-12`}>
             <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Section Header */}
@@ -125,7 +128,10 @@ export default function RecommendedCourses(): React.JSX.Element {
                         </p>
                     </div>
 
-                    <button className={`${styles.viewAllButton} px-6 py-3 rounded-xl font-semibold text-base flex items-center gap-2 transition-all duration-300 hover:gap-3 w-fit`}>
+                    <button
+                        onClick={() => router.push('/courses')}
+                        className={`${styles.viewAllButton} px-6 py-3 rounded-xl font-semibold text-base flex items-center gap-2 transition-all duration-300 hover:gap-3 w-fit`}
+                    >
                         View All Courses
                         <ArrowRight className="w-5 h-5" />
                     </button>
@@ -136,6 +142,7 @@ export default function RecommendedCourses(): React.JSX.Element {
                     {courses.slice(0, 4).map((course) => (
                         <div
                             key={course._id}
+                            onClick={() => router.push(`/courses/${course._id}`)}
                             className={`${styles.courseCard} group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 cursor-pointer`}
                         >
                             {/* Course Image */}

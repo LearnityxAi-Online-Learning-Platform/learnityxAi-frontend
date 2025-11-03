@@ -35,7 +35,7 @@ export default function Testimonials(): React.JSX.Element {
     ];
 
     return (
-        <section className={`${styles.testimonialsSection} py-16 sm:py-20 lg:py-24`}>
+        <section className={`${styles.testimonialsSection} py-8 sm:py-10 lg:py-12`}>
             <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Section Header */}
