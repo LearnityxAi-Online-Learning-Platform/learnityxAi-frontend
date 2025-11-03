@@ -284,3 +284,195 @@
     color: var(--color-text-secondary);
     transition: color var(--transition-normal);
 }
+
+// ==========================================
+// RECOMMENDED COURSES SECTION COLORS
+// ==========================================
+
+.recommendedSection {
+    background-color: var(--color-background);
+    transition: background-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-background);
+    }
+}
+
+.recommendedHeading {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.gradientText {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.recommendedSubheading {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.viewAllButton {
+    color: var(--color-text-inverse);
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-2px);
+    }
+
+    :global(.dark) & {
+        box-shadow: 0 4px 12px rgba(107, 143, 238, 0.3);
+
+        &:hover {
+            box-shadow: 0 8px 20px rgba(107, 143, 238, 0.4);
+        }
+    }
+}
+
+.courseCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        border-color: var(--color-primary-light);
+        box-shadow: var(--shadow-xl);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+        &:hover {
+            background-color: var(--color-surface-hover);
+            border-color: var(--color-primary);
+            box-shadow: 0 12px 30px rgba(107, 143, 238, 0.2);
+        }
+    }
+}
+
+.imageOverlay {
+    background: linear-gradient(to bottom,
+            transparent 0%,
+            transparent 50%,
+            rgba(0, 0, 0, 0.3) 100%);
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+
+    .courseCard:hover & {
+        opacity: 1;
+    }
+}
+
+.categoryBadge {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-normal);
+
+    .courseCard:hover & {
+        transform: scale(1.05);
+    }
+}
+
+.trendingBadge {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: var(--color-success);
+    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-normal);
+
+    .courseCard:hover & {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    :global(.dark) & {
+        background-color: rgba(20, 20, 20, 0.95);
+        color: var(--color-success-light);
+    }
+}
+
+.courseContent {
+    background-color: transparent;
+}
+
+.instructorName {
+    color: var(--color-primary);
+    transition: color var(--transition-normal);
+
+    :global(.dark) & {
+        color: var(--color-primary-light);
+    }
+}
+
+.courseName {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+
+    .courseCard:hover & {
+        color: var(--color-primary);
+    }
+
+    :global(.dark) & {
+        .courseCard:hover & {
+            color: var(--color-primary-light);
+        }
+    }
+}
+
+.clockIcon {
+    color: var(--color-text-tertiary);
+    transition: color var(--transition-normal);
+
+    .courseCard:hover & {
+        color: var(--color-primary);
+    }
+
+    :global(.dark) & {
+        .courseCard:hover & {
+            color: var(--color-primary-light);
+        }
+    }
+}
+
+.duration {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.divider {
+    background-color: var(--color-border-light);
+    transition: background-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-border);
+    }
+}
+
+.starIcon {
+    color: #F59E0B;
+}
+
+.ratingText {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.enrollmentText {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+
+    :global(.dark) & {
+        color: var(--color-text-tertiary);
+    }
+}
