@@ -23,7 +23,7 @@ export default function Header(): React.JSX.Element {
                                 Achieve your career goals with{' '}
                             </span>
                             <span className={styles.gradientText}>
-                                LearnittyxAi
+                                LearnityxAi
                             </span>
                         </h1>
 

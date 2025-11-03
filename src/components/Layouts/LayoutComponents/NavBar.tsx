@@ -68,7 +68,7 @@ export default function NavBar(): JSX.Element {
                         <Link href="/" className={`flex items-center ${styles.logo}`}>
                             <Image
                                 src="/logo/logo.png"
-                                alt="LearnittyxAi"
+                                alt="LearnityxAi"
                                 width={150}
                                 height={40}
                                 priority
