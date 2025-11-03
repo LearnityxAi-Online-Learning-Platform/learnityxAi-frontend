@@ -1,0 +1,94 @@
+@import '../../../theme/theme.scss';
+
+.toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        border-color: var(--color-primary);
+        transform: scale(1.05);
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+    }
+}
+
+.iconWrapper {
+    position: relative;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon {
+    position: absolute;
+    color: var(--color-text-secondary);
+    transition: all var(--transition-normal);
+    opacity: 0;
+    transform: scale(0.8) rotate(-45deg);
+
+    &.active {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+        color: var(--color-primary);
+    }
+}
+
+.sunIcon {
+    &.active {
+        animation: sunRise 0.3s ease-out;
+    }
+}
+
+.moonIcon {
+    &.active {
+        animation: moonRise 0.3s ease-out;
+    }
+}
+
+.label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+}
+
+@keyframes sunRise {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) rotate(-90deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@keyframes moonRise {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) rotate(90deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
