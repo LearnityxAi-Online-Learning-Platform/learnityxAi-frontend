@@ -250,7 +250,9 @@
    ================================ */
 
 /* Apply theme transitions synchronously to all elements for instant switching */
-
+html {
+  transition: background-color 0.1s ease-in-out;
+}
 
 html *,
 html *::before,
