@@ -1,0 +1,150 @@
+// InstructorComponents.module.scss - Colors Only
+@import '../../../theme//theme.scss';
+
+// Stats Card Colors - Enhanced
+.statsCard {
+  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface) 100%);
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(65, 105, 225, 0.15);
+  }
+
+  .statsIcon {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+    box-shadow: 0 4px 8px rgba(65, 105, 225, 0.3);
+  }
+
+  .statsValue {
+    color: var(--color-text-primary);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .statsLabel {
+    color: var(--color-text-secondary);
+  }
+
+  .statsChange {
+    color: var(--color-success);
+    background-color: rgba(16, 185, 129, 0.1);
+
+    &.negative {
+      color: var(--color-error);
+      background-color: rgba(239, 68, 68, 0.1);
+    }
+  }
+}
+
+// Chart Card Colors - Enhanced
+.chartCard {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .chartTitle {
+    color: var(--color-text-primary);
+    border-bottom-color: var(--color-border);
+  }
+}
+
+// Course Card Colors - Enhanced
+.courseCard {
+  background: linear-gradient(135deg, var(--color-surface) 0%, rgba(65, 105, 225, 0.02) 100%);
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 6px 16px rgba(65, 105, 225, 0.12);
+    background: linear-gradient(135deg, var(--color-surface) 0%, rgba(65, 105, 225, 0.05) 100%);
+  }
+
+  .courseTitle {
+    color: var(--color-text-primary);
+  }
+
+  .courseCategory {
+    background: linear-gradient(135deg, rgba(65, 105, 225, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+    color: var(--color-primary);
+    border: 1px solid rgba(65, 105, 225, 0.2);
+  }
+
+  .courseInfo {
+    color: var(--color-text-secondary);
+  }
+
+  .courseRating {
+    color: var(--color-warning);
+    filter: brightness(1.1);
+  }
+
+  .coursePrice {
+    color: var(--color-primary);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+  }
+}
+
+// Top Course Badge Colors
+.topCourseBadge {
+  background: var(--gradient-primary);
+  color: var(--color-text-inverse);
+}
+
+// Empty State Colors
+.emptyState {
+  color: var(--color-text-tertiary);
+
+  .emptyIcon {
+    color: var(--color-text-tertiary);
+  }
+}
+
+// Category Badge Colors
+.categoryBadge {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+
+  &:hover {
+    background-color: var(--color-primary);
+    color: var(--color-text-inverse);
+  }
+}
+
+// Info Box Colors
+.infoBox {
+  background-color: var(--color-info-light);
+  border-color: var(--color-info);
+  color: var(--color-info-dark);
+}
+
+.successBox {
+  background-color: var(--color-success-light);
+  border-color: var(--color-success);
+  color: var(--color-success-dark);
+}
+
+.warningBox {
+  background-color: var(--color-warning-light);
+  border-color: var(--color-warning);
+  color: var(--color-warning-dark);
+}
