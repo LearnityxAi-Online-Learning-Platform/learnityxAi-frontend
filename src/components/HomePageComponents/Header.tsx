@@ -40,7 +40,7 @@ export default function Header(): React.JSX.Element {
                         {/* CTA Button */}
                         <div className="flex flex-col sm:flex-row gap-4 items-start pt-2">
                             <Link
-                                href="/signup"
+                                href="/role"
                                 className={`${styles.ctaButton} inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 active:translate-y-0 w-full sm:w-auto min-h-[3.5rem] sm:min-h-[3.75rem]`}
                             >
                                 Start 7-day Free Trial

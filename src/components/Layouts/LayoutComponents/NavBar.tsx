@@ -267,7 +267,7 @@ export default function NavBar(): JSX.Element {
                                     Log In
                                 </Link>
                                 <Link
-                                    href="/signup"
+                                    href="/role"
                                     className={`px-4 xl:px-5 py-2 xl:py-2.5 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${styles.joinBtn}`}
                                 >
                                     Join for Free
@@ -414,7 +414,7 @@ export default function NavBar(): JSX.Element {
                                         Log In
                                     </Link>
                                     <Link
-                                        href="/signup"
+                                        href="/role"
                                         className={`w-full px-4 py-3.5 rounded-lg font-semibold text-center transition-all active:scale-95 min-h-[48px] flex items-center justify-center ${styles.mobileJoinBtn}`}
                                         onClick={toggleMobileMenu}
                                     >
