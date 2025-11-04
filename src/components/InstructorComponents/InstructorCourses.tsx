@@ -593,9 +593,14 @@ export default function InstructorCourses() {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div
-                            className={`w-12 h-12 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold`}
+                            className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold"
+                            style={{
+                              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                              minWidth: '3rem',
+                              minHeight: '3rem'
+                            }}
                           >
-                            {course.courseName.charAt(0)}
+                            {course.courseName.charAt(0).toUpperCase()}
                           </div>
                           <div>
                             <div className={`font-semibold ${styles.courseName}`}>
@@ -671,9 +676,14 @@ export default function InstructorCourses() {
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3 flex-1">
                       <div
-                        className={`w-12 h-12 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold flex-shrink-0`}
+                        className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold flex-shrink-0"
+                        style={{
+                          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                          minWidth: '3rem',
+                          minHeight: '3rem'
+                        }}
                       >
-                        {course.courseName.charAt(0)}
+                        {course.courseName.charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className={`font-semibold truncate ${styles.courseName}`}>
