@@ -30,6 +30,19 @@ interface CourseFormData {
   courseFlyer: File | null;
 }
 
+interface ValidationErrors {
+  courseName?: string;
+  courseCategory?: string;
+  description?: string;
+  whatYouWillLearn?: string;
+  skills?: string;
+  tools?: string;
+  startingDate?: string;
+  duration?: string;
+  price?: string;
+  courseFlyer?: string;
+}
+
 const COURSE_CATEGORIES = [
   "Web Development",
   "Mobile Development",
@@ -139,6 +152,8 @@ export default function CreateCourse() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentLearnItem, setCurrentLearnItem] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const { success, error, ToastComponent } = useToast();
 
   const [formData, setFormData] = useState<CourseFormData>({
@@ -154,6 +169,172 @@ export default function CreateCourse() {
     courseFlyer: null,
   });
 
+  // Validation function
+  const validateField = (name: string, value: string | string[] | File | null): string | undefined => {
+    switch (name) {
+      case "courseName":
+        if (typeof value !== "string" || !value.trim()) {
+          return "Course name is required";
+        }
+        if (value.trim().length < 5) {
+          return "Course name must be at least 5 characters long";
+        }
+        if (value.trim().length > 100) {
+          return "Course name must not exceed 100 characters";
+        }
+        if (!/^[a-zA-Z0-9\s\-:&.,()]+$/.test(value)) {
+          return "Course name contains invalid characters";
+        }
+        break;
+
+      case "courseCategory":
+        if (!value || (typeof value === "string" && !value.trim())) {
+          return "Please select a course category";
+        }
+        break;
+
+      case "description":
+        if (typeof value !== "string" || !value.trim()) {
+          return "Course description is required";
+        }
+        if (value.trim().length < 50) {
+          return "Description must be at least 50 characters long";
+        }
+        if (value.trim().length > 1000) {
+          return "Description must not exceed 1000 characters";
+        }
+        break;
+
+      case "whatYouWillLearn":
+        if (!Array.isArray(value) || value.length === 0) {
+          return "Please add at least one learning outcome";
+        }
+        if (value.length < 3) {
+          return "Please add at least 3 learning outcomes";
+        }
+        if (value.length > 20) {
+          return "Maximum 20 learning outcomes allowed";
+        }
+        break;
+
+      case "skills":
+        if (!Array.isArray(value) || value.length === 0) {
+          return "Please select at least one skill";
+        }
+        if (value.length < 2) {
+          return "Please select at least 2 skills";
+        }
+        if (value.length > 15) {
+          return "Maximum 15 skills allowed";
+        }
+        break;
+
+      case "tools":
+        if (!Array.isArray(value) || value.length === 0) {
+          return "Please select at least one tool";
+        }
+        if (value.length < 2) {
+          return "Please select at least 2 tools";
+        }
+        if (value.length > 15) {
+          return "Maximum 15 tools allowed";
+        }
+        break;
+
+      case "startingDate":
+        if (typeof value !== "string" || !value) {
+          return "Starting date is required";
+        }
+        const selectedDate = new Date(value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (selectedDate < today) {
+          return "Starting date cannot be in the past";
+        }
+        const maxDate = new Date();
+        maxDate.setFullYear(maxDate.getFullYear() + 2);
+        if (selectedDate > maxDate) {
+          return "Starting date cannot be more than 2 years in the future";
+        }
+        break;
+
+      case "duration":
+        if (!value || (typeof value === "string" && !value.trim())) {
+          return "Please select course duration";
+        }
+        break;
+
+      case "price":
+        if (typeof value !== "string" || value === "") {
+          return "Price is required";
+        }
+        const priceNum = parseFloat(value);
+        if (isNaN(priceNum)) {
+          return "Please enter a valid price";
+        }
+        if (priceNum < 0) {
+          return "Price cannot be negative";
+        }
+        if (priceNum === 0) {
+          return "Price must be greater than 0";
+        }
+        if (priceNum > 10000) {
+          return "Price cannot exceed $10,000";
+        }
+        if (!/^\d+(\.\d{1,2})?$/.test(value)) {
+          return "Price must have at most 2 decimal places";
+        }
+        break;
+
+      case "courseFlyer":
+        // Optional field, no required validation
+        if (value && value instanceof File) {
+          if (!value.type.startsWith("image/")) {
+            return "Only image files are allowed";
+          }
+          if (value.size > 5 * 1024 * 1024) {
+            return "Image size must be less than 5MB";
+          }
+        }
+        break;
+
+      default:
+        break;
+    }
+    return undefined;
+  };
+
+  // Validate all fields
+  const validateAllFields = (): boolean => {
+    const errors: ValidationErrors = {
+      courseName: validateField("courseName", formData.courseName),
+      courseCategory: validateField("courseCategory", formData.courseCategory),
+      description: validateField("description", formData.description),
+      whatYouWillLearn: validateField("whatYouWillLearn", formData.whatYouWillLearn),
+      skills: validateField("skills", formData.skills),
+      tools: validateField("tools", formData.tools),
+      startingDate: validateField("startingDate", formData.startingDate),
+      duration: validateField("duration", formData.duration),
+      price: validateField("price", formData.price),
+      courseFlyer: validateField("courseFlyer", formData.courseFlyer),
+    };
+
+    setValidationErrors(errors);
+
+    // Check if there are any errors
+    const hasErrors = Object.values(errors).some((err) => err !== undefined);
+
+    if (hasErrors) {
+      // Show first error in toast
+      const firstError = Object.values(errors).find((err) => err !== undefined);
+      if (firstError) {
+        error(firstError);
+      }
+    }
+
+    return !hasErrors;
+  };
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -162,40 +343,95 @@ export default function CreateCourse() {
       ...prev,
       [name]: value,
     }));
+
+    // Clear error for this field if it exists
+    if (validationErrors[name as keyof ValidationErrors]) {
+      setValidationErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
+    }
+  };
+
+  const handleBlur = (field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const fieldValue = formData[field as keyof CourseFormData];
+    const fieldError = validateField(field, fieldValue as string | string[] | File | null);
+    if (fieldError) {
+      setValidationErrors((prev) => ({
+        ...prev,
+        [field]: fieldError,
+      }));
+    }
   };
 
   const handleMultiSelect = (name: "skills" | "tools", value: string) => {
     setFormData((prev) => {
       const currentValues = prev[name];
-      if (currentValues.includes(value)) {
-        return {
-          ...prev,
-          [name]: currentValues.filter((item) => item !== value),
-        };
-      } else {
-        return {
-          ...prev,
-          [name]: [...currentValues, value],
-        };
-      }
+      const newValues = currentValues.includes(value)
+        ? currentValues.filter((item) => item !== value)
+        : [...currentValues, value];
+
+      // Validate the field after update
+      const fieldError = validateField(name, newValues);
+      setValidationErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: fieldError,
+      }));
+
+      return {
+        ...prev,
+        [name]: newValues,
+      };
     });
   };
 
   const addLearnItem = () => {
     if (currentLearnItem.trim()) {
-      setFormData((prev) => ({
-        ...prev,
-        whatYouWillLearn: [...prev.whatYouWillLearn, currentLearnItem.trim()],
-      }));
+      if (currentLearnItem.trim().length < 10) {
+        error("Learning outcome must be at least 10 characters long");
+        return;
+      }
+      if (currentLearnItem.trim().length > 200) {
+        error("Learning outcome must not exceed 200 characters");
+        return;
+      }
+
+      setFormData((prev) => {
+        const newItems = [...prev.whatYouWillLearn, currentLearnItem.trim()];
+
+        // Validate the field after update
+        const fieldError = validateField("whatYouWillLearn", newItems);
+        setValidationErrors((prevErrors) => ({
+          ...prevErrors,
+          whatYouWillLearn: fieldError,
+        }));
+
+        return {
+          ...prev,
+          whatYouWillLearn: newItems,
+        };
+      });
       setCurrentLearnItem("");
     }
   };
 
   const removeLearnItem = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      whatYouWillLearn: prev.whatYouWillLearn.filter((_, i) => i !== index),
-    }));
+    setFormData((prev) => {
+      const newItems = prev.whatYouWillLearn.filter((_, i) => i !== index);
+
+      // Validate the field after update
+      const fieldError = validateField("whatYouWillLearn", newItems);
+      setValidationErrors((prevErrors) => ({
+        ...prevErrors,
+        whatYouWillLearn: fieldError,
+      }));
+
+      return {
+        ...prev,
+        whatYouWillLearn: newItems,
+      };
+    });
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -238,41 +474,8 @@ export default function CreateCourse() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
-    if (!formData.courseName.trim()) {
-      error("Course name is required");
-      return;
-    }
-    if (!formData.courseCategory) {
-      error("Please select a course category");
-      return;
-    }
-    if (!formData.description.trim()) {
-      error("Course description is required");
-      return;
-    }
-    if (formData.whatYouWillLearn.length === 0) {
-      error("Please add at least one learning outcome");
-      return;
-    }
-    if (formData.skills.length === 0) {
-      error("Please select at least one skill");
-      return;
-    }
-    if (formData.tools.length === 0) {
-      error("Please select at least one tool");
-      return;
-    }
-    if (!formData.startingDate) {
-      error("Starting date is required");
-      return;
-    }
-    if (!formData.duration) {
-      error("Please select course duration");
-      return;
-    }
-    if (!formData.price || parseFloat(formData.price) <= 0) {
-      error("Please enter a valid price");
+    // Validate all fields
+    if (!validateAllFields()) {
       return;
     }
 
@@ -308,6 +511,8 @@ export default function CreateCourse() {
         courseFlyer: null,
       });
       setImagePreview(null);
+      setValidationErrors({});
+      setTouched({});
     } catch (err) {
       console.error("Error creating course:", err);
       error("Failed to create course. Please try again.");
@@ -343,35 +548,68 @@ export default function CreateCourse() {
                 name="courseName"
                 value={formData.courseName}
                 onChange={handleInputChange}
+                onBlur={() => handleBlur("courseName")}
                 placeholder="e.g., Complete Python Programming"
-                className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 transition-all ${styles.formInput}`}
+                className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 transition-all ${
+                  validationErrors.courseName && touched.courseName
+                    ? "border-red-500 focus:ring-red-500"
+                    : styles.formInput
+                }`}
                 required
               />
+              {validationErrors.courseName && touched.courseName && (
+                <p className="mt-1 text-sm text-red-600">{validationErrors.courseName}</p>
+              )}
             </div>
 
-            <CustomSelect
-              options={COURSE_CATEGORIES}
-              value={formData.courseCategory}
-              onChange={(value) => setFormData((prev) => ({ ...prev, courseCategory: value }))}
-              placeholder="Select a category"
-              label="Course Category"
-              required
-            />
+            <div>
+              <CustomSelect
+                options={COURSE_CATEGORIES}
+                value={formData.courseCategory}
+                onChange={(value) => {
+                  setFormData((prev) => ({ ...prev, courseCategory: value }));
+                  setTouched((prev) => ({ ...prev, courseCategory: true }));
+                  const fieldError = validateField("courseCategory", value);
+                  setValidationErrors((prev) => ({ ...prev, courseCategory: fieldError }));
+                }}
+                placeholder="Select a category"
+                label="Course Category"
+                required
+              />
+              {validationErrors.courseCategory && touched.courseCategory && (
+                <p className="mt-1 text-sm text-red-600">{validationErrors.courseCategory}</p>
+              )}
+            </div>
 
             <div>
               <label htmlFor="description" className={`block text-sm font-medium mb-2 ${styles.formLabel}`}>
-                Description *
+                Description * <span className="text-xs text-gray-500">(min 50 characters)</span>
               </label>
               <textarea
                 id="description"
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
+                onBlur={() => handleBlur("description")}
                 placeholder="Describe what students will learn in this course..."
                 rows={4}
-                className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 transition-all resize-none ${styles.formInput}`}
+                className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 transition-all resize-none ${
+                  validationErrors.description && touched.description
+                    ? "border-red-500 focus:ring-red-500"
+                    : styles.formInput
+                }`}
                 required
               />
+              <div className="flex justify-between items-center mt-1">
+                <div>
+                  {validationErrors.description && touched.description && (
+                    <p className="text-sm text-red-600">{validationErrors.description}</p>
+                  )}
+                </div>
+                <p className={`text-xs ${formData.description.length < 50 ? "text-red-500" : "text-gray-500"}`}>
+                  {formData.description.length}/1000
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -399,7 +637,7 @@ export default function CreateCourse() {
                     addLearnItem();
                   }
                 }}
-                placeholder="e.g., Master Python from scratch"
+                placeholder="e.g., Master Python from scratch (min 10 chars)"
                 className={`flex-1 px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 transition-all ${styles.formInput}`}
               />
               <button
@@ -411,6 +649,10 @@ export default function CreateCourse() {
                 <span className="hidden sm:inline">Add</span>
               </button>
             </div>
+
+            {validationErrors.whatYouWillLearn && (
+              <p className="text-sm text-red-600">{validationErrors.whatYouWillLearn}</p>
+            )}
 
             {formData.whatYouWillLearn.length > 0 && (
               <div className="space-y-2">
@@ -462,10 +704,14 @@ export default function CreateCourse() {
             ))}
           </div>
 
+          {validationErrors.skills && (
+            <p className="mt-2 text-sm text-red-600">{validationErrors.skills}</p>
+          )}
+
           {formData.skills.length > 0 && (
             <div className={`mt-4 p-3 rounded-lg ${styles.selectedCount}`}>
               <span className="text-sm font-medium">
-                {formData.skills.length} skill{formData.skills.length !== 1 ? "s" : ""} selected
+                {formData.skills.length} skill{formData.skills.length !== 1 ? "s" : ""} selected (min 2, max 15)
               </span>
             </div>
           )}
@@ -499,10 +745,14 @@ export default function CreateCourse() {
             ))}
           </div>
 
+          {validationErrors.tools && (
+            <p className="mt-2 text-sm text-red-600">{validationErrors.tools}</p>
+          )}
+
           {formData.tools.length > 0 && (
             <div className={`mt-4 p-3 rounded-lg ${styles.selectedCount}`}>
               <span className="text-sm font-medium">
-                {formData.tools.length} tool{formData.tools.length !== 1 ? "s" : ""} selected
+                {formData.tools.length} tool{formData.tools.length !== 1 ? "s" : ""} selected (min 2, max 15)
               </span>
             </div>
           )}
@@ -530,23 +780,41 @@ export default function CreateCourse() {
                 name="startingDate"
                 value={formData.startingDate}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 transition-all ${styles.formInput}`}
+                onBlur={() => handleBlur("startingDate")}
+                className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 transition-all ${
+                  validationErrors.startingDate && touched.startingDate
+                    ? "border-red-500 focus:ring-red-500"
+                    : styles.formInput
+                }`}
                 required
               />
+              {validationErrors.startingDate && touched.startingDate && (
+                <p className="mt-1 text-sm text-red-600">{validationErrors.startingDate}</p>
+              )}
             </div>
 
-            <CustomSelect
-              options={DURATION_OPTIONS}
-              value={formData.duration}
-              onChange={(value) => setFormData((prev) => ({ ...prev, duration: value }))}
-              placeholder="Select duration"
-              label="Duration"
-              required
-            />
+            <div>
+              <CustomSelect
+                options={DURATION_OPTIONS}
+                value={formData.duration}
+                onChange={(value) => {
+                  setFormData((prev) => ({ ...prev, duration: value }));
+                  setTouched((prev) => ({ ...prev, duration: true }));
+                  const fieldError = validateField("duration", value);
+                  setValidationErrors((prev) => ({ ...prev, duration: fieldError }));
+                }}
+                placeholder="Select duration"
+                label="Duration"
+                required
+              />
+              {validationErrors.duration && touched.duration && (
+                <p className="mt-1 text-sm text-red-600">{validationErrors.duration}</p>
+              )}
+            </div>
 
             <div>
               <label htmlFor="price" className={`block text-sm font-medium mb-2 ${styles.formLabel}`}>
-                Price (USD) *
+                Price (USD) * <span className="text-xs text-gray-500">(max $10,000)</span>
               </label>
               <input
                 type="number"
@@ -554,12 +822,21 @@ export default function CreateCourse() {
                 name="price"
                 value={formData.price}
                 onChange={handleInputChange}
+                onBlur={() => handleBlur("price")}
                 placeholder="99.99"
                 step="0.01"
                 min="0"
-                className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 transition-all ${styles.formInput}`}
+                max="10000"
+                className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 transition-all ${
+                  validationErrors.price && touched.price
+                    ? "border-red-500 focus:ring-red-500"
+                    : styles.formInput
+                }`}
                 required
               />
+              {validationErrors.price && touched.price && (
+                <p className="mt-1 text-sm text-red-600">{validationErrors.price}</p>
+              )}
             </div>
 
             <div className="md:col-span-2">
