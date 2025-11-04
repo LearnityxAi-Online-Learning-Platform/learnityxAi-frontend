@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import {
   BookOpen,
   List,
@@ -148,8 +149,14 @@ const DURATION_OPTIONS = [
   "12 months",
 ];
 
-export default function CreateCourse() {
+function CreateCourseForm() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const editId = searchParams?.get("edit");
+  const isEditMode = !!editId;
+
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(isEditMode);
   const [currentLearnItem, setCurrentLearnItem] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
@@ -168,6 +175,67 @@ export default function CreateCourse() {
     price: "",
     courseFlyer: null,
   });
+
+  // Fetch course data if in edit mode
+  useEffect(() => {
+    if (isEditMode && editId) {
+      fetchCourseData(editId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editId]);
+
+  const fetchCourseData = async (courseId: string) => {
+    setIsLoading(true);
+    try {
+      // TODO: Replace with actual API call
+      // const response = await fetch(`/api/instructor/courses/${courseId}`);
+      // const data = await response.json();
+
+      // Mock data for demonstration
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const mockCourseData = {
+        courseName: "Complete Python Programming",
+        courseCategory: "Web Development",
+        description:
+          "Learn Python from basics to advanced topics including Django and Flask with comprehensive hands-on projects",
+        whatYouWillLearn: [
+          "Master Python from scratch",
+          "Master Django from scratch",
+          "Master Flask from scratch",
+          "Master REST APIs from scratch",
+        ],
+        skills: ["Python", "Django", "Flask", "REST APIs"],
+        tools: ["Python", "Django", "PostgreSQL", "Git"],
+        startingDate: "2024-02-01",
+        duration: "12 weeks",
+        price: "99.99",
+        courseFlyerURL: "https://example.com/python-course-flyer.jpg",
+      };
+
+      setFormData({
+        courseName: mockCourseData.courseName,
+        courseCategory: mockCourseData.courseCategory,
+        description: mockCourseData.description,
+        whatYouWillLearn: mockCourseData.whatYouWillLearn,
+        skills: mockCourseData.skills,
+        tools: mockCourseData.tools,
+        startingDate: mockCourseData.startingDate,
+        duration: mockCourseData.duration,
+        price: mockCourseData.price,
+        courseFlyer: null,
+      });
+
+      // Set image preview if URL exists
+      if (mockCourseData.courseFlyerURL) {
+        setImagePreview(mockCourseData.courseFlyerURL);
+      }
+    } catch (err) {
+      console.error("Error fetching course data:", err);
+      error("Failed to load course data. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Validation function
   const validateField = (name: string, value: string | string[] | File | null): string | undefined => {
@@ -488,43 +556,85 @@ export default function CreateCourse() {
         price: parseFloat(formData.price),
       };
 
-      // TODO: Replace with actual API call
-      console.log("Course Data:", courseData);
+      if (isEditMode && editId) {
+        // TODO: Replace with actual API call for update
+        // const response = await fetch(`/api/instructor/courses/${editId}`, {
+        //   method: 'PUT',
+        //   body: JSON.stringify(courseData),
+        // });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+        console.log("Updating Course:", courseData);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        success("Course updated successfully!");
 
-      // Success
-      success("Course created successfully!");
+        // Navigate back to instructor courses after successful update
+        setTimeout(() => {
+          router.push("/instructor-courses");
+        }, 1500);
+      } else {
+        // TODO: Replace with actual API call for create
+        // const response = await fetch('/api/instructor/courses', {
+        //   method: 'POST',
+        //   body: JSON.stringify(courseData),
+        // });
 
-      // Reset form
-      setFormData({
-        courseName: "",
-        courseCategory: "",
-        description: "",
-        whatYouWillLearn: [],
-        skills: [],
-        tools: [],
-        startingDate: "",
-        duration: "",
-        price: "",
-        courseFlyer: null,
-      });
-      setImagePreview(null);
-      setValidationErrors({});
-      setTouched({});
+        console.log("Creating Course:", courseData);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        success("Course created successfully!");
+
+        // Reset form after creating
+        setFormData({
+          courseName: "",
+          courseCategory: "",
+          description: "",
+          whatYouWillLearn: [],
+          skills: [],
+          tools: [],
+          startingDate: "",
+          duration: "",
+          price: "",
+          courseFlyer: null,
+        });
+        setImagePreview(null);
+        setValidationErrors({});
+        setTouched({});
+      }
     } catch (err) {
-      console.error("Error creating course:", err);
-      error("Failed to create course. Please try again.");
+      console.error(`Error ${isEditMode ? "updating" : "creating"} course:`, err);
+      error(`Failed to ${isEditMode ? "update" : "create"} course. Please try again.`);
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Show loading state while fetching course data
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <p className={`text-sm ${styles.formLabel}`}>Loading course data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <ToastComponent />
       <div className="w-full max-w-5xl mx-auto pb-8">
+        {/* Page Title */}
+        <div className="mb-6">
+          <h1 className={`text-2xl md:text-3xl font-bold ${styles.formTitle}`}>
+            {isEditMode ? "Edit Course" : "Create New Course"}
+          </h1>
+          <p className={`text-sm mt-1 ${styles.formLabel}`}>
+            {isEditMode
+              ? "Update your course information below"
+              : "Fill in the details to create a new course"}
+          </p>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-6">
         {/* Course Name */}
         <div className={`rounded-xl border p-4 md:p-6 ${styles.formCard}`}>
@@ -926,12 +1036,12 @@ export default function CreateCourse() {
             {isSubmitting ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                Creating...
+                {isEditMode ? "Updating..." : "Creating..."}
               </>
             ) : (
               <>
                 <Save className="w-5 h-5" />
-                Create Course
+                {isEditMode ? "Update Course" : "Create Course"}
               </>
             )}
           </button>
@@ -939,5 +1049,23 @@ export default function CreateCourse() {
       </form>
       </div>
     </>
+  );
+}
+
+// Wrapper component with Suspense boundary
+export default function CreateCourse() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center py-12">
+          <div className="flex flex-col items-center gap-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Loading...</p>
+          </div>
+        </div>
+      }
+    >
+      <CreateCourseForm />
+    </Suspense>
   );
 }
