@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import styles from './UserComponents.module.scss';
 import AlertDialog from '../ui/AlertDialog';
+import Toast from '../ui/Toast';
 
 interface UserData {
     _id: string;
@@ -80,7 +81,8 @@ export default function UserProfile() {
     const [editedUser, setEditedUser] = useState<UserData>(userData.data.user);
     const [errors, setErrors] = useState<FormErrors>({});
     const [isSaving, setIsSaving] = useState(false);
-    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+    const [showSuccessToast, setShowSuccessToast] = useState(false);
+    const [showErrorToast, setShowErrorToast] = useState(false);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -149,26 +151,36 @@ export default function UserProfile() {
     };
 
     const handleSave = async () => {
-        if (!validateForm()) return;
+        if (!validateForm()) {
+            setShowErrorToast(true);
+            return;
+        }
 
         setIsSaving(true);
 
-        // Simulate API call
+        // Simulate API call with random success/failure for demonstration
         setTimeout(() => {
-            setUserData({
-                ...userData,
-                data: {
-                    user: {
-                        ...editedUser,
-                        updatedAt: new Date().toISOString()
-                    }
-                }
-            });
-            setIsSaving(false);
-            setIsEditing(false);
-            setShowSuccessMessage(true);
+            // Simulate 90% success rate (you can change this to always succeed in production)
+            const isSuccess = Math.random() > 0.1;
 
-            setTimeout(() => setShowSuccessMessage(false), 3000);
+            if (isSuccess) {
+                setUserData({
+                    ...userData,
+                    data: {
+                        user: {
+                            ...editedUser,
+                            updatedAt: new Date().toISOString()
+                        }
+                    }
+                });
+                setIsSaving(false);
+                setIsEditing(false);
+                setShowSuccessToast(true);
+            } else {
+                // Simulate API error
+                setIsSaving(false);
+                setShowErrorToast(true);
+            }
         }, 1000);
     };
 
@@ -207,13 +219,6 @@ export default function UserProfile() {
     return (
         <div className={`min-h-screen py-6 sm:py-8 lg:py-12 ${styles.profilePage}`}>
             <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Success Message */}
-                {showSuccessMessage && (
-                    <div className={`${styles.successMessage} fixed top-6 right-6 z-50 flex items-center gap-3 px-6 py-4 rounded-xl shadow-lg animate-slideInRight`}>
-                        <CheckCircle size={20} />
-                        <span className="font-semibold">Profile updated successfully!</span>
-                    </div>
-                )}
 
                 {/* Page Header */}
                 <div className="mb-6 sm:mb-8 lg:mb-10">
@@ -624,6 +629,28 @@ export default function UserProfile() {
                 cancelText="Cancel"
                 variant="danger"
                 isLoading={isDeleting}
+            />
+
+            {/* Success Toast Notification */}
+            <Toast
+                isVisible={showSuccessToast}
+                onClose={() => setShowSuccessToast(false)}
+                title="Profile updated successfully!"
+                variant="success"
+                duration={2000}
+                position="top-right"
+                showCloseButton={false}
+            />
+
+            {/* Error Toast Notification */}
+            <Toast
+                isVisible={showErrorToast}
+                onClose={() => setShowErrorToast(false)}
+                title="Failed to update profile"
+                variant="error"
+                duration={2000}
+                position="top-right"
+                showCloseButton={false}
             />
         </div>
     );
