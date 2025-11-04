@@ -289,7 +289,7 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
         </header>
 
         {/* Content */}
-        <div className="flex-1 px-6 md:px-8 pb-6 md:pb-8 pt-[97px] md:pt-[105px] max-w-[1400px] w-full mx-auto">
+        <div className="flex-1 px-4 md:px-8 pb-6 md:pb-8 pt-[97px] md:pt-[105px] max-w-[1400px] w-full mx-auto">
           {children}
         </div>
       </main>

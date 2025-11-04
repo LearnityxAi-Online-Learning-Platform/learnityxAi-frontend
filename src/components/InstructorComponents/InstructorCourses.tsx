@@ -403,39 +403,39 @@ export default function InstructorCourses() {
   const hasActiveFilters = searchQuery || selectedCategory || selectedTool || selectedDuration;
 
   return (
-    <>
+    <div className="w-full max-w-full">
       <ToastComponent />
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
         <div>
-          <h1 className={`text-2xl md:text-3xl font-bold ${styles.formTitle}`}>My Courses</h1>
-          <p className={`text-sm mt-1 ${styles.formLabel}`}>
+          <h1 className={`text-xl sm:text-2xl md:text-3xl font-bold ${styles.formTitle}`}>My Courses</h1>
+          <p className={`text-xs sm:text-sm mt-1 ${styles.formLabel}`}>
             Manage and track your course offerings
           </p>
         </div>
         <button
           onClick={() => router.push("/create-course")}
-          className={`flex items-center gap-2 px-4 py-3 rounded-lg font-medium transition-all ${styles.submitButton}`}
+          className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 rounded-lg font-medium transition-all text-sm sm:text-base ${styles.submitButton}`}
         >
-          <Plus className="w-5 h-5" />
-          Add New Course
+          <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+          <span>Add New Course</span>
         </button>
       </div>
 
       {/* Filters Section */}
-      <div className={`rounded-xl border p-4 md:p-6 mb-6 ${styles.formCard}`}>
-        <div className="flex items-center gap-3 mb-4">
-          <div className={`p-2 rounded-lg ${styles.formIconBg}`}>
-            <Filter className={`w-5 h-5 ${styles.formIcon}`} />
+      <div className={`rounded-lg sm:rounded-xl border p-3 sm:p-4 md:p-6 mb-4 sm:mb-6 ${styles.formCard}`}>
+        <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+          <div className={`p-1.5 sm:p-2 rounded-lg ${styles.formIconBg}`}>
+            <Filter className={`w-4 h-4 sm:w-5 sm:h-5 ${styles.formIcon}`} />
           </div>
-          <h2 className={`text-lg font-bold ${styles.formTitle}`}>Search & Filters</h2>
+          <h2 className={`text-base sm:text-lg font-bold ${styles.formTitle}`}>Search & Filters</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* Search */}
-          <div className="lg:col-span-2">
-            <label className={`block text-sm font-medium mb-2 ${styles.formLabel}`}>
+          <div className="sm:col-span-2 lg:col-span-2">
+            <label className={`block text-xs sm:text-sm font-medium mb-2 ${styles.formLabel}`}>
               Search by name
             </label>
             <div className="relative">
@@ -449,9 +449,9 @@ export default function InstructorCourses() {
                   }
                 }}
                 placeholder="Search courses..."
-                className={`w-full pl-10 pr-4 py-3 rounded-lg border focus:outline-none focus:ring-2 transition-all ${styles.formInput}`}
+                className={`w-full pl-9 sm:pl-10 pr-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg border focus:outline-none focus:ring-2 transition-all ${styles.formInput}`}
               />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
             </div>
           </div>
 
@@ -490,17 +490,17 @@ export default function InstructorCourses() {
         </div>
 
         {/* Filter Actions */}
-        <div className="flex gap-3 mt-4">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-3 sm:mt-4">
           <button
             onClick={handleSearch}
-            className={`px-6 py-2.5 rounded-lg font-medium transition-all ${styles.addButton}`}
+            className={`w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-medium text-sm sm:text-base transition-all ${styles.addButton}`}
           >
             Apply Filters
           </button>
           {hasActiveFilters && (
             <button
               onClick={handleClearFilters}
-              className={`px-6 py-2.5 rounded-lg font-medium transition-all ${styles.cancelButton}`}
+              className={`w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-medium text-sm sm:text-base transition-all ${styles.cancelButton}`}
             >
               Clear All
             </button>
@@ -509,7 +509,7 @@ export default function InstructorCourses() {
       </div>
 
       {/* Courses Table */}
-      <div className={`rounded-xl border overflow-hidden ${styles.formCard}`}>
+      <div className={`rounded-lg sm:rounded-xl border overflow-hidden ${styles.formCard}`}>
         {loading ? (
           <>
             {/* Desktop Skeleton */}
@@ -764,31 +764,31 @@ export default function InstructorCourses() {
             </div>
 
             {/* Mobile Cards */}
-            <div className="lg:hidden p-4 space-y-4">
+            <div className="lg:hidden p-3 sm:p-4 space-y-3 sm:space-y-4">
               {courses.map((course) => (
-                <div key={course._id} className={`rounded-lg border p-4 ${styles.mobileCard}`}>
+                <div key={course._id} className={`rounded-lg border p-3 sm:p-4 ${styles.mobileCard}`}>
                   <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3 flex-1">
+                    <div className="flex items-center gap-2 sm:gap-3 flex-1">
                       <div
-                        className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold flex-shrink-0"
+                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center text-white font-bold flex-shrink-0 text-sm sm:text-base"
                         style={{
                           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                          minWidth: '3rem',
-                          minHeight: '3rem'
+                          minWidth: '2.5rem',
+                          minHeight: '2.5rem'
                         }}
                       >
                         {course.courseName.charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className={`font-semibold truncate ${styles.courseName}`}>
+                        <div className={`font-semibold text-sm sm:text-base truncate ${styles.courseName}`}>
                           {course.courseName}
                         </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium inline-block ${styles.categoryBadge}`}>
+                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-1">
+                          <span className={`px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-medium inline-block ${styles.categoryBadge}`}>
                             {course.courseCategory}
                           </span>
                           <span
-                            className={`px-2 py-0.5 rounded-full text-xs font-medium inline-block ${
+                            className={`px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-medium inline-block ${
                               course.isActive ? styles.activeBadge : styles.inactiveBadge
                             }`}
                           >
@@ -799,61 +799,61 @@ export default function InstructorCourses() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 mb-3">
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-2 sm:mb-3">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 shrink-0" />
+                      <span className="text-xs sm:text-sm truncate">
                         <span className="font-semibold">{course.numberOfUserEnrolled}</span>{" "}
-                        students
+                        <span className="hidden xs:inline">students</span>
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-yellow-400 text-yellow-400 shrink-0" />
+                      <span className="text-xs sm:text-sm truncate">
                         <span className="font-semibold">{course.rating.toFixed(1)}</span> (
                         {course.totalRatings})
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm font-semibold">${course.price.toFixed(2)}</span>
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 shrink-0" />
+                      <span className="text-xs sm:text-sm font-semibold truncate">${course.price.toFixed(2)}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm">{course.duration}</span>
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 shrink-0" />
+                      <span className="text-xs sm:text-sm truncate">{course.duration}</span>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 pt-3 border-t">
+                  <div className="grid grid-cols-2 gap-1.5 sm:gap-2 pt-2 sm:pt-3 border-t">
                     <button
                       onClick={() => handleView(course)}
-                      className={`flex items-center justify-center gap-2 py-2 rounded-lg transition-all ${styles.actionButton} ${styles.viewButton}`}
+                      className={`flex items-center justify-center gap-1.5 py-2 sm:py-2.5 rounded-lg transition-all ${styles.actionButton} ${styles.viewButton}`}
                     >
-                      <Eye className="w-4 h-4" />
-                      <span className="text-sm font-medium">View</span>
+                      <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      <span className="text-xs sm:text-sm font-medium">View</span>
                     </button>
                     <button
                       onClick={() => handleEdit(course._id)}
-                      className={`flex items-center justify-center gap-2 py-2 rounded-lg transition-all ${styles.actionButton} ${styles.editButton}`}
+                      className={`flex items-center justify-center gap-1.5 py-2 sm:py-2.5 rounded-lg transition-all ${styles.actionButton} ${styles.editButton}`}
                     >
-                      <Edit className="w-4 h-4" />
-                      <span className="text-sm font-medium">Edit</span>
+                      <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      <span className="text-xs sm:text-sm font-medium">Edit</span>
                     </button>
                     <button
                       onClick={() => handleDeactivateClick(course._id, course.courseName, course.isActive)}
-                      className={`flex items-center justify-center gap-2 py-2 rounded-lg transition-all ${styles.actionButton} ${
+                      className={`flex items-center justify-center gap-1.5 py-2 sm:py-2.5 rounded-lg transition-all ${styles.actionButton} ${
                         course.isActive ? styles.deleteButton : styles.editButton
                       }`}
                     >
-                      <Power className="w-4 h-4" />
-                      <span className="text-sm font-medium">{course.isActive ? "Deactivate" : "Activate"}</span>
+                      <Power className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      <span className="text-xs sm:text-sm font-medium">{course.isActive ? "Deactivate" : "Activate"}</span>
                     </button>
                     <button
                       onClick={() => handleDeleteClick(course._id, course.courseName)}
-                      className={`flex items-center justify-center gap-2 py-2 rounded-lg transition-all ${styles.actionButton} ${styles.deleteButton}`}
+                      className={`flex items-center justify-center gap-1.5 py-2 sm:py-2.5 rounded-lg transition-all ${styles.actionButton} ${styles.deleteButton}`}
                     >
-                      <Trash2 className="w-4 h-4" />
-                      <span className="text-sm font-medium">Delete</span>
+                      <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      <span className="text-xs sm:text-sm font-medium">Delete</span>
                     </button>
                   </div>
                 </div>
@@ -920,7 +920,7 @@ export default function InstructorCourses() {
       {/* View Course Dialog */}
       {viewDialog.isOpen && viewDialog.course && (
         <div
-          className="fixed z-50 flex items-center justify-center p-4 left-0 right-0 md:left-[280px]"
+          className="fixed z-50 flex items-center justify-center p-2 sm:p-4 left-0 right-0 md:left-[280px]"
           style={{
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
             backdropFilter: 'blur(4px)',
@@ -930,31 +930,31 @@ export default function InstructorCourses() {
           onClick={() => setViewDialog({ isOpen: false, course: null })}
         >
           <div
-            className={`max-w-3xl w-full max-h-[calc(100vh-100px)] overflow-y-auto rounded-xl shadow-2xl ${styles.viewDialog}`}
+            className={`max-w-3xl w-full max-h-[calc(100vh-90px)] sm:max-h-[calc(100vh-100px)] overflow-y-auto rounded-lg sm:rounded-xl shadow-2xl ${styles.viewDialog}`}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className={`sticky top-0 z-10 flex items-center justify-between p-6 border-b ${styles.viewDialogHeader}`}>
-              <h2 className={`text-2xl font-bold ${styles.formTitle}`}>Course Details</h2>
+            <div className={`sticky top-0 z-10 flex items-center justify-between p-4 sm:p-6 border-b ${styles.viewDialogHeader}`}>
+              <h2 className={`text-lg sm:text-2xl font-bold ${styles.formTitle}`}>Course Details</h2>
               <button
                 onClick={() => setViewDialog({ isOpen: false, course: null })}
-                className={`p-2 rounded-lg transition-all ${styles.removeButton}`}
+                className={`p-1.5 sm:p-2 rounded-lg transition-all ${styles.removeButton}`}
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
 
-            <div className="p-6 space-y-6">
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               {/* Course Header */}
               <div>
-                <h3 className={`text-xl font-bold mb-2 ${styles.formTitle}`}>
+                <h3 className={`text-base sm:text-xl font-bold mb-2 ${styles.formTitle}`}>
                   {viewDialog.course.courseName}
                 </h3>
-                <div className="flex flex-wrap gap-2">
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${styles.categoryBadge}`}>
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                  <span className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium ${styles.categoryBadge}`}>
                     {viewDialog.course.courseCategory}
                   </span>
                   <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium ${
                       viewDialog.course.isActive ? styles.activeBadge : styles.inactiveBadge
                     }`}
                   >
@@ -964,46 +964,46 @@ export default function InstructorCourses() {
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className={`p-4 rounded-lg ${styles.statCard}`}>
-                  <Users className="w-5 h-5 mb-2 text-primary" />
-                  <div className="text-2xl font-bold">{viewDialog.course.numberOfUserEnrolled}</div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+                <div className={`p-3 sm:p-4 rounded-lg ${styles.statCard}`}>
+                  <Users className="w-4 h-4 sm:w-5 sm:h-5 mb-1 sm:mb-2 text-primary" />
+                  <div className="text-lg sm:text-2xl font-bold">{viewDialog.course.numberOfUserEnrolled}</div>
                   <div className={`text-xs ${styles.formLabel}`}>Students</div>
                 </div>
-                <div className={`p-4 rounded-lg ${styles.statCard}`}>
-                  <Star className="w-5 h-5 mb-2 text-yellow-400" />
-                  <div className="text-2xl font-bold">{viewDialog.course.rating.toFixed(1)}</div>
+                <div className={`p-3 sm:p-4 rounded-lg ${styles.statCard}`}>
+                  <Star className="w-4 h-4 sm:w-5 sm:h-5 mb-1 sm:mb-2 text-yellow-400" />
+                  <div className="text-lg sm:text-2xl font-bold">{viewDialog.course.rating.toFixed(1)}</div>
                   <div className={`text-xs ${styles.formLabel}`}>
                     ({viewDialog.course.totalRatings} ratings)
                   </div>
                 </div>
-                <div className={`p-4 rounded-lg ${styles.statCard}`}>
-                  <DollarSign className="w-5 h-5 mb-2 text-green-500" />
-                  <div className="text-2xl font-bold">${viewDialog.course.price.toFixed(2)}</div>
+                <div className={`p-3 sm:p-4 rounded-lg ${styles.statCard}`}>
+                  <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 mb-1 sm:mb-2 text-green-500" />
+                  <div className="text-lg sm:text-2xl font-bold">${viewDialog.course.price.toFixed(2)}</div>
                   <div className={`text-xs ${styles.formLabel}`}>Price</div>
                 </div>
-                <div className={`p-4 rounded-lg ${styles.statCard}`}>
-                  <Calendar className="w-5 h-5 mb-2 text-blue-500" />
-                  <div className="text-2xl font-bold">{viewDialog.course.duration}</div>
+                <div className={`p-3 sm:p-4 rounded-lg ${styles.statCard}`}>
+                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mb-1 sm:mb-2 text-blue-500" />
+                  <div className="text-lg sm:text-2xl font-bold">{viewDialog.course.duration}</div>
                   <div className={`text-xs ${styles.formLabel}`}>Duration</div>
                 </div>
               </div>
 
               {/* Description */}
               <div>
-                <h4 className={`text-lg font-semibold mb-2 ${styles.formTitle}`}>Description</h4>
-                <p className={`text-sm ${styles.formLabel}`}>{viewDialog.course.description}</p>
+                <h4 className={`text-base sm:text-lg font-semibold mb-2 ${styles.formTitle}`}>Description</h4>
+                <p className={`text-xs sm:text-sm ${styles.formLabel}`}>{viewDialog.course.description}</p>
               </div>
 
               {/* What You Will Learn */}
               <div>
-                <h4 className={`text-lg font-semibold mb-3 ${styles.formTitle}`}>
+                <h4 className={`text-base sm:text-lg font-semibold mb-2 sm:mb-3 ${styles.formTitle}`}>
                   What You Will Learn
                 </h4>
-                <ul className="space-y-2">
+                <ul className="space-y-1.5 sm:space-y-2">
                   {viewDialog.course.whatYouWillLearn.map((item, index) => (
-                    <li key={index} className={`flex items-start gap-2 text-sm ${styles.formLabel}`}>
-                      <span className="text-primary mt-1">✓</span>
+                    <li key={index} className={`flex items-start gap-2 text-xs sm:text-sm ${styles.formLabel}`}>
+                      <span className="text-primary mt-0.5 sm:mt-1">✓</span>
                       <span>{item}</span>
                     </li>
                   ))}
@@ -1012,10 +1012,10 @@ export default function InstructorCourses() {
 
               {/* Skills */}
               <div>
-                <h4 className={`text-lg font-semibold mb-3 ${styles.formTitle}`}>Skills</h4>
-                <div className="flex flex-wrap gap-2">
+                <h4 className={`text-base sm:text-lg font-semibold mb-2 sm:mb-3 ${styles.formTitle}`}>Skills</h4>
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {viewDialog.course.skills.map((skill, index) => (
-                    <span key={index} className={`px-3 py-1 rounded-lg text-sm font-medium ${styles.chip}`}>
+                    <span key={index} className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs sm:text-sm font-medium ${styles.chip}`}>
                       {skill}
                     </span>
                   ))}
@@ -1024,10 +1024,10 @@ export default function InstructorCourses() {
 
               {/* Tools */}
               <div>
-                <h4 className={`text-lg font-semibold mb-3 ${styles.formTitle}`}>Tools</h4>
-                <div className="flex flex-wrap gap-2">
+                <h4 className={`text-base sm:text-lg font-semibold mb-2 sm:mb-3 ${styles.formTitle}`}>Tools</h4>
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {viewDialog.course.tools.map((tool, index) => (
-                    <span key={index} className={`px-3 py-1 rounded-lg text-sm font-medium ${styles.chip}`}>
+                    <span key={index} className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs sm:text-sm font-medium ${styles.chip}`}>
                       {tool}
                     </span>
                   ))}
@@ -1036,26 +1036,26 @@ export default function InstructorCourses() {
 
               {/* Course Info */}
               <div>
-                <h4 className={`text-lg font-semibold mb-3 ${styles.formTitle}`}>Course Information</h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
+                <h4 className={`text-base sm:text-lg font-semibold mb-2 sm:mb-3 ${styles.formTitle}`}>Course Information</h4>
+                <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
+                  <div className="flex justify-between gap-2">
                     <span className={styles.formLabel}>Starting Date:</span>
-                    <span className="font-medium">{formatDate(viewDialog.course.startingDate)}</span>
+                    <span className="font-medium text-right">{formatDate(viewDialog.course.startingDate)}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between gap-2">
                     <span className={styles.formLabel}>Created:</span>
-                    <span className="font-medium">{formatDate(viewDialog.course.createdAt)}</span>
+                    <span className="font-medium text-right">{formatDate(viewDialog.course.createdAt)}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between gap-2">
                     <span className={styles.formLabel}>Last Updated:</span>
-                    <span className="font-medium">{formatDate(viewDialog.course.updatedAt)}</span>
+                    <span className="font-medium text-right">{formatDate(viewDialog.course.updatedAt)}</span>
                   </div>
                 </div>
               </div>
 
               {/* Enrolled Students */}
               <div>
-                <h4 className={`text-lg font-semibold mb-3 ${styles.formTitle}`}>
+                <h4 className={`text-base sm:text-lg font-semibold mb-2 sm:mb-3 ${styles.formTitle}`}>
                   Enrolled Students ({viewDialog.course.enrolledStudents.length})
                 </h4>
                 {viewDialog.course.enrolledStudents.length > 0 ? (
@@ -1063,48 +1063,48 @@ export default function InstructorCourses() {
                     {viewDialog.course.enrolledStudents.map((student) => (
                       <div
                         key={student._id}
-                        className={`flex items-center gap-3 p-3 rounded-lg ${styles.statCard}`}
+                        className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg ${styles.statCard}`}
                       >
                         <div
-                          className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm"
+                          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white font-semibold text-xs sm:text-sm shrink-0"
                           style={{
                             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                            minWidth: '2.5rem',
-                            minHeight: '2.5rem'
+                            minWidth: '2rem',
+                            minHeight: '2rem'
                           }}
                         >
                           {student.firstName.charAt(0).toUpperCase()}{student.lastName.charAt(0).toUpperCase()}
                         </div>
-                        <div className="flex-1">
-                          <div className={`font-medium ${styles.formTitle}`}>
+                        <div className="flex-1 min-w-0">
+                          <div className={`font-medium text-sm sm:text-base truncate ${styles.formTitle}`}>
                             {student.firstName} {student.lastName}
                           </div>
-                          <div className={`text-xs ${styles.formLabel}`}>{student.email}</div>
+                          <div className={`text-xs ${styles.formLabel} truncate`}>{student.email}</div>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className={`text-sm ${styles.formLabel}`}>No students enrolled yet.</p>
+                  <p className={`text-xs sm:text-sm ${styles.formLabel}`}>No students enrolled yet.</p>
                 )}
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-3 pt-4 border-t">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-3 sm:pt-4 border-t">
                 <button
                   onClick={() => {
                     const courseId = viewDialog.course?._id;
                     setViewDialog({ isOpen: false, course: null });
                     if (courseId) handleEdit(courseId);
                   }}
-                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-all ${styles.addButton}`}
+                  className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg font-medium text-sm sm:text-base transition-all ${styles.addButton}`}
                 >
-                  <Edit className="w-5 h-5" />
+                  <Edit className="w-4 h-4 sm:w-5 sm:h-5" />
                   Edit Course
                 </button>
                 <button
                   onClick={() => setViewDialog({ isOpen: false, course: null })}
-                  className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${styles.cancelButton}`}
+                  className={`flex-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg font-medium text-sm sm:text-base transition-all ${styles.cancelButton}`}
                 >
                   Close
                 </button>
@@ -1113,6 +1113,6 @@ export default function InstructorCourses() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
