@@ -158,50 +158,50 @@ export default function InstructorRegister() {
 
     return (
         <>
-            <div className="min-h-[calc(100vh-80px)] flex items-center justify-center p-3 sm:p-4">
-                <div className="w-full max-w-6xl">
-                    <div className={`${styles.authCard} rounded-xl sm:rounded-2xl shadow-xl overflow-hidden`}>
+            <div className="min-h-[calc(100vh-80px)] max-h-[calc(100vh-80px)] flex items-center justify-center p-2 sm:p-3">
+                <div className="w-full max-w-5xl h-full flex items-center py-2">
+                    <div className={`${styles.authCard} rounded-lg sm:rounded-xl shadow-xl overflow-hidden w-full`}>
                         <div className="grid grid-cols-1 lg:grid-cols-2">
                             {/* Left Brand Section */}
-                            <div className="hidden lg:flex flex-col justify-center p-8 lg:p-10 xl:p-12 bg-linear-to-br from-indigo-600 to-purple-700">
-                                <div className="space-y-6">
+                            <div className="hidden lg:flex flex-col justify-center p-6 lg:p-8 bg-linear-to-br from-indigo-600 to-purple-700">
+                                <div className="space-y-4">
                                     <div>
-                                        <h2 className="text-3xl xl:text-4xl font-bold text-white mb-2">
+                                        <h2 className="text-2xl xl:text-3xl font-bold text-white mb-1">
                                             Learnityx<span className="text-indigo-200">Ai</span>
                                         </h2>
-                                        <p className="text-indigo-100 text-lg">
+                                        <p className="text-indigo-100 text-sm">
                                             Share your expertise and inspire learners worldwide
                                         </p>
                                     </div>
 
-                                    <div className="space-y-4 pt-4">
-                                        <div className="flex items-start gap-3">
-                                            <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center shrink-0 mt-0.5">
-                                                <span className="text-white text-sm">✓</span>
+                                    <div className="space-y-3 pt-2">
+                                        <div className="flex items-start gap-2">
+                                            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0 mt-0.5">
+                                                <span className="text-white text-xs">✓</span>
                                             </div>
                                             <div>
-                                                <h3 className="text-white font-semibold mb-1">Create Courses</h3>
-                                                <p className="text-indigo-100 text-sm">Design and publish your own courses with ease</p>
+                                                <h3 className="text-white font-semibold text-sm mb-0.5">Create Courses</h3>
+                                                <p className="text-indigo-100 text-xs">Design and publish your own courses</p>
                                             </div>
                                         </div>
 
-                                        <div className="flex items-start gap-3">
-                                            <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center shrink-0 mt-0.5">
-                                                <span className="text-white text-sm">✓</span>
+                                        <div className="flex items-start gap-2">
+                                            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0 mt-0.5">
+                                                <span className="text-white text-xs">✓</span>
                                             </div>
                                             <div>
-                                                <h3 className="text-white font-semibold mb-1">Manage Students</h3>
-                                                <p className="text-indigo-100 text-sm">Track student progress and provide feedback</p>
+                                                <h3 className="text-white font-semibold text-sm mb-0.5">Manage Students</h3>
+                                                <p className="text-indigo-100 text-xs">Track student progress and feedback</p>
                                             </div>
                                         </div>
 
-                                        <div className="flex items-start gap-3">
-                                            <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center shrink-0 mt-0.5">
-                                                <span className="text-white text-sm">✓</span>
+                                        <div className="flex items-start gap-2">
+                                            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0 mt-0.5">
+                                                <span className="text-white text-xs">✓</span>
                                             </div>
                                             <div>
-                                                <h3 className="text-white font-semibold mb-1">Earn Revenue</h3>
-                                                <p className="text-indigo-100 text-sm">Monetize your knowledge and grow your income</p>
+                                                <h3 className="text-white font-semibold text-sm mb-0.5">Earn Revenue</h3>
+                                                <p className="text-indigo-100 text-xs">Monetize your knowledge</p>
                                             </div>
                                         </div>
                                     </div>
@@ -209,17 +209,17 @@ export default function InstructorRegister() {
                             </div>
 
                             {/* Right Form Section */}
-                            <div className="p-5 sm:p-6 md:p-8 lg:p-10">
-                                <div className="mb-6">
-                                    <h1 className="text-xl sm:text-2xl font-bold mb-2">
+                            <div className="p-4 sm:p-5 md:p-6 lg:p-7">
+                                <div className="mb-4">
+                                    <h1 className="text-lg sm:text-xl font-bold mb-1">
                                         Create Instructor Account
                                     </h1>
-                                    <p className={`${styles.authSubtitle} text-xs sm:text-sm`}>
+                                    <p className={`${styles.authSubtitle} text-xs`}>
                                         Start teaching and inspiring students today
                                     </p>
                                 </div>
 
-                                <form onSubmit={handleSubmit} className="space-y-4">
+                                <form onSubmit={handleSubmit} className="space-y-3">
                                     {/* Backend Error Message */}
                                     {errors.backend && (
                                         <div className={`${styles.backendError} p-2.5 sm:p-3 rounded-lg text-xs sm:text-sm font-medium`}>
@@ -228,113 +228,113 @@ export default function InstructorRegister() {
                                     )}
 
                                     {/* Name Fields - Side by Side */}
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         {/* First Name */}
-                                        <div className="space-y-1.5">
-                                            <label htmlFor="firstName" className={`${styles.formLabel} block text-xs sm:text-sm font-semibold`}>
+                                        <div className="space-y-1">
+                                            <label htmlFor="firstName" className={`${styles.formLabel} block text-xs font-semibold`}>
                                                 First Name
                                             </label>
                                             <div className="relative">
-                                                <User className={`${styles.inputIcon} absolute left-3 top-1/2 -translate-y-1/2`} size={18} />
+                                                <User className={`${styles.inputIcon} absolute left-2.5 top-1/2 -translate-y-1/2`} size={16} />
                                                 <input
                                                     type="text"
                                                     id="firstName"
                                                     value={formData.firstName}
                                                     onChange={(e) => handleInputChange('firstName', e.target.value)}
-                                                    className={`${styles.formInput} ${errors.firstName ? styles.inputError : ''} w-full pl-10 pr-3 py-2.5 rounded-lg text-sm border-2 transition-all duration-200`}
+                                                    className={`${styles.formInput} ${errors.firstName ? styles.inputError : ''} w-full pl-9 pr-2.5 py-2 rounded-lg text-xs border-2 transition-all duration-200`}
                                                     placeholder="Enter first name"
                                                     disabled={isLoading}
                                                     autoComplete="given-name"
                                                 />
                                             </div>
                                             {errors.firstName && (
-                                                <span className={`${styles.fieldError} text-xs font-medium block mt-1`}>{errors.firstName}</span>
+                                                <span className={`${styles.fieldError} text-xs font-medium block`}>{errors.firstName}</span>
                                             )}
                                         </div>
 
                                         {/* Last Name */}
-                                        <div className="space-y-1.5">
-                                            <label htmlFor="lastName" className={`${styles.formLabel} block text-xs sm:text-sm font-semibold`}>
+                                        <div className="space-y-1">
+                                            <label htmlFor="lastName" className={`${styles.formLabel} block text-xs font-semibold`}>
                                                 Last Name
                                             </label>
                                             <div className="relative">
-                                                <User className={`${styles.inputIcon} absolute left-3 top-1/2 -translate-y-1/2`} size={18} />
+                                                <User className={`${styles.inputIcon} absolute left-2.5 top-1/2 -translate-y-1/2`} size={16} />
                                                 <input
                                                     type="text"
                                                     id="lastName"
                                                     value={formData.lastName}
                                                     onChange={(e) => handleInputChange('lastName', e.target.value)}
-                                                    className={`${styles.formInput} ${errors.lastName ? styles.inputError : ''} w-full pl-10 pr-3 py-2.5 rounded-lg text-sm border-2 transition-all duration-200`}
+                                                    className={`${styles.formInput} ${errors.lastName ? styles.inputError : ''} w-full pl-9 pr-2.5 py-2 rounded-lg text-xs border-2 transition-all duration-200`}
                                                     placeholder="Enter last name"
                                                     disabled={isLoading}
                                                     autoComplete="family-name"
                                                 />
                                             </div>
                                             {errors.lastName && (
-                                                <span className={`${styles.fieldError} text-xs font-medium block mt-1`}>{errors.lastName}</span>
+                                                <span className={`${styles.fieldError} text-xs font-medium block`}>{errors.lastName}</span>
                                             )}
                                         </div>
                                     </div>
 
                                     {/* Email Field */}
-                                    <div className="space-y-1.5">
-                                        <label htmlFor="email" className={`${styles.formLabel} block text-xs sm:text-sm font-semibold`}>
+                                    <div className="space-y-1">
+                                        <label htmlFor="email" className={`${styles.formLabel} block text-xs font-semibold`}>
                                             Email
                                         </label>
                                         <div className="relative">
-                                            <Mail className={`${styles.inputIcon} absolute left-3 top-1/2 -translate-y-1/2`} size={18} />
+                                            <Mail className={`${styles.inputIcon} absolute left-2.5 top-1/2 -translate-y-1/2`} size={16} />
                                             <input
                                                 type="email"
                                                 id="email"
                                                 value={formData.email}
                                                 onChange={(e) => handleInputChange('email', e.target.value)}
-                                                className={`${styles.formInput} ${errors.email ? styles.inputError : ''} w-full pl-10 pr-3 py-2.5 rounded-lg text-sm border-2 transition-all duration-200`}
+                                                className={`${styles.formInput} ${errors.email ? styles.inputError : ''} w-full pl-9 pr-2.5 py-2 rounded-lg text-xs border-2 transition-all duration-200`}
                                                 placeholder="Enter your email"
                                                 disabled={isLoading}
                                                 autoComplete="email"
                                             />
                                         </div>
                                         {errors.email && (
-                                            <span className={`${styles.fieldError} text-xs font-medium block mt-1`}>{errors.email}</span>
+                                            <span className={`${styles.fieldError} text-xs font-medium block`}>{errors.email}</span>
                                         )}
                                     </div>
 
                                     {/* Phone Field */}
-                                    <div className="space-y-1.5">
-                                        <label htmlFor="phone" className={`${styles.formLabel} block text-xs sm:text-sm font-semibold`}>
+                                    <div className="space-y-1">
+                                        <label htmlFor="phone" className={`${styles.formLabel} block text-xs font-semibold`}>
                                             Phone Number
                                         </label>
                                         <div className="relative">
-                                            <Phone className={`${styles.inputIcon} absolute left-3 top-1/2 -translate-y-1/2`} size={18} />
+                                            <Phone className={`${styles.inputIcon} absolute left-2.5 top-1/2 -translate-y-1/2`} size={16} />
                                             <input
                                                 type="tel"
                                                 id="phone"
                                                 value={formData.phone}
                                                 onChange={(e) => handleInputChange('phone', e.target.value)}
-                                                className={`${styles.formInput} ${errors.phone ? styles.inputError : ''} w-full pl-10 pr-3 py-2.5 rounded-lg text-sm border-2 transition-all duration-200`}
+                                                className={`${styles.formInput} ${errors.phone ? styles.inputError : ''} w-full pl-9 pr-2.5 py-2 rounded-lg text-xs border-2 transition-all duration-200`}
                                                 placeholder="0XXXXXXXXX"
                                                 disabled={isLoading}
                                                 autoComplete="tel"
                                             />
                                         </div>
                                         {errors.phone && (
-                                            <span className={`${styles.fieldError} text-xs font-medium block mt-1`}>{errors.phone}</span>
+                                            <span className={`${styles.fieldError} text-xs font-medium block`}>{errors.phone}</span>
                                         )}
                                     </div>
 
                                     {/* Password Field */}
-                                    <div className="space-y-1.5">
-                                        <label htmlFor="password" className={`${styles.formLabel} block text-xs sm:text-sm font-semibold`}>
+                                    <div className="space-y-1">
+                                        <label htmlFor="password" className={`${styles.formLabel} block text-xs font-semibold`}>
                                             Password
                                         </label>
                                         <div className="relative">
-                                            <Lock className={`${styles.inputIcon} absolute left-3 top-1/2 -translate-y-1/2`} size={18} />
+                                            <Lock className={`${styles.inputIcon} absolute left-2.5 top-1/2 -translate-y-1/2`} size={16} />
                                             <input
                                                 type={showPassword ? 'text' : 'password'}
                                                 id="password"
                                                 value={formData.password}
                                                 onChange={(e) => handleInputChange('password', e.target.value)}
-                                                className={`${styles.formInput} ${errors.password ? styles.inputError : ''} w-full pl-10 pr-11 py-2.5 rounded-lg text-sm border-2 transition-all duration-200`}
+                                                className={`${styles.formInput} ${errors.password ? styles.inputError : ''} w-full pl-9 pr-10 py-2 rounded-lg text-xs border-2 transition-all duration-200`}
                                                 placeholder="Create a password"
                                                 disabled={isLoading}
                                                 autoComplete="new-password"
@@ -342,30 +342,30 @@ export default function InstructorRegister() {
                                             <button
                                                 type="button"
                                                 onClick={() => setShowPassword(!showPassword)}
-                                                className={`${styles.passwordToggle} absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md transition-all duration-200`}
+                                                className={`${styles.passwordToggle} absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md transition-all duration-200`}
                                                 disabled={isLoading}
                                             >
-                                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                             </button>
                                         </div>
                                         {errors.password && (
-                                            <span className={`${styles.fieldError} text-xs font-medium block mt-1`}>{errors.password}</span>
+                                            <span className={`${styles.fieldError} text-xs font-medium block`}>{errors.password}</span>
                                         )}
                                     </div>
 
                                     {/* Confirm Password Field */}
-                                    <div className="space-y-1.5">
-                                        <label htmlFor="confirmPassword" className={`${styles.formLabel} block text-xs sm:text-sm font-semibold`}>
+                                    <div className="space-y-1">
+                                        <label htmlFor="confirmPassword" className={`${styles.formLabel} block text-xs font-semibold`}>
                                             Confirm Password
                                         </label>
                                         <div className="relative">
-                                            <Lock className={`${styles.inputIcon} absolute left-3 top-1/2 -translate-y-1/2`} size={18} />
+                                            <Lock className={`${styles.inputIcon} absolute left-2.5 top-1/2 -translate-y-1/2`} size={16} />
                                             <input
                                                 type={showConfirmPassword ? 'text' : 'password'}
                                                 id="confirmPassword"
                                                 value={formData.confirmPassword}
                                                 onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                                                className={`${styles.formInput} ${errors.confirmPassword ? styles.inputError : ''} w-full pl-10 pr-11 py-2.5 rounded-lg text-sm border-2 transition-all duration-200`}
+                                                className={`${styles.formInput} ${errors.confirmPassword ? styles.inputError : ''} w-full pl-9 pr-10 py-2 rounded-lg text-xs border-2 transition-all duration-200`}
                                                 placeholder="Confirm your password"
                                                 disabled={isLoading}
                                                 autoComplete="new-password"
@@ -373,14 +373,14 @@ export default function InstructorRegister() {
                                             <button
                                                 type="button"
                                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                                className={`${styles.passwordToggle} absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md transition-all duration-200`}
+                                                className={`${styles.passwordToggle} absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md transition-all duration-200`}
                                                 disabled={isLoading}
                                             >
-                                                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                             </button>
                                         </div>
                                         {errors.confirmPassword && (
-                                            <span className={`${styles.fieldError} text-xs font-medium block mt-1`}>{errors.confirmPassword}</span>
+                                            <span className={`${styles.fieldError} text-xs font-medium block`}>{errors.confirmPassword}</span>
                                         )}
                                     </div>
 
@@ -388,11 +388,11 @@ export default function InstructorRegister() {
                                     <button
                                         type="submit"
                                         disabled={isLoading}
-                                        className={`${styles.authButton} w-full py-2.5 sm:py-3 rounded-lg font-semibold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed`}
+                                        className={`${styles.authButton} w-full py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed`}
                                     >
                                         {isLoading ? (
                                             <>
-                                                <span className={`${styles.spinner} w-4 h-4 border-2 rounded-full animate-spin`}></span>
+                                                <span className={`${styles.spinner} w-3.5 h-3.5 border-2 rounded-full animate-spin`}></span>
                                                 Creating account...
                                             </>
                                         ) : (
@@ -402,9 +402,9 @@ export default function InstructorRegister() {
                                 </form>
 
                                 {/* Login Link */}
-                                <div className={`${styles.authFooter} flex items-center justify-center gap-2 mt-6 pt-5 border-t`}>
-                                    <p className="text-xs sm:text-sm m-0">Already have an account?</p>
-                                    <Link href="/login" className={`${styles.authLink} text-xs sm:text-sm font-semibold transition-colors duration-200 hover:underline`}>
+                                <div className={`${styles.authFooter} flex items-center justify-center gap-2 mt-4 pt-4 border-t`}>
+                                    <p className="text-xs m-0">Already have an account?</p>
+                                    <Link href="/login" className={`${styles.authLink} text-xs font-semibold transition-colors duration-200 hover:underline`}>
                                         Log in
                                     </Link>
                                 </div>
