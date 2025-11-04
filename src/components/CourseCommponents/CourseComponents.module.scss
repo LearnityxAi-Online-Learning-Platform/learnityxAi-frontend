@@ -1,0 +1,435 @@
+// CourseComponents.module.scss
+// ONLY COLOR HANDLING - All layout/spacing/sizing uses Tailwind classes
+
+// ==========================================
+// PROFESSIONAL COURSE PAGE COLORS
+// ==========================================
+
+.coursePageContainer {
+    background-color: var(--color-background);
+    transition: background-color var(--transition-normal);
+}
+
+// Hero Section
+.heroSection {
+    background-color: var(--color-background-secondary);
+    transition: background-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-background-secondary);
+    }
+}
+
+.breadcrumb {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+
+    a {
+        color: var(--color-primary);
+        transition: color var(--transition-normal);
+
+        &:hover {
+            color: var(--color-primary-light);
+        }
+    }
+}
+
+.categoryBadge {
+    background-color: var(--color-background);
+    color: var(--color-primary);
+    border: 1px solid var(--color-border-light);
+    transition: all var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+        color: var(--color-primary-light);
+    }
+}
+
+.courseTitle {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.courseSubtitle {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+    line-height: 1.6;
+}
+
+.ratingSection {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.ratingNumber {
+    color: var(--color-primary);
+    transition: color var(--transition-normal);
+
+    :global(.dark) & {
+        color: var(--color-primary-light);
+    }
+}
+
+.ratingCount {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.starRating {
+    color: #F59E0B;
+}
+
+.studentCount {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.instructorInfo {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+
+    svg {
+        color: var(--color-text-secondary);
+
+        :global(.dark) & {
+            color: var(--color-text-secondary);
+        }
+    }
+}
+
+.lastUpdated {
+    color: var(--color-text-tertiary);
+    transition: color var(--transition-normal);
+}
+
+// Course Preview Card (Mobile)
+.mobilePreviewCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-lg);
+    transition: all var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+}
+
+.courseImage {
+    border: 1px solid var(--color-border-light);
+    transition: border-color var(--transition-normal);
+
+    :global(.dark) & {
+        border-color: var(--color-border);
+    }
+}
+
+// Main Content Section
+.contentSection {
+    background-color: var(--color-background);
+    transition: background-color var(--transition-normal);
+}
+
+.sectionCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    transition: all var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+    }
+}
+
+.sectionTitle {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.sectionText {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+    line-height: 1.7;
+}
+
+// What You'll Learn
+.learningGrid {
+    li {
+        color: var(--color-text-secondary);
+        transition: color var(--transition-normal);
+
+        &::before {
+            background-color: var(--color-primary);
+
+            :global(.dark) & {
+                background-color: var(--color-primary-light);
+            }
+        }
+
+        svg {
+            color: var(--color-primary);
+
+            :global(.dark) & {
+                color: var(--color-primary-light);
+            }
+        }
+    }
+}
+
+// Skills & Tools
+.skillTag {
+    background-color: var(--color-background-secondary);
+    color: var(--color-primary);
+    border: 1px solid var(--color-border-light);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        background: var(--gradient-primary);
+        color: var(--color-text-inverse);
+        border-color: transparent;
+        transform: translateY(-2px);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        color: var(--color-primary-light);
+        border-color: var(--color-border);
+
+        &:hover {
+            background: var(--gradient-primary);
+            color: var(--color-text-inverse);
+        }
+    }
+}
+
+.toolTag {
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        border-color: var(--color-primary-light);
+        transform: translateY(-2px);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+
+        &:hover {
+            background-color: var(--color-surface-hover);
+            border-color: var(--color-primary);
+        }
+    }
+}
+
+// Course Stats
+.statsContainer {
+    background-color: var(--color-background-secondary);
+    border: 1px solid var(--color-border-light);
+    transition: all var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+    }
+}
+
+.statItem {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+
+    svg {
+        color: var(--color-primary);
+
+        :global(.dark) & {
+            color: var(--color-primary-light);
+        }
+    }
+
+    strong {
+        color: var(--color-text-primary);
+    }
+}
+
+// Sidebar - Price Card
+.sidebarCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-xl);
+    transition: all var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+}
+
+.priceSection {
+    border-bottom: 1px solid var(--color-border-light);
+    transition: border-color var(--transition-normal);
+
+    :global(.dark) & {
+        border-color: var(--color-border);
+    }
+}
+
+.priceAmount {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.priceOriginal {
+    color: var(--color-text-tertiary);
+    transition: color var(--transition-normal);
+}
+
+.priceDiscount {
+    background-color: var(--color-background-secondary);
+    color: var(--color-primary);
+    transition: all var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        color: var(--color-primary-light);
+    }
+}
+
+.enrollButton {
+    color: var(--color-text-inverse);
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-lg);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        box-shadow: var(--shadow-xl);
+        filter: brightness(1.1);
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    :global(.dark) & {
+        box-shadow: 0 10px 20px -5px rgba(107, 143, 238, 0.3),
+            0 5px 10px -5px rgba(139, 92, 246, 0.2);
+
+        &:hover {
+            box-shadow: 0 15px 30px -5px rgba(107, 143, 238, 0.4),
+                0 10px 15px -5px rgba(139, 92, 246, 0.3);
+        }
+    }
+}
+
+.secondaryButton {
+    background-color: var(--color-background-secondary);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        border-color: var(--color-primary);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+
+        &:hover {
+            background-color: var(--color-surface-hover);
+            border-color: var(--color-primary-light);
+        }
+    }
+}
+
+// Course Includes
+.includesSection {
+    border-top: 1px solid var(--color-border-light);
+    transition: border-color var(--transition-normal);
+
+    :global(.dark) & {
+        border-color: var(--color-border);
+    }
+}
+
+.includeItem {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+
+    svg {
+        color: var(--color-text-tertiary);
+
+        :global(.dark) & {
+            color: var(--color-text-tertiary);
+        }
+    }
+}
+
+.shareButton {
+    color: var(--color-text-secondary);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        color: var(--color-primary);
+    }
+
+    :global(.dark) & {
+        &:hover {
+            color: var(--color-primary-light);
+        }
+    }
+}
+
+// Instructor Card
+.instructorCard {
+    background-color: var(--color-background-secondary);
+    border: 1px solid var(--color-border-light);
+    transition: all var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+    }
+}
+
+.instructorAvatar {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+    border: 2px solid var(--color-border-light);
+    transition: border-color var(--transition-normal);
+
+    :global(.dark) & {
+        border-color: var(--color-border);
+    }
+}
+
+.instructorName {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.instructorBio {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.instructorStat {
+    color: var(--color-text-tertiary);
+    transition: color var(--transition-normal);
+
+    svg {
+        color: var(--color-primary);
+
+        :global(.dark) & {
+            color: var(--color-primary-light);
+        }
+    }
+}
