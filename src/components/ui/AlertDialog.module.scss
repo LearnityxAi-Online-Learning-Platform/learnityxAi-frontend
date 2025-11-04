@@ -1,0 +1,446 @@
+// AlertDialog.module.scss - Reusable Alert Dialog Component
+// Fully responsive with mobile-first design
+// Theme-aligned colors and animations
+
+// ============================================
+// Backdrop Overlay
+// ============================================
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 9999;
+    animation: fadeIn 0.2s ease-out;
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+// ============================================
+// Dialog Container
+// ============================================
+.dialog {
+    background-color: var(--color-surface);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-2xl, 0 25px 50px -12px rgba(0, 0, 0, 0.25));
+    width: 100%;
+    max-width: 28rem;
+    position: relative;
+    padding: 1.5rem;
+    animation: slideUp 0.3s ease-out;
+    border: 2px solid transparent;
+
+    @media (min-width: 640px) {
+        padding: 2rem;
+        border-radius: 1.5rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+// ============================================
+// Dialog Variants
+// ============================================
+.dialog.danger {
+    border-color: var(--color-error);
+
+    .iconContainer {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
+        color: var(--color-error);
+    }
+
+    .title {
+        color: var(--color-error);
+    }
+
+    .confirmButton {
+        background-color: var(--color-error);
+        color: var(--color-text-inverse);
+
+        &:hover:not(:disabled) {
+            filter: brightness(0.9);
+            box-shadow: var(--shadow-lg);
+        }
+
+        &:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+    }
+}
+
+.dialog.warning {
+    border-color: var(--color-warning);
+
+    .iconContainer {
+        background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05));
+        color: var(--color-warning);
+    }
+
+    .title {
+        color: var(--color-warning);
+    }
+
+    .confirmButton {
+        background-color: var(--color-warning);
+        color: var(--color-text-inverse);
+
+        &:hover:not(:disabled) {
+            filter: brightness(0.9);
+            box-shadow: var(--shadow-lg);
+        }
+
+        &:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+    }
+}
+
+.dialog.info {
+    border-color: var(--color-primary);
+
+    .iconContainer {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));
+        color: var(--color-primary);
+    }
+
+    .title {
+        color: var(--color-primary);
+    }
+
+    .confirmButton {
+        background: var(--gradient-primary);
+        color: var(--color-text-inverse);
+
+        &:hover:not(:disabled) {
+            background: var(--gradient-secondary);
+            box-shadow: var(--shadow-lg);
+        }
+
+        &:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+    }
+}
+
+// ============================================
+// Close Button
+// ============================================
+.closeButton {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: transparent;
+    color: var(--color-text-secondary);
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover:not(:disabled) {
+        background-color: var(--color-surface-hover);
+        color: var(--color-text-primary);
+    }
+
+    &:active:not(:disabled) {
+        transform: scale(0.95);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+    }
+
+    @media (min-width: 640px) {
+        top: 1.5rem;
+        right: 1.5rem;
+    }
+}
+
+// ============================================
+// Icon Container
+// ============================================
+.iconContainer {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    transition: all 0.3s ease;
+
+    @media (min-width: 640px) {
+        width: 5rem;
+        height: 5rem;
+        margin-bottom: 2rem;
+    }
+}
+
+// ============================================
+// Content
+// ============================================
+.content {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    @media (min-width: 640px) {
+        margin-bottom: 2.5rem;
+    }
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+
+    @media (min-width: 640px) {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+}
+
+.description {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.6;
+
+    @media (min-width: 640px) {
+        font-size: 1rem;
+    }
+}
+
+// ============================================
+// Actions
+// ============================================
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    @media (min-width: 640px) {
+        flex-direction: row;
+        gap: 1rem;
+    }
+}
+
+// ============================================
+// Buttons
+// ============================================
+.button {
+    flex: 1;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+    }
+
+    @media (min-width: 640px) {
+        padding: 0.875rem 1.75rem;
+        font-size: 1rem;
+    }
+}
+
+.cancelButton {
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    border-color: var(--color-border);
+    order: 2;
+
+    &:hover:not(:disabled) {
+        background-color: var(--color-surface-hover);
+        border-color: var(--color-text-secondary);
+    }
+
+    &:active:not(:disabled) {
+        transform: scale(0.98);
+    }
+
+    @media (min-width: 640px) {
+        order: 1;
+    }
+}
+
+.confirmButton {
+    box-shadow: var(--shadow-md);
+    order: 1;
+
+    @media (min-width: 640px) {
+        order: 2;
+    }
+}
+
+.buttonContent {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+// ============================================
+// Loading Spinner
+// ============================================
+.spinner {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--color-text-inverse);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// ============================================
+// Dark Mode Enhancements
+// ============================================
+@media (prefers-color-scheme: dark) {
+    .backdrop {
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .dialog {
+        background-color: var(--color-surface);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .cancelButton {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.1);
+
+        &:hover:not(:disabled) {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+    }
+}
+
+// ============================================
+// Accessibility
+// ============================================
+@media (prefers-reduced-motion: reduce) {
+
+    .dialog,
+    .backdrop {
+        animation: none;
+    }
+
+    .button,
+    .closeButton {
+        transition: none;
+    }
+}
+
+// ============================================
+// Mobile Specific Adjustments
+// ============================================
+@media (max-width: 374px) {
+    .dialog {
+        padding: 1.25rem;
+    }
+
+    .title {
+        font-size: 1.125rem;
+    }
+
+    .description {
+        font-size: 0.8125rem;
+    }
+
+    .button {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.8125rem;
+    }
+}
+
+// ============================================
+// Landscape Mobile Adjustments
+// ============================================
+@media (max-height: 600px) and (orientation: landscape) {
+    .backdrop {
+        padding: 0.5rem;
+    }
+
+    .dialog {
+        max-height: 95vh;
+        overflow-y: auto;
+        padding: 1.25rem;
+    }
+
+    .iconContainer {
+        width: 3rem;
+        height: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .content {
+        margin-bottom: 1.5rem;
+    }
+
+    .title {
+        font-size: 1.125rem;
+        margin-bottom: 0.5rem;
+    }
+}
