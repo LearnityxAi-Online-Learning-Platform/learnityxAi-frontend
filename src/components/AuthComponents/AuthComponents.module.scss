@@ -1,0 +1,170 @@
+// ============================================
+// Auth Card - Colors Only
+// ============================================
+.authCard {
+    background-color: var(--color-surface);
+}
+
+// ============================================
+// Brand Colors
+// ============================================
+.brandName {
+    color: var(--color-text-primary);
+}
+
+.brandAi {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.authSubtitle {
+    color: var(--color-text-secondary);
+}
+
+// ============================================
+// Form Elements - Colors Only
+// ============================================
+.formLabel {
+    color: var(--color-text-primary);
+}
+
+.inputIcon {
+    color: var(--color-text-secondary);
+}
+
+.formInput {
+    color: var(--color-text-primary);
+    background-color: var(--color-background);
+    border-color: var(--color-border);
+
+    &::placeholder {
+        color: var(--color-text-secondary);
+    }
+
+    &:hover:not(:disabled) {
+        border-color: var(--color-text-secondary);
+    }
+
+    &:focus {
+        border-color: var(--color-primary);
+        background-color: var(--color-surface);
+        box-shadow: 0 0 0 3px rgba(0, 86, 210, 0.1);
+    }
+
+    &.inputError {
+        border-color: var(--color-error);
+
+        &:focus {
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+    }
+}
+
+.passwordToggle {
+    color: var(--color-text-secondary);
+
+    &:hover:not(:disabled) {
+        color: var(--color-text-primary);
+        background-color: var(--color-background);
+    }
+}
+
+// ============================================
+// Error Messages - Colors Only
+// ============================================
+.backendError {
+    background-color: var(--color-background-secondary);
+    border-color: var(--color-error);
+    color: var(--color-error);
+}
+
+.fieldError {
+    color: var(--color-error);
+}
+
+// ============================================
+// Links - Colors Only
+// ============================================
+.forgotLink {
+    color: var(--color-primary);
+
+    &:hover {
+        color: var(--color-primary-dark);
+    }
+}
+
+.authLink {
+    color: var(--color-primary);
+
+    &:hover {
+        color: var(--color-primary-dark);
+    }
+}
+
+// ============================================
+// Auth Button - Colors Only
+// ============================================
+.authButton {
+    color: var(--color-text-inverse);
+    background: var(--gradient-primary);
+
+    &:hover:not(:disabled) {
+        background: var(--gradient-secondary);
+    }
+}
+
+// ============================================
+// Spinner - Colors Only
+// ============================================
+.spinner {
+    border-color: rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+}
+
+// ============================================
+// Auth Footer - Colors Only
+// ============================================
+.authFooter {
+    border-top-color: var(--color-border);
+
+    p {
+        color: var(--color-text-secondary);
+    }
+}
+
+// ============================================
+// Role Cards - Colors Only
+// ============================================
+.roleCard {
+    background-color: var(--color-background);
+    border-color: var(--color-border);
+
+    &:hover {
+        border-color: var(--color-primary);
+    }
+}
+
+.roleIcon {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+}
+
+.roleDescription {
+    color: var(--color-text-secondary);
+}
+
+.feature {
+    color: var(--color-text-secondary);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+
+    &:hover {
+        background-color: var(--color-background);
+    }
+}
+
+.roleCard:hover .feature {
+    border-color: var(--color-primary);
+}
