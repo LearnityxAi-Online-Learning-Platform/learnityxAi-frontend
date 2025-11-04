@@ -653,3 +653,319 @@
     outline: 2px solid var(--color-error);
     outline-offset: 2px;
 }
+
+// ============================================
+// Course Cards & Courses Page
+// ============================================
+.statsBadge {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+
+    &:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-2px);
+    }
+}
+
+.statsIcon {
+    color: var(--color-text-inverse);
+}
+
+.statsLabel {
+    color: var(--color-text-inverse);
+    font-weight: 600;
+}
+
+// ============================================
+// Empty State
+// ============================================
+.emptyState {
+    background-color: var(--color-surface);
+    border: 2px dashed var(--color-border);
+    box-shadow: var(--shadow-md);
+}
+
+.emptyStateIcon {
+    color: var(--color-text-tertiary);
+    margin: 0 auto 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.emptyStateTitle {
+    color: var(--color-text-primary);
+}
+
+.emptyStateText {
+    color: var(--color-text-secondary);
+}
+
+// ============================================
+// Course Card
+// ============================================
+.courseCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+
+    &:hover {
+        box-shadow: var(--shadow-xl);
+        transform: translateY(-4px);
+    }
+}
+
+.courseImageContainer {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.courseImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+
+    .courseCard:hover & {
+        transform: scale(1.05);
+    }
+}
+
+.courseCategory {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+    padding: 0.375rem 0.875rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: var(--shadow-md);
+}
+
+.courseContent {
+    padding: 1.25rem;
+}
+
+.courseTitle {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    margin-bottom: 0.375rem;
+    line-height: 1.4;
+}
+
+.courseInstructor {
+    font-size: 0.875rem;
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+}
+
+.courseDescription {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+// ============================================
+// Course Stats
+// ============================================
+.courseStats {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.courseStat {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+
+    svg {
+        color: var(--color-primary);
+    }
+}
+
+.courseStatLabel {
+    font-weight: 400;
+    color: var(--color-text-tertiary);
+}
+
+// ============================================
+// Course Skills
+// ============================================
+.courseSkills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.skillBadge {
+    background: var(--gradient-secondary);
+    color: var(--color-text-inverse);
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+}
+
+// ============================================
+// Course Footer
+// ============================================
+.courseFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+    margin-bottom: 0.75rem;
+}
+
+.coursePrice {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-primary);
+
+    svg {
+        color: var(--color-primary);
+    }
+}
+
+.unenrollBtn {
+    background-color: var(--color-warning);
+    color: var(--color-text-inverse);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+
+    &:hover {
+        filter: brightness(0.9);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0) scale(0.98);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-warning);
+        outline-offset: 2px;
+    }
+}
+
+// ============================================
+// Course Meta
+// ============================================
+.courseMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.courseMetaItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+
+    svg {
+        color: var(--color-primary);
+    }
+}
+
+// ============================================
+// Dark Mode - Course Styles
+// ============================================
+@media (prefers-color-scheme: dark) {
+    .emptyState {
+        background-color: var(--color-surface);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .courseCard {
+        background-color: var(--color-surface);
+        border-color: rgba(255, 255, 255, 0.1);
+
+        &:hover {
+            border-color: var(--color-primary);
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+    }
+
+    .courseStats {
+        border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .courseFooter {
+        border-top-color: rgba(255, 255, 255, 0.1);
+    }
+}
+
+// ============================================
+// Responsive - Course Cards
+// ============================================
+@media (max-width: 640px) {
+    .courseCard {
+        box-shadow: var(--shadow-md);
+    }
+
+    .courseImageContainer {
+        height: 180px;
+    }
+
+    .courseContent {
+        padding: 1rem;
+    }
+
+    .courseTitle {
+        font-size: 1.125rem;
+    }
+
+    .courseStats {
+        gap: 0.75rem;
+    }
+
+    .courseFooter {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .unenrollBtn {
+        width: 100%;
+        justify-content: center;
+    }
+}
