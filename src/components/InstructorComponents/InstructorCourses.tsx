@@ -906,6 +906,42 @@ export default function InstructorCourses() {
                 </div>
               </div>
 
+              {/* Enrolled Students */}
+              <div>
+                <h4 className={`text-lg font-semibold mb-3 ${styles.formTitle}`}>
+                  Enrolled Students ({viewDialog.course.enrolledStudents.length})
+                </h4>
+                {viewDialog.course.enrolledStudents.length > 0 ? (
+                  <div className="space-y-2">
+                    {viewDialog.course.enrolledStudents.map((student) => (
+                      <div
+                        key={student._id}
+                        className={`flex items-center gap-3 p-3 rounded-lg ${styles.statCard}`}
+                      >
+                        <div
+                          className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm"
+                          style={{
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            minWidth: '2.5rem',
+                            minHeight: '2.5rem'
+                          }}
+                        >
+                          {student.firstName.charAt(0).toUpperCase()}{student.lastName.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="flex-1">
+                          <div className={`font-medium ${styles.formTitle}`}>
+                            {student.firstName} {student.lastName}
+                          </div>
+                          <div className={`text-xs ${styles.formLabel}`}>{student.email}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className={`text-sm ${styles.formLabel}`}>No students enrolled yet.</p>
+                )}
+              </div>
+
               {/* Action Buttons */}
               <div className="flex gap-3 pt-4 border-t">
                 <button
