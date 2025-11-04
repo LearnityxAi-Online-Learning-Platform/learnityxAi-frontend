@@ -10,6 +10,512 @@
     transition: background-color var(--transition-normal);
 }
 
+// ==========================================
+// ALL COURSES PAGE
+// ==========================================
+
+.allCoursesPage {
+    background-color: var(--color-background);
+    transition: background-color var(--transition-normal);
+}
+
+.pageTitle {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.pageSubtitle {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.gradientText {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+// Search & Filters
+.searchContainer {
+    position: relative;
+}
+
+.searchInput {
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border-light);
+    transition: all var(--transition-normal);
+
+    &::placeholder {
+        color: var(--color-text-tertiary);
+    }
+
+    &:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(107, 143, 238, 0.1);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+
+        &:focus {
+            border-color: var(--color-primary-light);
+            box-shadow: 0 0 0 3px rgba(107, 143, 238, 0.2);
+        }
+    }
+}
+
+.searchIcon {
+    color: var(--color-text-tertiary);
+    transition: color var(--transition-normal);
+}
+
+.clearButton {
+    color: var(--color-text-tertiary);
+    background-color: var(--color-background-secondary);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        color: var(--color-text-primary);
+        background-color: var(--color-surface-hover);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+
+        &:hover {
+            background-color: var(--color-surface-hover);
+        }
+    }
+}
+
+.sortSelect {
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border-light);
+    transition: all var(--transition-normal);
+    cursor: pointer;
+
+    &:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(107, 143, 238, 0.1);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+
+        &:focus {
+            border-color: var(--color-primary-light);
+            box-shadow: 0 0 0 3px rgba(107, 143, 238, 0.2);
+        }
+    }
+}
+
+.filterButton {
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border-light);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        border-color: var(--color-primary);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+
+        &:hover {
+            background-color: var(--color-surface-hover);
+            border-color: var(--color-primary-light);
+        }
+    }
+}
+
+.categoryContainer {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    transition: all var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+    }
+}
+
+.filterIcon {
+    color: var(--color-primary);
+    transition: color var(--transition-normal);
+
+    :global(.dark) & {
+        color: var(--color-primary-light);
+    }
+}
+
+.filterLabel {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.filterSubLabel {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.categoryChip {
+    background-color: var(--color-background-secondary);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border-light);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        color: var(--color-text-primary);
+        border-color: var(--color-primary);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+
+        &:hover {
+            background-color: var(--color-surface-hover);
+            border-color: var(--color-primary-light);
+        }
+    }
+}
+
+.categoryChipActive {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+    border-color: transparent;
+
+    &:hover {
+        background: var(--gradient-primary);
+        color: var(--color-text-inverse);
+        filter: brightness(1.1);
+    }
+}
+
+.resultsInfo {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+
+    strong {
+        color: var(--color-text-primary);
+    }
+}
+
+.clearFiltersButton {
+    color: var(--color-primary);
+    transition: color var(--transition-normal);
+
+    &:hover {
+        color: var(--color-primary-light);
+    }
+
+    :global(.dark) & {
+        color: var(--color-primary-light);
+
+        &:hover {
+            color: var(--color-primary);
+        }
+    }
+}
+
+// No Results State
+.noResults {
+    color: var(--color-text-secondary);
+}
+
+.noResultsIcon {
+    background-color: var(--color-background-secondary);
+    color: var(--color-text-tertiary);
+    transition: all var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+    }
+}
+
+.noResultsTitle {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.noResultsText {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.resetButton {
+    color: var(--color-text-inverse);
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        box-shadow: var(--shadow-lg);
+        filter: brightness(1.1);
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    :global(.dark) & {
+        box-shadow: 0 10px 20px -5px rgba(107, 143, 238, 0.3);
+
+        &:hover {
+            box-shadow: 0 15px 30px -5px rgba(107, 143, 238, 0.4);
+        }
+    }
+}
+
+// ==========================================
+// PAGINATION COMPONENT
+// ==========================================
+
+.paginationContainer {
+    margin-top: 2rem;
+}
+
+.paginationButton {
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border-light);
+    transition: all var(--transition-normal);
+
+    &:hover:not(:disabled) {
+        background-color: var(--color-surface-hover);
+        border-color: var(--color-primary);
+        transform: translateY(-2px);
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+
+        &:hover:not(:disabled) {
+            background-color: var(--color-surface-hover);
+            border-color: var(--color-primary-light);
+        }
+    }
+}
+
+.paginationNumber {
+    &:hover:not(:disabled) {
+        color: var(--color-primary);
+    }
+}
+
+.paginationActive {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+    border-color: transparent;
+    box-shadow: var(--shadow-md);
+
+    &:hover {
+        background: var(--gradient-primary);
+        color: var(--color-text-inverse);
+        filter: brightness(1.1);
+    }
+
+    :global(.dark) & {
+        box-shadow: 0 4px 12px rgba(107, 143, 238, 0.3);
+    }
+}
+
+.paginationArrow {
+    svg {
+        transition: transform var(--transition-normal);
+    }
+
+    &:hover:not(:disabled) svg {
+        transform: scale(1.1);
+    }
+}
+
+.paginationEllipsis {
+    color: var(--color-text-tertiary);
+}
+
+.pageInfo {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+
+    strong {
+        color: var(--color-text-primary);
+    }
+}
+
+// ==========================================
+// COURSE CARDS (Shared between pages)
+// ==========================================
+
+.courseCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        box-shadow: var(--shadow-xl);
+        border-color: var(--color-primary);
+    }
+
+    :global(.dark) & {
+        background-color: var(--color-surface);
+        border-color: var(--color-border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+        &:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            border-color: var(--color-primary-light);
+        }
+    }
+}
+
+.imageOverlay {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+    transition: background var(--transition-normal);
+
+    .courseCard:hover & {
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 100%);
+    }
+}
+
+.categoryBadge {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+    backdrop-filter: blur(10px);
+    transition: all var(--transition-normal);
+}
+
+.trendingBadge {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: var(--color-primary);
+    backdrop-filter: blur(10px);
+    transition: all var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: rgba(0, 0, 0, 0.8);
+        color: var(--color-primary-light);
+    }
+}
+
+.courseContent {
+    background-color: var(--color-surface);
+    transition: background-color var(--transition-normal);
+}
+
+.instructorName {
+    color: var(--color-primary);
+    transition: color var(--transition-normal);
+
+    :global(.dark) & {
+        color: var(--color-primary-light);
+    }
+}
+
+.courseName {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.clockIcon {
+    color: var(--color-text-tertiary);
+    transition: color var(--transition-normal);
+}
+
+.duration {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.divider {
+    background-color: var(--color-border-light);
+    transition: background-color var(--transition-normal);
+
+    :global(.dark) & {
+        background-color: var(--color-border);
+    }
+}
+
+.starIcon {
+    color: #F59E0B;
+}
+
+.ratingText {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.enrollmentText {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+// ==========================================
+// RECOMMENDED SECTION (from HomePage)
+// ==========================================
+
+.recommendedSection {
+    background-color: var(--color-background);
+    transition: background-color var(--transition-normal);
+}
+
+.recommendedHeading {
+    color: var(--color-text-primary);
+    transition: color var(--transition-normal);
+}
+
+.recommendedSubheading {
+    color: var(--color-text-secondary);
+    transition: color var(--transition-normal);
+}
+
+.viewAllButton {
+    color: var(--color-text-inverse);
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        box-shadow: var(--shadow-lg);
+        filter: brightness(1.1);
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    :global(.dark) & {
+        box-shadow: 0 10px 20px -5px rgba(107, 143, 238, 0.3);
+
+        &:hover {
+            box-shadow: 0 15px 30px -5px rgba(107, 143, 238, 0.4);
+        }
+    }
+}
+
+// ==========================================
+// SINGLE COURSE PAGE
+// ==========================================
+
 // Hero Section
 .heroSection {
     background-color: var(--color-background-secondary);
@@ -31,19 +537,6 @@
         &:hover {
             color: var(--color-primary-light);
         }
-    }
-}
-
-.categoryBadge {
-    background-color: var(--color-background);
-    color: var(--color-primary);
-    border: 1px solid var(--color-border-light);
-    transition: all var(--transition-normal);
-
-    :global(.dark) & {
-        background-color: var(--color-surface);
-        border-color: var(--color-border);
-        color: var(--color-primary-light);
     }
 }
 
