@@ -678,11 +678,10 @@ export default function InstructorCourses() {
       {/* View Course Dialog */}
       {viewDialog.isOpen && viewDialog.course && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 md:left-[280px] md:w-[calc(100%-280px)]"
           style={{
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            backdropFilter: 'blur(4px)',
-            left: 'var(--sidebar-width, 0px)' // Account for sidebar
+            backdropFilter: 'blur(4px)'
           }}
           onClick={() => setViewDialog({ isOpen: false, course: null })}
         >
