@@ -658,7 +658,7 @@ export default function AllCoursesPageAPI(): React.JSX.Element {
                     </>
                 ) : (
                     <div className={`${styles.noResults} text-center py-16 sm:py-20 lg:py-24`}>
-                        <div className={`${styles.noResultsIcon} w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-6 rounded-full flex items-center justify-center`}>
+                        <div className={`${styles.noResultsIcon} w-28 h-28 sm:w-30 sm:h-30 mx-auto mb-6 rounded-full flex items-center justify-center`}>
                             <Search className="w-10 h-10 sm:w-12 sm:h-12" />
                         </div>
                         <h3 className={`${styles.noResultsTitle} text-xl sm:text-2xl font-bold mb-3`}>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Mail, ArrowLeft } from 'lucide-react';
 import styles from './AuthComponents.module.scss';
@@ -82,17 +83,29 @@ export default function ForgotPassword() {
 
     return (
         <div className="min-h-[calc(100vh-80px)] max-h-[calc(100vh-80px)] flex items-center justify-center p-2 sm:p-3">
-            <div className="w-full max-w-md">
-                <div className={`${styles.authCard} rounded-lg sm:rounded-xl shadow-xl p-5 sm:p-6 md:p-7`}>
+            <div className="w-full max-w-md h-full flex items-center py-2">
+                <div className={`${styles.authCard} rounded-lg sm:rounded-xl shadow-xl p-4 sm:p-5 md:p-6 w-full`}>
                     {/* Back to Login Link */}
-                    <Link href="/login" className={`${styles.authLink} inline-flex items-center gap-1.5 text-xs font-semibold mb-5 transition-colors duration-200 hover:underline`}>
+                    <Link href="/login" className={`${styles.authLink} inline-flex items-center gap-1.5 text-xs font-semibold mb-4 transition-colors duration-200 hover:underline`}>
                         <ArrowLeft size={14} />
                         Back to Login
                     </Link>
 
+                    {/* Logo */}
+                    <div className="flex justify-center mb-3">
+                        <Image
+                            src="/logo/logo.png"
+                            alt="Learnityx Logo"
+                            width={120}
+                            height={120}
+                            className="w-28 h-28 sm:w-30 sm:h-30 object-contain"
+                            priority
+                        />
+                    </div>
+
                     {/* Header */}
-                    <div className="mb-5">
-                        <h1 className="text-lg sm:text-xl font-bold mb-1.5">
+                    <div className="mb-4">
+                        <h1 className="text-lg sm:text-xl font-bold mb-1">
                             Forgot Password?
                         </h1>
                         <p className={`${styles.authSubtitle} text-xs`}>
@@ -101,7 +114,7 @@ export default function ForgotPassword() {
                     </div>
 
                     {/* Form */}
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-3">
                         {/* Backend Error Message */}
                         {errors.backend && (
                             <div className={`${styles.backendError} p-2.5 rounded-lg text-xs font-medium`}>
@@ -110,7 +123,7 @@ export default function ForgotPassword() {
                         )}
 
                         {/* Email Field */}
-                        <div className="space-y-1.5">
+                        <div className="space-y-1">
                             <label htmlFor="email" className={`${styles.formLabel} block text-xs font-semibold`}>
                                 Email Address
                             </label>
@@ -121,7 +134,7 @@ export default function ForgotPassword() {
                                     id="email"
                                     value={email}
                                     onChange={(e) => handleInputChange(e.target.value)}
-                                    className={`${styles.formInput} ${errors.email ? styles.inputError : ''} w-full pl-9 pr-2.5 py-2.5 rounded-lg text-xs border-2 transition-all duration-200`}
+                                    className={`${styles.formInput} ${errors.email ? styles.inputError : ''} w-full pl-9 pr-2.5 py-2 rounded-lg text-xs border-2 transition-all duration-200`}
                                     placeholder="Enter your email"
                                     disabled={isLoading}
                                     autoComplete="email"
@@ -136,7 +149,7 @@ export default function ForgotPassword() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className={`${styles.authButton} w-full py-2.5 rounded-lg font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed`}
+                            className={`${styles.authButton} w-full py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed`}
                         >
                             {isLoading ? (
                                 <>
@@ -150,7 +163,7 @@ export default function ForgotPassword() {
                     </form>
 
                     {/* Login Link */}
-                    <div className={`${styles.authFooter} flex items-center justify-center gap-2 mt-5 pt-5 border-t`}>
+                    <div className={`${styles.authFooter} flex items-center justify-center gap-2 mt-4 pt-4 border-t`}>
                         <p className="text-xs m-0">Remember your password?</p>
                         <Link href="/login" className={`${styles.authLink} text-xs font-semibold transition-colors duration-200 hover:underline`}>
                             Log in

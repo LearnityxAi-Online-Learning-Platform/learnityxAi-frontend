@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, KeyboardEvent, ClipboardEvent, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
 import styles from './AuthComponents.module.scss';
 
@@ -155,16 +156,28 @@ function OTPContent() {
 
     return (
         <div className="min-h-[calc(100vh-80px)] max-h-[calc(100vh-80px)] flex items-center justify-center p-2 sm:p-3">
-            <div className="w-full max-w-md">
-                <div className={`${styles.authCard} rounded-lg sm:rounded-xl shadow-xl p-5 sm:p-6 md:p-7`}>
+            <div className="w-full max-w-md h-full flex items-center py-2">
+                <div className={`${styles.authCard} rounded-lg sm:rounded-xl shadow-xl p-4 sm:p-5 md:p-6 w-full`}>
                     {/* Back Link */}
-                    <Link href="/forgot-password" className={`${styles.authLink} inline-flex items-center gap-1.5 text-xs font-semibold mb-5 transition-colors duration-200 hover:underline`}>
+                    <Link href="/forgot-password" className={`${styles.authLink} inline-flex items-center gap-1.5 text-xs font-semibold mb-4 transition-colors duration-200 hover:underline`}>
                         <ArrowLeft size={14} />
                         Back
                     </Link>
 
+                    {/* Logo */}
+                    <div className="flex justify-center mb-3">
+                        <Image
+                            src="/logo/logo.png"
+                            alt="Learnityx Logo"
+                            width={120}
+                            height={120}
+                            className="w-28 h-28 sm:w-30 sm:h-30 object-contain"
+                            priority
+                        />
+                    </div>
+
                     {/* Header */}
-                    <div className="mb-5">
+                    <div className="mb-4">
                         <h1 className="text-lg sm:text-xl font-bold mb-1.5">
                             Enter Verification Code
                         </h1>
@@ -174,7 +187,7 @@ function OTPContent() {
                     </div>
 
                     {/* Form */}
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-3">
                         {/* Backend Error Message */}
                         {errors.backend && (
                             <div className={`${styles.backendError} p-2.5 rounded-lg text-xs font-medium`}>
@@ -183,7 +196,7 @@ function OTPContent() {
                         )}
 
                         {/* OTP Input Fields */}
-                        <div className="space-y-1.5">
+                        <div className="space-y-1">
                             <label className={`${styles.formLabel} block text-xs font-semibold`}>
                                 Verification Code
                             </label>
@@ -229,7 +242,7 @@ function OTPContent() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className={`${styles.authButton} w-full py-2.5 rounded-lg font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed`}
+                            className={`${styles.authButton} w-full py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed`}
                         >
                             {isLoading ? (
                                 <>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import styles from './AuthComponents.module.scss';
 
@@ -100,6 +101,18 @@ export default function Login() {
         <div className="min-h-[calc(100vh-80px)] flex items-center justify-center p-3 sm:p-4">
             <div className="w-full max-w-md">
                 <div className={`${styles.authCard} rounded-xl sm:rounded-2xl shadow-xl p-5 sm:p-6 md:p-8`}>
+                    {/* Logo */}
+                    <div className="flex justify-center mb-4 sm:mb-5">
+                        <Image
+                            src="/logo/logo.png"
+                            alt="Learnityx Logo"
+                            width={120}
+                            height={120}
+                            className="w-28 h-28 sm:w-30 sm:h-30 object-contain"
+                            priority
+                        />
+                    </div>
+
                     {/* Header */}
                     <div className="text-center mb-6 sm:mb-7">
                         <h1 className="text-xl sm:text-2xl font-bold mb-2">

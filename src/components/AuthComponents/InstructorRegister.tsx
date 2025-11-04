@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Mail, Lock, Eye, EyeOff, User, Phone } from 'lucide-react';
 import Toast from '@/components/ui/Toast';
 import styles from './AuthComponents.module.scss';
@@ -210,6 +211,18 @@ export default function InstructorRegister() {
 
                             {/* Right Form Section */}
                             <div className="p-4 sm:p-5 md:p-6 lg:p-7">
+                                {/* Logo */}
+                                <div className="flex justify-center mb-3">
+                                    <Image
+                                        src="/logo/logo.png"
+                                        alt="Learnityx Logo"
+                                        width={120}
+                                        height={120}
+                                        className="w-28 h-28 sm:w-30 sm:h-30 object-contain"
+                                        priority
+                                    />
+                                </div>
+
                                 <div className="mb-4">
                                     <h1 className="text-lg sm:text-xl font-bold mb-1">
                                         Create Instructor Account
