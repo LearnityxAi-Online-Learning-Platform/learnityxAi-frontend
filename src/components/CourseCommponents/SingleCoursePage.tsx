@@ -335,7 +335,7 @@ export default function SingleCoursePage(): React.JSX.Element {
                                     Instructor
                                 </h2>
                                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-                                    <div className={`${styles.instructorAvatar} w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center flex-shrink-0 mx-auto sm:mx-0`}>
+                                    <div className={`${styles.instructorAvatar} w-28 h-28 sm:w-30 sm:h-30 rounded-full flex items-center justify-center flex-shrink-0 mx-auto sm:mx-0`}>
                                         <User className="w-10 h-10 sm:w-12 sm:h-12" />
                                     </div>
                                     <div className="flex-1 text-center sm:text-left">
