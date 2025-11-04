@@ -739,7 +739,7 @@ export default function InstructorCourses() {
             </div>
 
             {/* Pagination */}
-            <div className="px-6 py-4 border-t">
+            <div className="px-6 py-4">
               <Pagination
                 currentPage={pagination.currentPage}
                 totalPages={pagination.totalPages}
