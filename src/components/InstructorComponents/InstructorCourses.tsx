@@ -15,6 +15,7 @@ import {
   Users,
   Star,
   BookOpen,
+  Power,
 } from "lucide-react";
 import styles from "./InstructorComponents.module.scss";
 import Pagination from "../ui/Pagination";
@@ -146,6 +147,14 @@ export default function InstructorCourses() {
     isLoading: false,
   });
 
+  const [deactivateDialog, setDeactivateDialog] = useState({
+    isOpen: false,
+    courseId: "",
+    courseName: "",
+    isActive: false,
+    isLoading: false,
+  });
+
   const [viewDialog, setViewDialog] = useState({
     isOpen: false,
     course: null as Course | null,
@@ -238,11 +247,36 @@ export default function InstructorCourses() {
               createdAt: "2025-11-01T00:45:59.350Z",
               updatedAt: "2025-11-01T00:55:40.445Z",
             },
+            {
+              _id: "69055847ebcd89cbc8eecef0",
+              courseName: "Inactive Test Course",
+              courseCategory: "Data Science",
+              instructorId: "690553d08deac7a86c92c678",
+              instructorName: "Jane Instructor",
+              description:
+                "This is an inactive course for testing reactivation",
+              whatYouWillLearn: [
+                "Test reactivation feature",
+              ],
+              rating: 3.5,
+              totalRatings: 5,
+              numberOfUserEnrolled: 10,
+              skills: ["Testing"],
+              tools: ["Python"],
+              startingDate: "2024-02-01T00:00:00.000Z",
+              duration: "8 weeks",
+              price: 49.99,
+              courseFlyerURL: "https://example.com/test-course-flyer.jpg",
+              isActive: false,
+              enrolledStudents: [],
+              createdAt: "2025-11-01T00:45:59.350Z",
+              updatedAt: "2025-11-01T00:55:40.445Z",
+            },
           ],
           pagination: {
             currentPage: page,
             pageSize: 10,
-            totalCourses: 2,
+            totalCourses: 3,
             totalPages: 1,
             hasNextPage: false,
             hasPrevPage: false,
@@ -316,6 +350,45 @@ export default function InstructorCourses() {
       console.error("Error deleting course:", err);
       error("Failed to delete course. Please try again.");
       setDeleteDialog((prev) => ({ ...prev, isLoading: false }));
+    }
+  };
+
+  const handleDeactivateClick = (courseId: string, courseName: string, isActive: boolean) => {
+    setDeactivateDialog({
+      isOpen: true,
+      courseId,
+      courseName,
+      isActive,
+      isLoading: false,
+    });
+  };
+
+  const handleDeactivateConfirm = async () => {
+    setDeactivateDialog((prev) => ({ ...prev, isLoading: true }));
+
+    try {
+      // TODO: Replace with actual API call
+      // await fetch(`/api/instructor/courses/${deactivateDialog.courseId}/toggle-status`, {
+      //   method: 'PATCH',
+      //   body: JSON.stringify({ isActive: !deactivateDialog.isActive }),
+      // });
+
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      const action = deactivateDialog.isActive ? "deactivated" : "activated";
+      success(`Course ${action} successfully!`);
+      setDeactivateDialog({
+        isOpen: false,
+        courseId: "",
+        courseName: "",
+        isActive: false,
+        isLoading: false
+      });
+      fetchCourses(pagination.currentPage);
+    } catch (err) {
+      console.error("Error updating course status:", err);
+      error("Failed to update course status. Please try again.");
+      setDeactivateDialog((prev) => ({ ...prev, isLoading: false }));
     }
   };
 
@@ -567,7 +640,7 @@ export default function InstructorCourses() {
                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Course
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
+                    <th className="px-2 py-4 text-left text-xs font-semibold uppercase tracking-wider w-32">
                       Category
                     </th>
                     <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider">
@@ -581,6 +654,9 @@ export default function InstructorCourses() {
                     </th>
                     <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider">
                       Duration
+                    </th>
+                    <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider">
+                      Status
                     </th>
                     <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider">
                       Actions
@@ -612,8 +688,8 @@ export default function InstructorCourses() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${styles.categoryBadge}`}>
+                      <td className="px-2 py-4">
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${styles.categoryBadge}`}>
                           {course.courseCategory}
                         </span>
                       </td>
@@ -638,6 +714,15 @@ export default function InstructorCourses() {
                       <td className="px-6 py-4 text-center">
                         <span className={`text-sm ${styles.formLabel}`}>{course.duration}</span>
                       </td>
+                      <td className="px-6 py-4 text-center">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            course.isActive ? styles.activeBadge : styles.inactiveBadge
+                          }`}
+                        >
+                          {course.isActive ? "Active" : "Inactive"}
+                        </span>
+                      </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-center gap-2">
                           <button
@@ -653,6 +738,15 @@ export default function InstructorCourses() {
                             title="Edit course"
                           >
                             <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeactivateClick(course._id, course.courseName, course.isActive)}
+                            className={`p-2 rounded-lg transition-all ${styles.actionButton} ${
+                              course.isActive ? styles.deleteButton : styles.editButton
+                            }`}
+                            title={course.isActive ? "Deactivate course" : "Activate course"}
+                          >
+                            <Power className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleDeleteClick(course._id, course.courseName)}
@@ -689,9 +783,18 @@ export default function InstructorCourses() {
                         <div className={`font-semibold truncate ${styles.courseName}`}>
                           {course.courseName}
                         </div>
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium inline-block mt-1 ${styles.categoryBadge}`}>
-                          {course.courseCategory}
-                        </span>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium inline-block ${styles.categoryBadge}`}>
+                            {course.courseCategory}
+                          </span>
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-xs font-medium inline-block ${
+                              course.isActive ? styles.activeBadge : styles.inactiveBadge
+                            }`}
+                          >
+                            {course.isActive ? "Active" : "Inactive"}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -721,24 +824,33 @@ export default function InstructorCourses() {
                     </div>
                   </div>
 
-                  <div className="flex gap-2 pt-3 border-t">
+                  <div className="grid grid-cols-2 gap-2 pt-3 border-t">
                     <button
                       onClick={() => handleView(course)}
-                      className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg transition-all ${styles.actionButton} ${styles.viewButton}`}
+                      className={`flex items-center justify-center gap-2 py-2 rounded-lg transition-all ${styles.actionButton} ${styles.viewButton}`}
                     >
                       <Eye className="w-4 h-4" />
                       <span className="text-sm font-medium">View</span>
                     </button>
                     <button
                       onClick={() => handleEdit(course._id)}
-                      className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg transition-all ${styles.actionButton} ${styles.editButton}`}
+                      className={`flex items-center justify-center gap-2 py-2 rounded-lg transition-all ${styles.actionButton} ${styles.editButton}`}
                     >
                       <Edit className="w-4 h-4" />
                       <span className="text-sm font-medium">Edit</span>
                     </button>
                     <button
+                      onClick={() => handleDeactivateClick(course._id, course.courseName, course.isActive)}
+                      className={`flex items-center justify-center gap-2 py-2 rounded-lg transition-all ${styles.actionButton} ${
+                        course.isActive ? styles.deleteButton : styles.editButton
+                      }`}
+                    >
+                      <Power className="w-4 h-4" />
+                      <span className="text-sm font-medium">{course.isActive ? "Deactivate" : "Activate"}</span>
+                    </button>
+                    <button
                       onClick={() => handleDeleteClick(course._id, course.courseName)}
-                      className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg transition-all ${styles.actionButton} ${styles.deleteButton}`}
+                      className={`flex items-center justify-center gap-2 py-2 rounded-lg transition-all ${styles.actionButton} ${styles.deleteButton}`}
                     >
                       <Trash2 className="w-4 h-4" />
                       <span className="text-sm font-medium">Delete</span>
@@ -778,6 +890,31 @@ export default function InstructorCourses() {
         cancelText="Cancel"
         variant="danger"
         isLoading={deleteDialog.isLoading}
+      />
+
+      {/* Deactivate/Activate Confirmation Dialog */}
+      <AlertDialog
+        isOpen={deactivateDialog.isOpen}
+        onClose={() =>
+          setDeactivateDialog({
+            isOpen: false,
+            courseId: "",
+            courseName: "",
+            isActive: false,
+            isLoading: false
+          })
+        }
+        onConfirm={handleDeactivateConfirm}
+        title={deactivateDialog.isActive ? "Deactivate Course" : "Activate Course"}
+        description={
+          deactivateDialog.isActive
+            ? `Are you sure you want to deactivate "${deactivateDialog.courseName}"? Students will no longer be able to enroll in this course.`
+            : `Are you sure you want to activate "${deactivateDialog.courseName}"? Students will be able to enroll in this course.`
+        }
+        confirmText={deactivateDialog.isActive ? "Deactivate Course" : "Activate Course"}
+        cancelText="Cancel"
+        variant={deactivateDialog.isActive ? "danger" : "info"}
+        isLoading={deactivateDialog.isLoading}
       />
 
       {/* View Course Dialog */}
