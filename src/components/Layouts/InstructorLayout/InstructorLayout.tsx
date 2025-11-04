@@ -198,7 +198,7 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
       {/* Main Content */}
       <main className={`flex-1 ml-0 md:ml-[280px] min-h-screen flex flex-col transition-[margin-left] duration-300 ${styles.main}`}>
         {/* Header */}
-        <header className={`border-b px-4 md:px-6 py-3 flex items-center justify-between sticky top-0 z-[100] shadow-sm ${styles.header}`}>
+        <header className={`fixed top-0 right-0 left-0 md:left-[280px] border-b px-4 md:px-6 py-3 flex items-center justify-between z-[100] shadow-sm ${styles.header}`}>
           <div className="flex items-center gap-4">
             <button
               className={`flex items-center justify-center md:hidden p-2 border-0 cursor-pointer rounded-md active:scale-95 transition-all duration-150 ${styles.menuButton}`}
@@ -289,7 +289,7 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
         </header>
 
         {/* Content */}
-        <div className="flex-1 p-6 md:p-8 max-w-[1400px] w-full mx-auto">
+        <div className="flex-1 px-6 md:px-8 pb-6 md:pb-8 pt-[97px] md:pt-[105px] max-w-[1400px] w-full mx-auto">
           {children}
         </div>
       </main>
