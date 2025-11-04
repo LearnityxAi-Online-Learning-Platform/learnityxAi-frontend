@@ -125,40 +125,56 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
   };
 
   return (
-    <div className={styles.layout}>
+    <div className={`min-h-screen flex relative ${styles.layout}`}>
       {/* Overlay */}
       <div
-        className={`${styles.overlay} ${isSidebarOpen ? styles.visible : ""}`}
+        className={`fixed inset-0 z-[999] transition-opacity duration-300 md:hidden ${
+          isSidebarOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        } ${styles.overlay}`}
         onClick={closeSidebar}
       />
 
       {/* Sidebar */}
-      <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.open : ""}`}>
+      <aside
+        className={`fixed top-0 left-0 h-screen w-[280px] border-r flex flex-col z-[1000] transition-transform duration-300 overflow-y-auto overflow-x-hidden shadow-xl md:shadow-none ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        } ${styles.sidebar}`}
+      >
         {/* Logo Section */}
-        <div className={styles.logoSection}>
-          <div className={styles.logoWrapper}>
-            <div className={styles.logoIcon}>L</div>
-            <div className={styles.logoText}>
-              <h2>LearnityX</h2>
-              <p>Instructor Portal</p>
+        <div className={`p-4 px-5 border-b sticky top-0 z-10 min-h-[73px] flex items-center ${styles.logoSection}`}>
+          <div className="flex items-center gap-3 w-full">
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xl shrink-0 ${styles.logoIcon}`}>
+              L
+            </div>
+            <div className="flex-1 min-w-0">
+              <h2 className={`text-xl font-bold m-0 leading-tight ${styles.logoText}`}>LearnityX</h2>
+              <p className={`text-xs m-0 mt-0.5 leading-tight ${styles.logoText}`}>Instructor Portal</p>
             </div>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className={styles.navigation}>
+        <nav className={`flex-1 py-6 overflow-y-auto ${styles.navigation}`}>
           {navigationItems.map((section) => (
-            <div key={section.section} className={styles.navSection}>
-              <div className={styles.navLabel}>{section.section}</div>
-              <ul className={styles.navList}>
+            <div key={section.section} className="mb-8 last:mb-0">
+              <div className={`text-xs font-semibold uppercase tracking-wider px-5 mb-3 ${styles.navLabel}`}>
+                {section.section}
+              </div>
+              <ul className="list-none p-0 m-0">
                 {section.items.map((item) => (
-                  <li key={item.href} className={styles.navItem}>
+                  <li key={item.href} className="mx-3 my-1">
                     <Link
                       href={item.href}
-                      className={pathname === item.href ? styles.active : ""}
+                      className={`flex items-center gap-3.5 px-4 py-3.5 rounded-lg no-underline font-medium text-[15px] relative overflow-hidden before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-[3px] before:scale-y-0 hover:translate-x-1 transition-all duration-150 ${
+                        pathname === item.href
+                          ? `${styles.active} font-semibold before:scale-y-100`
+                          : ""
+                      } ${styles.navItem}`}
                     >
-                      <span className={styles.navIcon}>{item.icon}</span>
-                      <span className={styles.navText}>{item.label}</span>
+                      <span className={`w-[22px] h-[22px] flex items-center justify-center shrink-0 ${styles.navIcon}`}>
+                        {item.icon}
+                      </span>
+                      <span className="flex-1">{item.label}</span>
                     </Link>
                   </li>
                 ))}
@@ -168,66 +184,77 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
         </nav>
 
         {/* User Section */}
-        <div className={styles.userSection}>
-          <button className={styles.logoutButton} onClick={handleLogout}>
-            <LogOut />
+        <div className={`p-3 border-t mt-auto ${styles.userSection}`}>
+          <button
+            className={`flex items-center gap-3 px-4 py-3.5 mx-2 rounded-lg border font-medium text-[15px] cursor-pointer w-[calc(100%-1rem)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 ${styles.logoutButton}`}
+            onClick={handleLogout}
+          >
+            <LogOut className="w-5 h-5" />
             <span>Logout</span>
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className={styles.main}>
+      <main className={`flex-1 ml-0 md:ml-[280px] min-h-screen flex flex-col transition-[margin-left] duration-300 ${styles.main}`}>
         {/* Header */}
-        <header className={styles.header}>
-          <div className={styles.headerLeft}>
+        <header className={`border-b px-4 md:px-6 py-3 flex items-center justify-between sticky top-0 z-[100] shadow-sm ${styles.header}`}>
+          <div className="flex items-center gap-4">
             <button
-              className={styles.menuButton}
+              className={`flex items-center justify-center md:hidden p-2 border-0 cursor-pointer rounded-md active:scale-95 transition-all duration-150 ${styles.menuButton}`}
               onClick={toggleSidebar}
               aria-label="Toggle menu"
             >
               {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
-            <h1 className={styles.headerTitle}>{getPageTitle()}</h1>
+            <h1 className={`text-lg md:text-2xl font-bold m-0 ${styles.headerTitle}`}>{getPageTitle()}</h1>
           </div>
 
-          <div className={styles.headerRight}>
+          <div className="flex items-center gap-3">
             {/* Theme Toggle */}
             <ThemeToggle />
 
             {/* Profile Dropdown */}
-            <div className={styles.profileDropdownWrapper} ref={profileDropdownRef}>
+            <div className="relative" ref={profileDropdownRef}>
               <button
-                className={`${styles.profileButton} ${
+                className={`flex items-center gap-2.5 p-2 border rounded-full cursor-pointer transition-all duration-150 ${
                   isProfileDropdownOpen ? styles.active : ""
-                }`}
+                } ${styles.profileButton}`}
                 onClick={toggleProfileDropdown}
                 aria-label="Profile menu"
               >
-                <div className={styles.profileAvatar}>JD</div>
-                <span className={styles.profileName}>John Doe</span>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm ${styles.profileAvatar}`}>
+                  JD
+                </div>
+                <span className="text-sm font-medium hidden sm:block">John Doe</span>
                 <ChevronDown
                   size={16}
-                  className={`${styles.chevronIcon} ${
-                    isProfileDropdownOpen ? styles.open : ""
+                  className={`transition-transform duration-150 hidden sm:block ${
+                    isProfileDropdownOpen ? "rotate-180" : ""
                   }`}
                 />
               </button>
 
               <div
-                className={`${styles.profileDropdown} ${
-                  isProfileDropdownOpen ? styles.open : ""
-                }`}
+                className={`absolute top-[calc(100%+0.5rem)] right-0 min-w-[220px] border rounded-lg shadow-xl overflow-hidden transition-all duration-150 ${
+                  isProfileDropdownOpen
+                    ? "opacity-100 visible translate-y-0"
+                    : "opacity-0 invisible -translate-y-2.5 pointer-events-none"
+                } ${styles.profileDropdown}`}
               >
-                <div className={styles.dropdownHeader}>
-                  <h3 className={styles.dropdownUserName}>John Doe</h3>
-                  <p className={styles.dropdownUserEmail}>john.doe@example.com</p>
+                <div className={`p-4 border-b ${styles.dropdownHeader}`}>
+                  <h3 className={`text-[15px] font-semibold m-0 mb-1 ${styles.dropdownUserName}`}>
+                    John Doe
+                  </h3>
+                  <p className={`text-[13px] m-0 ${styles.dropdownUserEmail}`}>
+                    john.doe@example.com
+                  </p>
                 </div>
 
-                <div className={styles.dropdownMenu}>
+                <div className="p-2">
                   <Link
                     href="/instructor-profile.tsx"
-                    className={styles.dropdownItem}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-md no-underline text-sm font-medium cursor-pointer transition-all duration-150 border-0 w-full text-left ${styles.dropdownItem}`}
                     onClick={() => setIsProfileDropdownOpen(false)}
                   >
                     <User size={18} />
@@ -236,17 +263,17 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
 
                   <Link
                     href="/settings"
-                    className={styles.dropdownItem}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-md no-underline text-sm font-medium cursor-pointer transition-all duration-150 border-0 w-full text-left ${styles.dropdownItem}`}
                     onClick={() => setIsProfileDropdownOpen(false)}
                   >
                     <Settings size={18} />
                     <span>Settings</span>
                   </Link>
 
-                  <div className={styles.dropdownDivider} />
+                  <div className={`h-px my-2 ${styles.dropdownDivider}`} />
 
                   <button
-                    className={`${styles.dropdownItem} ${styles.danger}`}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium cursor-pointer transition-all duration-150 border-0 w-full text-left ${styles.dropdownItem} ${styles.danger}`}
                     onClick={() => {
                       setIsProfileDropdownOpen(false);
                       handleLogout();
@@ -262,7 +289,9 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
         </header>
 
         {/* Content */}
-        <div className={styles.content}>{children}</div>
+        <div className="flex-1 p-6 md:p-8 max-w-[1400px] w-full mx-auto">
+          {children}
+        </div>
       </main>
     </div>
   );
