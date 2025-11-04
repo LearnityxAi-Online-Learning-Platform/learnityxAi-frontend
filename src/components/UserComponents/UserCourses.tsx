@@ -9,7 +9,8 @@ import {
     Users,
     Star,
     LogOut,
-    DollarSign
+    DollarSign,
+    MessageSquare
 } from 'lucide-react';
 import styles from './UserComponents.module.scss';
 import AlertDialog from '../ui/AlertDialog';
@@ -137,6 +138,13 @@ export default function UserCourses() {
     const [isUnenrolling, setIsUnenrolling] = useState(false);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
     const [showErrorToast, setShowErrorToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+
+    // Rating dialog states
+    const [showRateDialog, setShowRateDialog] = useState(false);
+    const [newRating, setNewRating] = useState(0);
+    const [newComment, setNewComment] = useState('');
+    const [isSubmittingRating, setIsSubmittingRating] = useState(false);
 
     const formatDate = (dateString: string): string => {
         const date = new Date(dateString);
@@ -179,12 +187,84 @@ export default function UserCourses() {
                 setIsUnenrolling(false);
                 setShowUnenrollDialog(false);
                 setSelectedCourse(null);
+                setToastMessage('Successfully unenrolled from course');
                 setShowSuccessToast(true);
             } else {
                 setIsUnenrolling(false);
+                setToastMessage('Failed to unenroll from course');
                 setShowErrorToast(true);
             }
         }, 1500);
+    };
+
+    const handleRateClick = (course: Course) => {
+        setSelectedCourse(course);
+        setNewRating(0);
+        setNewComment('');
+        setShowRateDialog(true);
+    };
+
+    const handleSubmitRating = async () => {
+        if (!selectedCourse) return;
+
+        if (newRating === 0) {
+            setToastMessage('Please select a rating');
+            setShowErrorToast(true);
+            return;
+        }
+
+        setIsSubmittingRating(true);
+
+        // Simulate API call with the expected payload
+        const payload = {
+            courseId: selectedCourse._id,
+            userId: "690555578deac7a86c92c6b0", // This should come from auth context in production
+            rating: newRating,
+            comment: newComment
+        };
+
+        console.log('Submitting rating:', payload);
+
+        // Simulate API call
+        setTimeout(() => {
+            const isSuccess = Math.random() > 0.1; // 90% success rate
+
+            if (isSuccess) {
+                setIsSubmittingRating(false);
+                setShowRateDialog(false);
+                setSelectedCourse(null);
+                setNewRating(0);
+                setNewComment('');
+                setToastMessage('Rating submitted successfully');
+                setShowSuccessToast(true);
+            } else {
+                setIsSubmittingRating(false);
+                setToastMessage('Failed to submit rating');
+                setShowErrorToast(true);
+            }
+        }, 1500);
+    };
+
+    const renderStars = (rating: number, interactive: boolean = false, onRatingChange?: (rating: number) => void) => {
+        return (
+            <div className={styles.starsContainer}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                        key={star}
+                        type="button"
+                        onClick={() => interactive && onRatingChange && onRatingChange(star)}
+                        disabled={!interactive}
+                        className={`${styles.starButton} ${interactive ? styles.interactive : ''}`}
+                    >
+                        <Star
+                            size={interactive ? 32 : 20}
+                            className={star <= rating ? styles.starFilled : styles.starEmpty}
+                            fill={star <= rating ? 'currentColor' : 'none'}
+                        />
+                    </button>
+                ))}
+            </div>
+        );
     };
 
     const courses = coursesData.data.courses;
@@ -323,13 +403,24 @@ export default function UserCourses() {
                                             <DollarSign size={18} />
                                             <span>{course.price.toFixed(2)}</span>
                                         </div>
-                                        <button
-                                            onClick={() => handleUnenrollClick(course)}
-                                            className={styles.unenrollBtn}
-                                        >
-                                            <LogOut size={18} />
-                                            <span>Unenroll</span>
-                                        </button>
+                                        <div className={styles.courseActions}>
+                                            <button
+                                                onClick={() => handleRateClick(course)}
+                                                className={styles.rateBtn}
+                                                title="Rate this course"
+                                            >
+                                                <Star size={18} />
+                                                <span>Rate</span>
+                                            </button>
+                                            <button
+                                                onClick={() => handleUnenrollClick(course)}
+                                                className={styles.unenrollBtn}
+                                                title="Unenroll from course"
+                                            >
+                                                <LogOut size={18} />
+                                                <span>Unenroll</span>
+                                            </button>
+                                        </div>
                                     </div>
 
                                     {/* Course Meta Info */}
@@ -380,11 +471,70 @@ export default function UserCourses() {
                 isLoading={isUnenrolling}
             />
 
+            {/* Rating Dialog */}
+            {showRateDialog && selectedCourse && (
+                <div className={styles.modalBackdrop}>
+                    <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                        <h2 className={styles.modalTitle}>Rate This Course</h2>
+                        <p className={styles.modalSubtitle}>{selectedCourse.courseName}</p>
+                        <p className={`${styles.modalCategory} mb-4`}>{selectedCourse.courseCategory}</p>
+
+                        {/* Star Rating */}
+                        <div className="mb-6">
+                            <label className={styles.formLabel}>Your Rating</label>
+                            {renderStars(newRating, true, setNewRating)}
+                        </div>
+
+                        {/* Comment */}
+                        <div className="mb-6 w-full">
+                            <label className={styles.formLabel}>Your Review (Optional)</label>
+                            <textarea
+                                value={newComment}
+                                onChange={(e) => setNewComment(e.target.value)}
+                                className={`${styles.textarea} w-full`}
+                                placeholder="Share your experience with this course..."
+                                rows={4}
+                                maxLength={500}
+                                disabled={isSubmittingRating}
+                            />
+                            <div className={styles.charCount}>
+                                {newComment.length}/500 characters
+                            </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <button
+                                onClick={handleSubmitRating}
+                                disabled={isSubmittingRating}
+                                className={`${styles.saveBtn} flex-1 py-3 rounded-xl font-semibold text-base flex items-center justify-center gap-2`}
+                            >
+                                {isSubmittingRating ? (
+                                    <>
+                                        <div className={styles.spinner} />
+                                        <span>Submitting...</span>
+                                    </>
+                                ) : (
+                                    'Submit Rating'
+                                )}
+                            </button>
+                            <button
+                                onClick={() => !isSubmittingRating && setShowRateDialog(false)}
+                                disabled={isSubmittingRating}
+                                className={`${styles.cancelBtn} flex-1 py-3 rounded-xl font-semibold text-base`}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Success Toast */}
             <Toast
                 isVisible={showSuccessToast}
                 onClose={() => setShowSuccessToast(false)}
-                title="Successfully unenrolled from course"
+                title={toastMessage}
                 variant="success"
                 duration={2000}
                 position="top-right"
@@ -395,7 +545,7 @@ export default function UserCourses() {
             <Toast
                 isVisible={showErrorToast}
                 onClose={() => setShowErrorToast(false)}
-                title="Failed to unenroll from course"
+                title={toastMessage}
                 variant="error"
                 duration={2000}
                 position="top-right"
