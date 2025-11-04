@@ -622,7 +622,7 @@ function CreateCourseForm() {
   return (
     <>
       <ToastComponent />
-      <div className="w-full max-w-5xl mx-auto pb-8">
+      <div className="w-full pb-8">
         {/* Page Title */}
         <div className="mb-6">
           <h1 className={`text-2xl md:text-3xl font-bold ${styles.formTitle}`}>
