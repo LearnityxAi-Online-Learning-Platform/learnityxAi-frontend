@@ -1,0 +1,242 @@
+// InstructorLayout.module.scss - Colors Only
+@import '../../../../theme//theme.scss';
+
+// Layout Colors
+.layout {
+  background-color: var(--color-background);
+}
+
+// Sidebar Colors
+.sidebar {
+  background: var(--color-surface);
+  border-right-color: var(--color-border);
+  transition: background-color var(--transition-fast);
+}
+
+// Logo Section Colors
+.logoSection {
+  border-bottom-color: var(--color-border);
+  background-color: var(--color-surface);
+
+  .logoIcon {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+  }
+
+  .logoText {
+    h2 {
+      color: var(--color-text-primary);
+    }
+
+    p {
+      color: var(--color-text-secondary);
+    }
+  }
+}
+
+// Navigation Colors
+.navigation {
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+
+    &:hover {
+      background-color: var(--color-border-dark);
+    }
+  }
+}
+
+.navLabel {
+  color: var(--color-text-tertiary);
+}
+
+.navItem {
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+
+  &::before {
+    background: var(--gradient-primary);
+    transition: transform var(--transition-fast);
+  }
+
+  &:hover {
+    background-color: var(--color-surface-hover);
+    color: var(--color-text-primary);
+
+    .navIcon {
+      color: var(--color-primary);
+    }
+  }
+}
+
+.active {
+  background-color: rgba(65, 105, 225, 0.12) !important;
+  color: var(--color-primary) !important;
+
+  .navIcon {
+    color: var(--color-primary) !important;
+  }
+
+  &::before {
+    background: var(--gradient-primary);
+  }
+
+  :global(.dark) & {
+    background-color: rgba(107, 143, 238, 0.15) !important;
+  }
+}
+
+.navIcon {
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.badge {
+  background-color: var(--color-error);
+  color: var(--color-text-inverse);
+}
+
+// User Section Colors
+.userSection {
+  border-top-color: var(--color-border);
+  background-color: var(--color-surface);
+}
+
+// Logout Button Colors
+.logoutButton {
+  background: none;
+  border-color: var(--color-border);
+  color: var(--color-error);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background-color: var(--color-error-light);
+    color: var(--color-text-inverse);
+    border-color: var(--color-error);
+  }
+}
+
+// Main Content Colors
+.main {
+  background-color: var(--color-background-secondary);
+}
+
+// Header Colors
+.header {
+  background-color: var(--color-surface);
+  border-bottom-color: var(--color-border);
+}
+
+.menuButton {
+  background: none;
+  color: var(--color-text-primary);
+  transition: background-color var(--transition-fast);
+
+  &:hover {
+    background-color: var(--color-surface-hover);
+  }
+}
+
+.headerTitle {
+  color: var(--color-text-primary);
+}
+
+.iconButton {
+  background: none;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background-color: var(--color-surface-hover);
+    color: var(--color-text-primary);
+  }
+
+  .notificationDot {
+    background-color: var(--color-error);
+    border-color: var(--color-surface);
+  }
+}
+
+// Profile Dropdown Colors
+.profileButton {
+  background: none;
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background-color: var(--color-surface-hover);
+    border-color: var(--color-border-dark);
+  }
+
+  &.active {
+    background-color: var(--color-surface-hover);
+    border-color: var(--color-primary);
+  }
+
+  .profileAvatar {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+  }
+}
+
+.profileDropdown {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+
+  .dropdownHeader {
+    border-bottom-color: var(--color-border);
+
+    .dropdownUserName {
+      color: var(--color-text-primary);
+    }
+
+    .dropdownUserEmail {
+      color: var(--color-text-secondary);
+    }
+  }
+
+  .dropdownItem {
+    color: var(--color-text-primary);
+    transition: all var(--transition-fast);
+    background: none;
+
+    svg {
+      color: var(--color-text-secondary);
+    }
+
+    &:hover {
+      background-color: var(--color-surface-hover);
+      color: var(--color-primary);
+
+      svg {
+        color: var(--color-primary);
+      }
+    }
+
+    &.danger {
+      color: var(--color-error);
+
+      svg {
+        color: var(--color-error);
+      }
+
+      &:hover {
+        background-color: rgba(239, 68, 68, 0.1);
+      }
+    }
+  }
+
+  .dropdownDivider {
+    background-color: var(--color-border);
+  }
+}
+
+// Overlay Colors
+.overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: opacity var(--transition-normal);
+}

@@ -1,0 +1,748 @@
+// InstructorComponents.module.scss - Colors Only
+@import '../../../theme//theme.scss';
+
+// Stats Card Colors - Enhanced
+.statsCard {
+  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface) 100%);
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(65, 105, 225, 0.15);
+  }
+
+  .statsIcon {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+    box-shadow: 0 4px 8px rgba(65, 105, 225, 0.3);
+  }
+
+  .statsValue {
+    color: var(--color-text-primary);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .statsLabel {
+    color: var(--color-text-secondary);
+  }
+
+  .statsChange {
+    color: var(--color-success);
+    background-color: rgba(16, 185, 129, 0.1);
+
+    &.negative {
+      color: var(--color-error);
+      background-color: rgba(239, 68, 68, 0.1);
+    }
+  }
+}
+
+// Chart Card Colors - Enhanced
+.chartCard {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .chartTitle {
+    color: var(--color-text-primary);
+    border-bottom-color: var(--color-border);
+  }
+}
+
+// Course Card Colors - Enhanced
+.courseCard {
+  background: linear-gradient(135deg, var(--color-surface) 0%, rgba(65, 105, 225, 0.02) 100%);
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 6px 16px rgba(65, 105, 225, 0.12);
+    background: linear-gradient(135deg, var(--color-surface) 0%, rgba(65, 105, 225, 0.05) 100%);
+  }
+
+  .courseTitle {
+    color: var(--color-text-primary);
+  }
+
+  .courseCategory {
+    background: linear-gradient(135deg, rgba(65, 105, 225, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+    color: var(--color-primary);
+    border: 1px solid rgba(65, 105, 225, 0.2);
+  }
+
+  .courseInfo {
+    color: var(--color-text-secondary);
+  }
+
+  .courseRating {
+    color: var(--color-warning);
+    filter: brightness(1.1);
+  }
+
+  .coursePrice {
+    color: var(--color-primary);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+  }
+}
+
+// Top Course Badge Colors
+.topCourseBadge {
+  background: var(--gradient-primary);
+  color: var(--color-text-inverse);
+}
+
+// Empty State Colors
+.emptyState {
+  color: var(--color-text-tertiary);
+
+  .emptyIcon {
+    color: var(--color-text-tertiary);
+  }
+}
+
+// Category Badge Colors
+.categoryBadge {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+
+  &:hover {
+    background-color: var(--color-primary);
+    color: var(--color-text-inverse);
+  }
+}
+
+// Info Box Colors
+.infoBox {
+  background-color: var(--color-info-light);
+  border-color: var(--color-info);
+  color: var(--color-info-dark);
+}
+
+.successBox {
+  background-color: var(--color-success-light);
+  border-color: var(--color-success);
+  color: var(--color-success-dark);
+}
+
+.warningBox {
+  background-color: var(--color-warning-light);
+  border-color: var(--color-warning);
+  color: var(--color-warning-dark);
+}
+
+// Form Card Colors - CreateCourse Component
+.formCard {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.formTitle {
+  color: var(--color-text-primary);
+}
+
+.formLabel {
+  color: var(--color-text-secondary);
+}
+
+.formIconBg {
+  background: linear-gradient(135deg, rgba(65, 105, 225, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+}
+
+.formIcon {
+  color: var(--color-primary);
+}
+
+// Form Input Colors
+.formInput {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+  transition: all var(--transition-fast);
+
+  &::placeholder {
+    color: var(--color-text-tertiary);
+  }
+
+  &:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.2);
+  }
+
+  &:hover {
+    border-color: var(--color-border-dark);
+  }
+
+  :global(.dark) & {
+    background-color: var(--color-background);
+
+    &:focus {
+      background-color: var(--color-surface);
+    }
+  }
+}
+
+// Select specific styling to ensure dropdown opens downward
+select.formInput {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234169E1' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  padding-right: 3rem;
+  cursor: pointer;
+
+  :global(.dark) & {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B8FEE' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+  }
+}
+
+// Button Colors
+.addButton {
+  background: var(--gradient-primary);
+  color: var(--color-text-inverse);
+  border: none;
+  box-shadow: 0 2px 4px rgba(65, 105, 225, 0.3);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(65, 105, 225, 0.4);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.submitButton {
+  background: var(--gradient-primary);
+  color: var(--color-text-inverse);
+  border: none;
+  box-shadow: 0 2px 8px rgba(65, 105, 225, 0.3);
+  transition: all var(--transition-fast);
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 4px 12px rgba(65, 105, 225, 0.4);
+    transform: translateY(-2px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.cancelButton {
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-surface-hover);
+    border-color: var(--color-border-dark);
+    color: var(--color-text-primary);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.removeButton {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--color-error);
+  border: none;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background-color: var(--color-error);
+    color: var(--color-text-inverse);
+  }
+}
+
+// List Item Colors
+.listItem {
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--color-primary);
+    background-color: var(--color-surface);
+  }
+}
+
+// Chip Colors (Skills & Tools Selection)
+.chip {
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background-color: var(--color-surface);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.selectedChip {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  border: 1px solid var(--color-primary);
+  color: var(--color-text-inverse);
+  box-shadow: 0 2px 6px rgba(65, 105, 225, 0.3);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(65, 105, 225, 0.4);
+    transform: translateY(-2px);
+  }
+}
+
+// Selected Count Badge
+.selectedCount {
+  background: linear-gradient(135deg, rgba(65, 105, 225, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  border: 1px solid rgba(65, 105, 225, 0.2);
+  color: var(--color-primary);
+}
+
+// Image Upload Area Colors
+.uploadArea {
+  border-color: var(--color-border);
+  background-color: var(--color-background-secondary);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--color-primary);
+    background-color: var(--color-surface);
+  }
+}
+
+.uploadIconBg {
+  background: linear-gradient(135deg, rgba(65, 105, 225, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+}
+
+.uploadIcon {
+  color: var(--color-primary);
+}
+
+.uploadText {
+  color: var(--color-text-primary);
+}
+
+.uploadSubtext {
+  color: var(--color-text-secondary);
+}
+
+// Image Preview Colors
+.imagePreview {
+  border-color: var(--color-border);
+  background-color: var(--color-surface);
+
+  &:hover {
+    border-color: var(--color-primary);
+  }
+}
+
+.removeImageButton {
+  background-color: rgba(239, 68, 68, 0.9);
+  color: white;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background-color: rgba(220, 38, 38, 1);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// Custom Select Dropdown Colors
+.customSelectButton {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--color-primary);
+  }
+
+  &:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.2);
+  }
+
+  :global(.dark) & {
+    background-color: var(--color-background);
+  }
+}
+
+.customSelectOpen {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.2);
+}
+
+.customSelectValue {
+  color: var(--color-text-primary);
+}
+
+.customSelectPlaceholder {
+  color: var(--color-text-tertiary);
+}
+
+.customSelectIcon {
+  color: var(--color-primary);
+  transition: transform var(--transition-fast);
+}
+
+.customSelectDropdown {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  max-height: 300px;
+  animation: slideDown 0.2s ease-out;
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+.customSelectSearch {
+  background-color: var(--color-surface);
+  border-bottom-color: var(--color-border);
+}
+
+.customSelectSearchInput {
+  background-color: var(--color-background-secondary);
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+
+  &::placeholder {
+    color: var(--color-text-tertiary);
+  }
+
+  &:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.2);
+  }
+
+  :global(.dark) & {
+    background-color: var(--color-background);
+  }
+}
+
+.customSelectList {
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: 4px;
+
+    &:hover {
+      background-color: var(--color-border-dark);
+    }
+  }
+}
+
+.customSelectOption {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border: none;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background-color: var(--color-surface-hover);
+    color: var(--color-primary);
+  }
+}
+
+.customSelectOptionActive {
+  background-color: rgba(65, 105, 225, 0.1);
+  color: var(--color-primary);
+  font-weight: 500;
+
+  &:hover {
+    background-color: rgba(65, 105, 225, 0.15);
+  }
+
+  :global(.dark) & {
+    background-color: rgba(107, 143, 238, 0.12);
+
+    &:hover {
+      background-color: rgba(107, 143, 238, 0.18);
+    }
+  }
+}
+
+.customSelectCheckIcon {
+  color: var(--color-primary);
+}
+
+.customSelectEmpty {
+  color: var(--color-text-secondary);
+}
+
+// Table Styles
+.tableHeader {
+  background-color: var(--color-background-secondary);
+  border-bottom: 2px solid var(--color-border);
+
+  th {
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  :global(.dark) & {
+    background-color: rgba(30, 41, 59, 0.5);
+  }
+}
+
+.tableBody {
+  tr {
+    transition: all var(--transition-fast);
+  }
+}
+
+.tableRow {
+  border-bottom: 1px solid var(--color-border);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background-color: var(--color-background-secondary);
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  :global(.dark) & {
+    &:hover {
+      background-color: rgba(30, 41, 59, 0.3);
+    }
+  }
+}
+
+.courseName {
+  color: var(--color-text-primary);
+}
+
+.categoryBadge {
+  background-color: rgba(65, 105, 225, 0.1);
+  color: var(--color-primary);
+  border: 1px solid rgba(65, 105, 225, 0.2);
+
+  :global(.dark) & {
+    background-color: rgba(107, 143, 238, 0.15);
+    border-color: rgba(107, 143, 238, 0.3);
+  }
+}
+
+// Action Buttons
+.actionButton {
+  transition: all var(--transition-fast);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  :global(.dark) & {
+    background-color: rgba(30, 41, 59, 0.5);
+  }
+}
+
+.viewButton {
+  color: var(--color-primary);
+  border-color: rgba(65, 105, 225, 0.2);
+
+  &:hover {
+    background-color: rgba(65, 105, 225, 0.1);
+    border-color: var(--color-primary);
+  }
+
+  :global(.dark) & {
+    border-color: rgba(107, 143, 238, 0.3);
+
+    &:hover {
+      background-color: rgba(107, 143, 238, 0.15);
+    }
+  }
+}
+
+.editButton {
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.2);
+
+  &:hover {
+    background-color: rgba(16, 185, 129, 0.1);
+    border-color: #10b981;
+  }
+
+  :global(.dark) & {
+    border-color: rgba(16, 185, 129, 0.3);
+
+    &:hover {
+      background-color: rgba(16, 185, 129, 0.15);
+    }
+  }
+}
+
+.deleteButton {
+  color: var(--color-error);
+  border-color: rgba(239, 68, 68, 0.2);
+
+  &:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    border-color: var(--color-error);
+  }
+
+  :global(.dark) & {
+    border-color: rgba(239, 68, 68, 0.3);
+
+    &:hover {
+      background-color: rgba(239, 68, 68, 0.15);
+    }
+  }
+}
+
+// Mobile Card
+.mobileCard {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(65, 105, 225, 0.1);
+  }
+
+  :global(.dark) & {
+    background-color: rgba(30, 41, 59, 0.5);
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(107, 143, 238, 0.1);
+    }
+  }
+}
+
+// View Dialog
+.viewDialog {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+
+  :global(.dark) & {
+    background-color: var(--color-background);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  }
+}
+
+.viewDialogHeader {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+
+  :global(.dark) & {
+    background-color: var(--color-background-secondary);
+  }
+}
+
+.statCard {
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 8px rgba(65, 105, 225, 0.1);
+  }
+
+  :global(.dark) & {
+    background-color: rgba(30, 41, 59, 0.3);
+
+    &:hover {
+      box-shadow: 0 2px 8px rgba(107, 143, 238, 0.1);
+    }
+  }
+}
+
+// Badge Styles
+.activeBadge {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+
+  :global(.dark) & {
+    background-color: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+}
+
+.inactiveBadge {
+  background-color: rgba(107, 114, 128, 0.1);
+  color: #6b7280;
+  border: 1px solid rgba(107, 114, 128, 0.2);
+
+  :global(.dark) & {
+    background-color: rgba(107, 114, 128, 0.15);
+    border-color: rgba(107, 114, 128, 0.3);
+  }
+}
