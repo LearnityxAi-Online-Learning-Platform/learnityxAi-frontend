@@ -3,13 +3,20 @@
 import React, { JSX, useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Search, Menu, X, ChevronDown } from 'lucide-react';
+import { Search, Menu, X, ChevronDown, User, BookOpen, Star, LogOut } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle/themeToggle';
 import styles from './NavBar.module.scss';
 
 interface NavLink {
     label: string;
     href: string;
+}
+
+interface UserProfile {
+    firstName: string;
+    lastName?: string;
+    email: string;
+    profilePicture?: string;
 }
 
 const exploreLinks: NavLink[] = [
@@ -24,7 +31,19 @@ const exploreLinks: NavLink[] = [
 export default function NavBar(): JSX.Element {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
     const [isExploreOpen, setIsExploreOpen] = useState<boolean>(false);
+    const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
     const exploreRef = useRef<HTMLDivElement>(null);
+    const profileRef = useRef<HTMLDivElement>(null);
+
+    // Mock user data - Replace with actual auth context/state
+    const [user, setUser] = useState<UserProfile | null>({
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john.doe@example.com',
+        profilePicture: '' // Optional: URL to profile picture
+    });
+
+    const isLoggedIn = !!user;
 
     const toggleMobileMenu = (): void => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -34,11 +53,24 @@ export default function NavBar(): JSX.Element {
         setIsExploreOpen(!isExploreOpen);
     };
 
-    // Close explore dropdown when clicking outside
+    const toggleProfile = (): void => {
+        setIsProfileOpen(!isProfileOpen);
+    };
+
+    const handleLogout = (): void => {
+        // Add logout logic here
+        setUser(null);
+        setIsProfileOpen(false);
+    };
+
+    // Close dropdowns when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (exploreRef.current && !exploreRef.current.contains(event.target as Node)) {
                 setIsExploreOpen(false);
+            }
+            if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+                setIsProfileOpen(false);
             }
         };
 
@@ -134,28 +166,114 @@ export default function NavBar(): JSX.Element {
                         </div>
                     </div>
 
-                    {/* Right Section - Theme Toggle, Auth Buttons & Mobile Menu */}
+                    {/* Right Section - Theme Toggle, Auth Buttons/Profile & Mobile Menu */}
                     <div className="flex items-center gap-2 sm:gap-3">
                         {/* Theme Toggle - Desktop & Tablet */}
                         <div className="hidden sm:flex">
                             <ThemeToggle />
                         </div>
 
-                        {/* Auth Buttons - Desktop */}
-                        <div className="hidden lg:flex items-center gap-2">
-                            <Link
-                                href="/login"
-                                className={`px-4 xl:px-5 py-2 xl:py-2.5 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${styles.loginBtn}`}
-                            >
-                                Log In
-                            </Link>
-                            <Link
-                                href="/signup"
-                                className={`px-4 xl:px-5 py-2 xl:py-2.5 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${styles.joinBtn}`}
-                            >
-                                Join for Free
-                            </Link>
-                        </div>
+                        {/* Profile Dropdown or Auth Buttons - Desktop */}
+                        {isLoggedIn ? (
+                            <div className="hidden lg:block relative" ref={profileRef}>
+                                <button
+                                    onClick={toggleProfile}
+                                    className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${styles.profileBtn}`}
+                                    type="button"
+                                    aria-expanded={isProfileOpen}
+                                    aria-haspopup="true"
+                                >
+                                    {/* Avatar */}
+                                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm ${styles.avatar}`}>
+                                        {user.profilePicture ? (
+                                            <Image
+                                                src={user.profilePicture}
+                                                alt={user.firstName}
+                                                width={36}
+                                                height={36}
+                                                className="rounded-full object-cover"
+                                            />
+                                        ) : (
+                                            <span>{user.firstName.charAt(0).toUpperCase()}</span>
+                                        )}
+                                    </div>
+                                    <ChevronDown
+                                        size={18}
+                                        className={`transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`}
+                                    />
+                                </button>
+
+                                {/* Profile Dropdown Menu */}
+                                {isProfileOpen && (
+                                    <div
+                                        className={`absolute top-full right-0 mt-2 min-w-[14rem] rounded-xl p-2 animate-fade-in ${styles.profileDropdown}`}
+                                        role="menu"
+                                    >
+                                        {/* User Info */}
+                                        <div className={`px-4 py-3 border-b mb-1 ${styles.userInfo}`}>
+                                            <p className="font-semibold text-sm">{user.firstName} {user.lastName}</p>
+                                            <p className="text-xs opacity-70 truncate">{user.email}</p>
+                                        </div>
+
+                                        {/* Profile Links */}
+                                        <Link
+                                            href="/profile"
+                                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-all ${styles.dropdownItem}`}
+                                            role="menuitem"
+                                            onClick={() => setIsProfileOpen(false)}
+                                        >
+                                            <User size={18} />
+                                            <span>My Profile</span>
+                                        </Link>
+                                        <Link
+                                            href="/my-courses"
+                                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-all ${styles.dropdownItem}`}
+                                            role="menuitem"
+                                            onClick={() => setIsProfileOpen(false)}
+                                        >
+                                            <BookOpen size={18} />
+                                            <span>My Courses</span>
+                                        </Link>
+                                        <Link
+                                            href="/my-ratings"
+                                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-all ${styles.dropdownItem}`}
+                                            role="menuitem"
+                                            onClick={() => setIsProfileOpen(false)}
+                                        >
+                                            <Star size={18} />
+                                            <span>My Ratings</span>
+                                        </Link>
+
+                                        {/* Logout */}
+                                        <div className={`border-t mt-1 pt-1 ${styles.userInfo}`}>
+                                            <button
+                                                onClick={handleLogout}
+                                                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-all ${styles.dropdownItem} ${styles.logoutBtn}`}
+                                                role="menuitem"
+                                            >
+                                                <LogOut size={18} />
+                                                <span>Log Out</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="hidden lg:flex items-center gap-2">
+                                <Link
+                                    href="/login"
+                                    className={`px-4 xl:px-5 py-2 xl:py-2.5 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${styles.loginBtn}`}
+                                >
+                                    Log In
+                                </Link>
+                                <Link
+                                    href="/signup"
+                                    className={`px-4 xl:px-5 py-2 xl:py-2.5 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${styles.joinBtn}`}
+                                >
+                                    Join for Free
+                                </Link>
+                            </div>
+                        )}
 
                         {/* Mobile Menu Button */}
                         <button
@@ -224,23 +342,86 @@ export default function NavBar(): JSX.Element {
                     {/* Mobile Menu Content - Scrollable */}
                     <div className="flex-1 overflow-y-auto overscroll-contain">
                         <div className="p-4 sm:p-6 space-y-6">
-                            {/* Auth Buttons - Mobile (Top Priority) */}
-                            <div className="flex flex-col gap-3 pb-6 border-b border-white/10">
-                                <Link
-                                    href="/login"
-                                    className={`w-full px-4 py-3.5 rounded-lg font-semibold text-center transition-all active:scale-95 min-h-[48px] flex items-center justify-center ${styles.mobileLoginBtn}`}
-                                    onClick={toggleMobileMenu}
-                                >
-                                    Log In
-                                </Link>
-                                <Link
-                                    href="/signup"
-                                    className={`w-full px-4 py-3.5 rounded-lg font-semibold text-center transition-all active:scale-95 min-h-[48px] flex items-center justify-center ${styles.mobileJoinBtn}`}
-                                    onClick={toggleMobileMenu}
-                                >
-                                    Join for Free
-                                </Link>
-                            </div>
+                            {/* User Profile or Auth Buttons - Mobile */}
+                            {isLoggedIn ? (
+                                <div className="pb-6 border-b border-white/10">
+                                    {/* User Info */}
+                                    <div className={`flex items-center gap-3 mb-4 px-2 ${styles.mobileUserInfo}`}>
+                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-base ${styles.avatar}`}>
+                                            {user.profilePicture ? (
+                                                <Image
+                                                    src={user.profilePicture}
+                                                    alt={user.firstName}
+                                                    width={48}
+                                                    height={48}
+                                                    className="rounded-full object-cover"
+                                                />
+                                            ) : (
+                                                <span>{user.firstName.charAt(0).toUpperCase()}</span>
+                                            )}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="font-semibold text-base truncate">{user.firstName} {user.lastName}</p>
+                                            <p className="text-sm opacity-70 truncate">{user.email}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Profile Links */}
+                                    <div className="flex flex-col gap-1">
+                                        <Link
+                                            href="/profile"
+                                            className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all active:scale-95 min-h-[44px] ${styles.mobileLink}`}
+                                            onClick={toggleMobileMenu}
+                                        >
+                                            <User size={20} />
+                                            <span>My Profile</span>
+                                        </Link>
+                                        <Link
+                                            href="/my-courses"
+                                            className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all active:scale-95 min-h-[44px] ${styles.mobileLink}`}
+                                            onClick={toggleMobileMenu}
+                                        >
+                                            <BookOpen size={20} />
+                                            <span>My Courses</span>
+                                        </Link>
+                                        <Link
+                                            href="/my-ratings"
+                                            className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all active:scale-95 min-h-[44px] ${styles.mobileLink}`}
+                                            onClick={toggleMobileMenu}
+                                        >
+                                            <Star size={20} />
+                                            <span>My Ratings</span>
+                                        </Link>
+                                        <button
+                                            onClick={() => {
+                                                handleLogout();
+                                                toggleMobileMenu();
+                                            }}
+                                            className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all active:scale-95 min-h-[44px] w-full text-left ${styles.mobileLink} ${styles.mobileLogoutBtn}`}
+                                        >
+                                            <LogOut size={20} />
+                                            <span>Log Out</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col gap-3 pb-6 border-b border-white/10">
+                                    <Link
+                                        href="/login"
+                                        className={`w-full px-4 py-3.5 rounded-lg font-semibold text-center transition-all active:scale-95 min-h-[48px] flex items-center justify-center ${styles.mobileLoginBtn}`}
+                                        onClick={toggleMobileMenu}
+                                    >
+                                        Log In
+                                    </Link>
+                                    <Link
+                                        href="/signup"
+                                        className={`w-full px-4 py-3.5 rounded-lg font-semibold text-center transition-all active:scale-95 min-h-[48px] flex items-center justify-center ${styles.mobileJoinBtn}`}
+                                        onClick={toggleMobileMenu}
+                                    >
+                                        Join for Free
+                                    </Link>
+                                </div>
+                            )}
 
                             {/* Explore Section */}
                             <div className={`pb-6 border-b border-white/10 ${styles.mobileSection}`}>

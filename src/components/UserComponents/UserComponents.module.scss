@@ -1,0 +1,1349 @@
+// UserComponents.module.scss - Professional UI with Theme Colors
+// All layout, spacing, and sizing handled by Tailwind CSS
+// Only colors, gradients, shadows, and visual effects here
+
+// ============================================
+// Profile Page Background
+// ============================================
+.profilePage {
+    background-color: var(--color-background);
+}
+
+// ============================================
+// Page Title & Subtitle
+// ============================================
+.pageTitle {
+    color: var(--color-text-primary);
+}
+
+.pageSubtitle {
+    color: var(--color-text-secondary);
+}
+
+.gradientText {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+// ============================================
+// Success Message (Toast)
+// ============================================
+.successMessage {
+    background: var(--color-success);
+    color: var(--color-text-inverse);
+    box-shadow: var(--shadow-xl);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+// ============================================
+// Primary Action Button
+// ============================================
+.primaryBtn {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+    border: 2px solid transparent;
+    box-shadow: var(--shadow-md);
+
+    &:hover {
+        box-shadow: var(--shadow-lg);
+        background: var(--gradient-secondary);
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: translateY(0) scale(0.98);
+    }
+}
+
+// ============================================
+// Profile Card (Left Sidebar)
+// ============================================
+.profileCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s ease;
+
+    &:hover {
+        box-shadow: var(--shadow-xl);
+        border-color: var(--color-primary);
+    }
+}
+
+// ============================================
+// Avatar
+// ============================================
+.avatar {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+    box-shadow: var(--shadow-lg);
+    border: 4px solid var(--color-surface);
+    transition: all 0.3s ease;
+
+    &:hover {
+        box-shadow: var(--shadow-xl);
+        transform: scale(1.05);
+    }
+}
+
+// ============================================
+// Edit Photo Button
+// ============================================
+.editPhotoBtn {
+    background-color: var(--color-primary);
+    color: var(--color-text-inverse);
+    box-shadow: var(--shadow-md);
+    border: 2px solid var(--color-surface);
+
+    &:hover {
+        background-color: var(--color-primary-dark);
+        box-shadow: var(--shadow-lg);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+// ============================================
+// User Name
+// ============================================
+.userName {
+    color: var(--color-text-primary);
+}
+
+// ============================================
+// Role Badge
+// ============================================
+.roleBadge {
+    background: var(--gradient-secondary);
+    color: var(--color-text-inverse);
+    border: 1px solid var(--color-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+// ============================================
+// Status Container
+// ============================================
+.statusContainer {
+    background-color: var(--color-background-secondary);
+    border: 1px solid var(--color-border);
+}
+
+// ============================================
+// Status Indicators
+// ============================================
+.verified {
+    color: var(--color-success);
+    font-weight: 600;
+}
+
+.unverified {
+    color: var(--color-warning);
+    font-weight: 600;
+}
+
+.active {
+    color: var(--color-success);
+    font-weight: 600;
+}
+
+.inactive {
+    color: var(--color-error);
+    font-weight: 600;
+}
+
+// ============================================
+// Action Buttons
+// ============================================
+.editProfileBtn {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+    border: 2px solid transparent;
+    box-shadow: var(--shadow-md);
+
+    &:hover {
+        box-shadow: var(--shadow-lg);
+        background: var(--gradient-secondary);
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: translateY(0) scale(0.98);
+    }
+}
+
+.saveBtn {
+    background: var(--color-success);
+    color: var(--color-text-inverse);
+    border: 2px solid transparent;
+    box-shadow: var(--shadow-md);
+
+    &:hover:not(:disabled) {
+        box-shadow: var(--shadow-lg);
+        filter: brightness(1.1);
+        transform: translateY(-2px);
+    }
+
+    &:active:not(:disabled) {
+        transform: translateY(0) scale(0.98);
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+.cancelBtn {
+    background-color: var(--color-surface);
+    color: var(--color-text-secondary);
+    border: 2px solid var(--color-border);
+
+    &:hover:not(:disabled) {
+        background-color: var(--color-surface-hover);
+        border-color: var(--color-error);
+        color: var(--color-error);
+    }
+
+    &:active:not(:disabled) {
+        transform: scale(0.98);
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+// ============================================
+// Loading Spinner
+// ============================================
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--color-text-inverse);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// ============================================
+// Info Cards
+// ============================================
+.infoCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s ease;
+
+    &:hover {
+        box-shadow: var(--shadow-xl);
+        border-color: var(--color-primary);
+    }
+}
+
+// ============================================
+// Card Title
+// ============================================
+.cardTitle {
+    color: var(--color-text-primary);
+    position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: var(--gradient-primary);
+        border-radius: 2px;
+    }
+}
+
+// ============================================
+// Edit Button (Small)
+// ============================================
+.editBtn {
+    color: var(--color-primary);
+    background-color: transparent;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+        color: var(--color-primary-dark);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+// ============================================
+// Info Items
+// ============================================
+.infoItem {
+    background-color: var(--color-background-secondary);
+    border: 1px solid var(--color-border);
+}
+
+// ============================================
+// Info Icon
+// ============================================
+.infoIcon {
+    color: var(--color-primary);
+}
+
+// ============================================
+// Info Label
+// ============================================
+.infoLabel {
+    color: var(--color-text-tertiary);
+}
+
+// ============================================
+// Info Value
+// ============================================
+.infoValue {
+    color: var(--color-text-primary);
+}
+
+// ============================================
+// Form Inputs
+// ============================================
+.input {
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    border-color: var(--color-border);
+    outline: none;
+
+    &::placeholder {
+        color: var(--color-text-tertiary);
+    }
+
+    &:focus {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb, 59, 130, 246), 0.1);
+        outline: none;
+    }
+}
+
+.inputDisabled {
+    background-color: var(--color-background-secondary);
+    color: var(--color-text-tertiary);
+    border-color: var(--color-border);
+    opacity: 0.6;
+    outline: none;
+
+    &::placeholder {
+        color: var(--color-text-tertiary);
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: none;
+    }
+}
+
+.textarea {
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    border-color: var(--color-border);
+    line-height: 1.6;
+    outline: none;
+
+    &::placeholder {
+        color: var(--color-text-tertiary);
+    }
+
+    &:focus {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb, 59, 130, 246), 0.1);
+        outline: none;
+    }
+}
+
+// ============================================
+// Character Count
+// ============================================
+.charCount {
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+}
+
+// ============================================
+// Error Text
+// ============================================
+.errorText {
+    color: var(--color-error);
+    font-weight: 600;
+}
+
+// ============================================
+// Info Text
+// ============================================
+.infoText {
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+}
+
+// ============================================
+// Danger Zone - Account Deletion
+// ============================================
+.dangerCard {
+    background-color: var(--color-surface);
+    border: 2px solid var(--color-error);
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s ease;
+
+    &:hover {
+        box-shadow: var(--shadow-xl);
+    }
+}
+
+.dangerTitle {
+    color: var(--color-error);
+    position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: var(--color-error);
+        border-radius: 2px;
+    }
+}
+
+.dangerContent {
+    background-color: var(--color-background-secondary);
+    border: 1px solid var(--color-error);
+    border-style: dashed;
+}
+
+.dangerText {
+    color: var(--color-text-secondary);
+}
+
+.deleteBtn {
+    background-color: var(--color-error);
+    color: var(--color-text-inverse);
+    border: 2px solid transparent;
+    box-shadow: var(--shadow-md);
+
+    &:hover {
+        box-shadow: var(--shadow-lg);
+        filter: brightness(0.9);
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: translateY(0) scale(0.98);
+    }
+}
+
+// ============================================
+// Responsive Adjustments
+// ============================================
+@media (max-width: 640px) {
+    .profileCard {
+        box-shadow: var(--shadow-md);
+    }
+
+    .infoCard {
+        box-shadow: var(--shadow-md);
+    }
+
+    .avatar {
+        box-shadow: var(--shadow-md);
+    }
+}
+
+// ============================================
+// Dark Mode Enhancements
+// ============================================
+@media (prefers-color-scheme: dark) {
+    .profileCard {
+        background-color: var(--color-surface);
+        border-color: rgba(255, 255, 255, 0.1);
+
+        &:hover {
+            border-color: var(--color-primary);
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+    }
+
+    .infoCard {
+        background-color: var(--color-surface);
+        border-color: rgba(255, 255, 255, 0.1);
+
+        &:hover {
+            border-color: var(--color-primary);
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+    }
+
+    .infoItem {
+        background-color: rgba(255, 255, 255, 0.02);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .statusContainer {
+        background-color: rgba(255, 255, 255, 0.02);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .dangerCard {
+        background-color: var(--color-surface);
+        border-color: var(--color-error);
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+    }
+
+    .dangerContent {
+        background-color: rgba(255, 255, 255, 0.02);
+        border-color: var(--color-error);
+    }
+
+    .input,
+    .textarea {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.1);
+
+        &:hover:not(:focus) {
+            background-color: rgba(255, 255, 255, 0.07);
+        }
+
+        &:focus {
+            background-color: rgba(255, 255, 255, 0.08);
+            outline: none;
+        }
+    }
+
+    .inputDisabled {
+        background-color: rgba(255, 255, 255, 0.02);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .cancelBtn {
+        background-color: rgba(255, 255, 255, 0.05);
+
+        &:hover:not(:disabled) {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    }
+}
+
+// ============================================
+// Animation Classes
+// ============================================
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.profileCard {
+    animation: fadeInScale 0.5s ease-out;
+}
+
+.infoCard {
+    animation: fadeIn 0.5s ease-out;
+
+    &:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+
+    &:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    &:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+}
+
+// ============================================
+// Print Styles
+// ============================================
+@media print {
+
+    .editProfileBtn,
+    .saveBtn,
+    .cancelBtn,
+    .editBtn,
+    .editPhotoBtn,
+    .primaryBtn {
+        display: none;
+    }
+
+    .profilePage {
+        background-color: white;
+    }
+
+    .profileCard,
+    .infoCard {
+        box-shadow: none;
+        border-color: #e5e7eb;
+    }
+}
+
+// ============================================
+// Accessibility Enhancements
+// ============================================
+.input:focus-visible,
+.textarea:focus-visible {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb, 59, 130, 246), 0.1);
+}
+
+.editProfileBtn:focus-visible,
+.saveBtn:focus-visible,
+.cancelBtn:focus-visible,
+.editBtn:focus-visible,
+.primaryBtn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.deleteBtn:focus-visible {
+    outline: 2px solid var(--color-error);
+    outline-offset: 2px;
+}
+
+// ============================================
+// Course Cards & Courses Page
+// ============================================
+.statsBadge {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+
+    &:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-2px);
+    }
+}
+
+.statsIcon {
+    color: var(--color-text-inverse);
+}
+
+.statsLabel {
+    color: var(--color-text-inverse);
+    font-weight: 600;
+}
+
+// ============================================
+// Empty State
+// ============================================
+.emptyState {
+    background-color: var(--color-surface);
+    border: 2px dashed var(--color-border);
+    box-shadow: var(--shadow-md);
+}
+
+.emptyStateIcon {
+    color: var(--color-text-tertiary);
+    margin: 0 auto 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.emptyStateTitle {
+    color: var(--color-text-primary);
+}
+
+.emptyStateText {
+    color: var(--color-text-secondary);
+}
+
+// ============================================
+// Course Card
+// ============================================
+.courseCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+
+    &:hover {
+        box-shadow: var(--shadow-xl);
+        transform: translateY(-4px);
+    }
+}
+
+.courseImageContainer {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.courseImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+
+    .courseCard:hover & {
+        transform: scale(1.05);
+    }
+}
+
+.courseCategory {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+    padding: 0.375rem 0.875rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: var(--shadow-md);
+}
+
+.courseContent {
+    padding: 1.25rem;
+}
+
+.courseTitle {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    margin-bottom: 0.375rem;
+    line-height: 1.4;
+}
+
+.courseInstructor {
+    font-size: 0.875rem;
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+}
+
+.courseDescription {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+// ============================================
+// Course Stats
+// ============================================
+.courseStats {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.courseStat {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+
+    svg {
+        color: var(--color-primary);
+    }
+}
+
+.courseStatLabel {
+    font-weight: 400;
+    color: var(--color-text-tertiary);
+}
+
+// ============================================
+// Course Skills
+// ============================================
+.courseSkills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.skillBadge {
+    background: var(--gradient-secondary);
+    color: var(--color-text-inverse);
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+}
+
+// ============================================
+// Course Footer
+// ============================================
+.courseFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+    margin-bottom: 0.75rem;
+}
+
+.coursePrice {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-primary);
+
+    svg {
+        color: var(--color-primary);
+    }
+}
+
+.courseActions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.rateBtn {
+    background-color: var(--color-primary);
+    color: var(--color-text-inverse);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+
+    &:hover {
+        filter: brightness(0.9);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0) scale(0.98);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+    }
+}
+
+.unenrollBtn {
+    background-color: var(--color-warning);
+    color: var(--color-text-inverse);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+
+    &:hover {
+        filter: brightness(0.9);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0) scale(0.98);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-warning);
+        outline-offset: 2px;
+    }
+}
+
+// ============================================
+// Course Meta
+// ============================================
+.courseMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.courseMetaItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+
+    svg {
+        color: var(--color-primary);
+    }
+}
+
+// ============================================
+// Dark Mode - Course Styles
+// ============================================
+@media (prefers-color-scheme: dark) {
+    .emptyState {
+        background-color: var(--color-surface);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .courseCard {
+        background-color: var(--color-surface);
+        border-color: rgba(255, 255, 255, 0.1);
+
+        &:hover {
+            border-color: var(--color-primary);
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+    }
+
+    .courseStats {
+        border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .courseFooter {
+        border-top-color: rgba(255, 255, 255, 0.1);
+    }
+}
+
+// ============================================
+// Responsive - Course Cards
+// ============================================
+@media (max-width: 640px) {
+    .courseCard {
+        box-shadow: var(--shadow-md);
+    }
+
+    .courseImageContainer {
+        height: 180px;
+    }
+
+    .courseContent {
+        padding: 1rem;
+    }
+
+    .courseTitle {
+        font-size: 1.125rem;
+    }
+
+    .courseStats {
+        gap: 0.75rem;
+    }
+
+    .courseFooter {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .courseActions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .rateBtn,
+    .unenrollBtn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+// ============================================
+// Rating Components & Stars
+// ============================================
+.ratingCard {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+
+    &:hover {
+        box-shadow: var(--shadow-xl);
+    }
+}
+
+.ratingCourseTitle {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+}
+
+.ratingCategory {
+    font-size: 0.875rem;
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+}
+
+.ratingIcon {
+    color: var(--color-primary);
+}
+
+// ============================================
+// Star Rating
+// ============================================
+.starsContainer {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+}
+
+.starButton {
+    background: none;
+    border: none;
+    padding: 0.125rem;
+    cursor: default;
+    transition: all 0.2s ease;
+
+    &.interactive {
+        cursor: pointer;
+
+        &:hover {
+            transform: scale(1.1);
+        }
+
+        &:active {
+            transform: scale(0.95);
+        }
+    }
+}
+
+.starFilled {
+    color: #fbbf24;
+}
+
+.starEmpty {
+    color: var(--color-text-tertiary);
+}
+
+// ============================================
+// Rating Comment
+// ============================================
+.ratingCommentContainer {
+    background-color: var(--color-background-secondary);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-border);
+}
+
+.commentIcon {
+    color: var(--color-primary);
+}
+
+.commentLabel {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.ratingComment {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+}
+
+// ============================================
+// Rating Footer
+// ============================================
+.ratingFooter {
+    border-top: 1px solid var(--color-border);
+}
+
+.ratingDate {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-tertiary);
+
+    svg {
+        color: var(--color-primary);
+    }
+}
+
+// ============================================
+// Action Buttons
+// ============================================
+.iconActionBtn {
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+
+    &:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0) scale(0.98);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+    }
+}
+
+.viewBtn {
+    background-color: var(--color-primary);
+    color: var(--color-text-inverse);
+}
+
+.editActionBtn {
+    background-color: var(--color-primary);
+    color: var(--color-text-inverse);
+}
+
+.deleteActionBtn {
+    background-color: var(--color-error);
+    color: var(--color-text-inverse);
+}
+
+// ============================================
+// Modal Styles
+// ============================================
+.modalBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 9999;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.modalContent {
+    background-color: var(--color-surface);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-2xl);
+    width: 100%;
+    max-width: 32rem;
+    padding: 1.5rem;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease-out;
+
+    @media (min-width: 640px) {
+        padding: 2rem;
+        border-radius: 1.5rem;
+    }
+}
+
+.modalTitle {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.modalSubtitle {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.modalCategory {
+    font-size: 0.875rem;
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+}
+
+.formLabel {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 0.75rem;
+}
+
+.viewComment {
+    background-color: var(--color-background-secondary);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    border: 1px solid var(--color-border);
+}
+
+.viewDate {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+
+    svg {
+        color: var(--color-primary);
+    }
+}
+
+// ============================================
+// Rate Course Button (for UserCourses)
+// ============================================
+.rateBtn {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+
+    &:hover {
+        background: var(--gradient-secondary);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0) scale(0.98);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+    }
+}
+
+// ============================================
+// Dark Mode - Rating Styles
+// ============================================
+@media (prefers-color-scheme: dark) {
+    .ratingCard {
+        background-color: var(--color-surface);
+        border-color: rgba(255, 255, 255, 0.1);
+
+        &:hover {
+            border-color: var(--color-primary);
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+    }
+
+    .ratingCommentContainer {
+        background-color: rgba(255, 255, 255, 0.02);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .ratingFooter {
+        border-top-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .modalContent {
+        background-color: var(--color-surface);
+    }
+
+    .viewComment {
+        background-color: rgba(255, 255, 255, 0.02);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+}
+
+// ============================================
+// Responsive - Rating Cards
+// ============================================
+@media (max-width: 640px) {
+    .ratingCard {
+        box-shadow: var(--shadow-md);
+        padding: 1.25rem;
+    }
+
+    .ratingCourseTitle {
+        font-size: 1.125rem;
+    }
+
+    .modalContent {
+        padding: 1.25rem;
+        max-height: 85vh;
+    }
+
+    .modalTitle {
+        font-size: 1.25rem;
+    }
+
+    .starButton.interactive svg {
+        width: 28px;
+        height: 28px;
+    }
+}
