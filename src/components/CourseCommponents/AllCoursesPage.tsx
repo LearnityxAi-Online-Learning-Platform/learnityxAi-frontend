@@ -236,7 +236,7 @@ export default function AllCoursesPageAPI(): React.JSX.Element {
     const [selectedDuration, setSelectedDuration] = useState('All Durations');
     const [selectedRating, setSelectedRating] = useState(0);
     const [sortBy, setSortBy] = useState('popular');
-    const [showFilters, setShowFilters] = useState(false);
+    const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
     const [expandedSections, setExpandedSections] = useState({
         categories: true,
         tools: false,
@@ -345,7 +345,7 @@ export default function AllCoursesPageAPI(): React.JSX.Element {
                             <Search className={`${styles.searchIcon} absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5`} />
                             <input
                                 type="text"
-                                placeholder="Search by course name, instructor, or skills..."
+                                placeholder="Search by course name ..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className={`${styles.searchInput} w-full pl-12 pr-4 py-3.5 rounded-xl text-sm sm:text-base`}
@@ -376,7 +376,7 @@ export default function AllCoursesPageAPI(): React.JSX.Element {
 
                             {/* Mobile Filter Button */}
                             <button
-                                onClick={() => setShowFilters(!showFilters)}
+                                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
                                 className={`${styles.filterButton} lg:hidden px-4 py-3.5 rounded-xl font-medium flex items-center gap-2`}
                             >
                                 <SlidersHorizontal className="w-5 h-5" />
@@ -406,13 +406,32 @@ export default function AllCoursesPageAPI(): React.JSX.Element {
                         </div>
                     )}
 
-                    {/* Advanced Filters Panel */}
-                    <div className={`${showFilters ? 'block' : 'hidden'} lg:block mt-4`}>
-                        <div className={`${styles.categoryContainer} rounded-xl p-4 sm:p-5`}>
-                            <div className="flex items-center gap-2 mb-4">
-                                <Filter className={`${styles.filterIcon} w-5 h-5`} />
-                                <span className={`${styles.filterLabel} text-base font-bold`}>Advanced Filters</span>
+                    {/* Advanced Filters Toggle Button - Desktop */}
+                    <div className="hidden lg:block mt-4">
+                        <button
+                            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                            className={`${styles.filterButton} w-full px-4 py-3 rounded-xl font-medium flex items-center justify-between transition-all duration-300`}
+                        >
+                            <div className="flex items-center gap-2">
+                                <SlidersHorizontal className="w-5 h-5" />
+                                <span>Advanced Filters</span>
                             </div>
+                            {showAdvancedFilters ? (
+                                <ChevronUp className="w-5 h-5" />
+                            ) : (
+                                <ChevronDown className="w-5 h-5" />
+                            )}
+                        </button>
+                    </div>
+
+                    {/* Advanced Filters Panel */}
+                    {showAdvancedFilters && (
+                        <div className="mt-4">
+                            <div className={`${styles.categoryContainer} rounded-xl p-4 sm:p-5`}>
+                                <div className="flex items-center gap-2 mb-4">
+                                    <Filter className={`${styles.filterIcon} w-5 h-5`} />
+                                    <span className={`${styles.filterLabel} text-base font-bold`}>Advanced Filters</span>
+                                </div>
 
                             <div className="space-y-4">
                                 {/* Categories Filter */}
@@ -541,7 +560,8 @@ export default function AllCoursesPageAPI(): React.JSX.Element {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Course Grid */}
