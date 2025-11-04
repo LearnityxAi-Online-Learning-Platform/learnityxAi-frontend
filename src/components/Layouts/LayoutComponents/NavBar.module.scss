@@ -126,6 +126,45 @@
     }
 }
 
+// Profile Button & Dropdown
+.profileBtn {
+    color: var(--color-text-primary);
+    background-color: transparent;
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+    }
+}
+
+.avatar {
+    background: var(--gradient-primary);
+    color: var(--color-text-inverse);
+    box-shadow: var(--shadow-sm);
+}
+
+.profileDropdown {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+}
+
+.userInfo {
+    border-color: var(--color-border);
+}
+
+.logoutBtn {
+    color: var(--color-error) !important;
+
+    &:hover {
+        background-color: rgba(239, 68, 68, 0.1);
+    }
+}
+
 // Mobile Menu
 .mobileMenu {
     background-color: var(--color-surface);
@@ -180,5 +219,18 @@
 
     &:active {
         transform: translateY(0);
+    }
+}
+
+// Mobile Profile Section
+.mobileUserInfo {
+    color: var(--color-text-primary);
+}
+
+.mobileLogoutBtn {
+    color: var(--color-error) !important;
+
+    &:hover {
+        background-color: rgba(239, 68, 68, 0.1) !important;
     }
 }
