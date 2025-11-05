@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -74,7 +75,8 @@ export default function UserProfile() {
         if (user && !editedUser) {
             setEditedUser(user as UserData);
         }
-    }, [user, editedUser]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user]);
 
     // Fetch user profile on mount if not available
     useEffect(() => {

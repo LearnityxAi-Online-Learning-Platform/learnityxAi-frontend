@@ -181,6 +181,23 @@ class UserService {
     const response = await axiosInstance.delete(`/api/ratings/course/${courseId}`);
     return response.data;
   }
+
+  // Get all user's ratings (authenticated)
+  async getAllUserRatings(
+    page: number = 1,
+    size: number = 10
+  ): Promise<ApiSuccessResponse<RatingsResponse>> {
+    const response = await axiosInstance.get(
+      `/api/ratings/my-ratings?page=${page}&size=${size}`
+    );
+    return response.data;
+  }
+
+  // Unenroll from a course (authenticated - student only)
+  async unenrollFromCourse(courseId: string): Promise<ApiSuccessResponse<null>> {
+    const response = await axiosInstance.post(`/api/courses/${courseId}/unenroll`);
+    return response.data;
+  }
 }
 
 export const userService = new UserService();

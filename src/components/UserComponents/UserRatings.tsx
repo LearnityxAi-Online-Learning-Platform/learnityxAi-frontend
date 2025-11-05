@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Star,
     Edit2,
@@ -13,71 +13,31 @@ import {
 import styles from './UserComponents.module.scss';
 import AlertDialog from '../ui/AlertDialog';
 import Toast from '../ui/Toast';
+import { useUser } from '@/hooks/useUserHook';
+import { Rating as BaseRating } from '@/types/userTypes';
 
-interface Rating {
-    _id: string;
-    courseId: string;
-    userId: string;
-    rating: number;
-    comment: string;
-    createdAt: string;
-    updatedAt: string;
-    courseName?: string; // Added for display
-    courseCategory?: string; // Added for display
-}
-
-interface ApiResponse {
-    success: boolean;
-    message: string;
-    data: {
-        ratings: Rating[];
-    };
+// Extended Rating type with course details
+interface Rating extends BaseRating {
+    courseName?: string;
+    courseCategory?: string;
 }
 
 export default function UserRatings() {
-    // Mock API response with multiple ratings
-    const [ratingsData, setRatingsData] = useState<ApiResponse>({
-        success: true,
-        message: "Ratings retrieved successfully",
-        data: {
-            ratings: [
-                {
-                    _id: "69055a750a25a132e8cad812",
-                    courseId: "69055847ebcd89cbc8eecee9",
-                    userId: "690555578deac7a86c92c6b0",
-                    rating: 4,
-                    comment: "Good course, but could use more practical examples.",
-                    createdAt: "2025-11-01T00:55:17.796Z",
-                    updatedAt: "2025-11-01T00:55:40.303Z",
-                    courseName: "Complete Python Programming",
-                    courseCategory: "Web Development"
-                },
-                {
-                    _id: "69055a750a25a132e8cad813",
-                    courseId: "69055847ebcd89cbc8eecee8",
-                    userId: "690555578deac7a86c92c6b0",
-                    rating: 5,
-                    comment: "Excellent course! Learned a lot and instructor was very helpful.",
-                    createdAt: "2025-10-28T00:55:17.796Z",
-                    updatedAt: "2025-10-28T00:55:17.796Z",
-                    courseName: "Modern React Development",
-                    courseCategory: "Frontend Development"
-                },
-                {
-                    _id: "69055a750a25a132e8cad814",
-                    courseId: "69055847ebcd89cbc8eecee7",
-                    userId: "690555578deac7a86c92c6b0",
-                    rating: 3,
-                    comment: "Decent content but pacing was too fast for beginners.",
-                    createdAt: "2025-10-20T00:55:17.796Z",
-                    updatedAt: "2025-10-20T00:55:17.796Z",
-                    courseName: "Full Stack JavaScript",
-                    courseCategory: "Full Stack Development"
-                }
-            ]
-        }
-    });
+    // Redux hooks
+    const {
+        ratings: reduxRatings,
+        loading,
+        error,
+        getAllUserRatings,
+        updateRating,
+        deleteRating
+    } = useUser();
 
+    // Cast to extended Rating type (API returns course details)
+    const ratings = reduxRatings as Rating[];
+
+    // Local state for UI
+    const [currentPage, setCurrentPage] = useState(1);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [showEditDialog, setShowEditDialog] = useState(false);
     const [showViewDialog, setShowViewDialog] = useState(false);
@@ -91,6 +51,12 @@ export default function UserRatings() {
     // Edit form state
     const [editRating, setEditRating] = useState(0);
     const [editComment, setEditComment] = useState('');
+
+    // Fetch ratings on mount and page change
+    useEffect(() => {
+        getAllUserRatings(currentPage, 10);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentPage]);
 
     const formatDate = (dateString: string): string => {
         const date = new Date(dateString);
@@ -123,30 +89,20 @@ export default function UserRatings() {
 
         setIsDeleting(true);
 
-        // Simulate API call
-        setTimeout(() => {
-            const isSuccess = Math.random() > 0.1;
-
-            if (isSuccess) {
-                setRatingsData({
-                    ...ratingsData,
-                    data: {
-                        ratings: ratingsData.data.ratings.filter(
-                            r => r._id !== selectedRating._id
-                        )
-                    }
-                });
-                setIsDeleting(false);
-                setShowDeleteDialog(false);
-                setSelectedRating(null);
-                setToastMessage('Rating deleted successfully');
-                setShowSuccessToast(true);
-            } else {
-                setIsDeleting(false);
-                setToastMessage('Failed to delete rating');
-                setShowErrorToast(true);
-            }
-        }, 1500);
+        try {
+            await deleteRating(selectedRating.courseId);
+            setToastMessage('Rating deleted successfully');
+            setShowSuccessToast(true);
+            setShowDeleteDialog(false);
+            setSelectedRating(null);
+            // Refresh ratings
+            await getAllUserRatings(currentPage, 10);
+        } catch (error: any) {
+            setToastMessage(error?.message || 'Failed to delete rating');
+            setShowErrorToast(true);
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     const handleSaveEdit = async () => {
@@ -160,40 +116,26 @@ export default function UserRatings() {
 
         setIsSaving(true);
 
-        // Simulate API call
-        setTimeout(() => {
-            const isSuccess = Math.random() > 0.1;
-
-            if (isSuccess) {
-                setRatingsData({
-                    ...ratingsData,
-                    data: {
-                        ratings: ratingsData.data.ratings.map(r =>
-                            r._id === selectedRating._id
-                                ? {
-                                    ...r,
-                                    rating: editRating,
-                                    comment: editComment,
-                                    updatedAt: new Date().toISOString()
-                                }
-                                : r
-                        )
-                    }
-                });
-                setIsSaving(false);
-                setShowEditDialog(false);
-                setSelectedRating(null);
-                setToastMessage('Rating updated successfully');
-                setShowSuccessToast(true);
-            } else {
-                setIsSaving(false);
-                setToastMessage('Failed to update rating');
-                setShowErrorToast(true);
-            }
-        }, 1500);
+        try {
+            await updateRating({
+                courseId: selectedRating.courseId,
+                rating: editRating,
+                comment: editComment
+            });
+            setToastMessage('Rating updated successfully');
+            setShowSuccessToast(true);
+            setShowEditDialog(false);
+            setSelectedRating(null);
+            // Refresh ratings
+            await getAllUserRatings(currentPage, 10);
+        } catch (error: any) {
+            setToastMessage(error?.message || 'Failed to update rating');
+            setShowErrorToast(true);
+        } finally {
+            setIsSaving(false);
+        }
     };
 
-    const ratings = ratingsData.data.ratings;
     const hasNoRatings = ratings.length === 0;
 
     const renderStars = (rating: number, interactive: boolean = false, onRatingChange?: (rating: number) => void) => {
