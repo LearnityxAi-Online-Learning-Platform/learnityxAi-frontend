@@ -15,6 +15,8 @@ import {
   getCourseRatings,
   getMyRating,
   deleteRating,
+  getAllUserRatings,
+  unenrollFromCourse,
   clearUserError,
   clearCurrentCourse,
   clearCourseRating,
@@ -109,6 +111,14 @@ export const useUser = () => {
     return await dispatch(deleteRating(courseId)).unwrap();
   };
 
+  const handleGetAllUserRatings = async (page: number = 1, size: number = 10) => {
+    return await dispatch(getAllUserRatings({ page, size })).unwrap();
+  };
+
+  const handleUnenrollFromCourse = async (courseId: string) => {
+    return await dispatch(unenrollFromCourse(courseId)).unwrap();
+  };
+
   const handleClearError = () => {
     dispatch(clearUserError());
   };
@@ -148,6 +158,8 @@ export const useUser = () => {
     getCourseRatings: handleGetCourseRatings,
     getMyRating: handleGetMyRating,
     deleteRating: handleDeleteRating,
+    getAllUserRatings: handleGetAllUserRatings,
+    unenrollFromCourse: handleUnenrollFromCourse,
     clearError: handleClearError,
     clearCurrentCourse: handleClearCurrentCourse,
     clearCourseRating: handleClearCourseRating,
