@@ -1,4 +1,4 @@
-// src/store/hooks/useInstructorHook.ts
+// src/hooks/useInstructorHook.ts
 import { useAppDispatch, useAppSelector } from './useReduxHooks';
 import {
   createCourse,
@@ -9,7 +9,7 @@ import {
   toggleCourseStatus,
   clearInstructorError,
   clearCurrentInstructorCourse,
-} from '../slices/instructorSlice';
+} from '../store/slices/instructorSlice';
 import { CreateCoursePayload, UpdateCoursePayload } from '../types/instructorTypes';
 
 export const useInstructor = () => {

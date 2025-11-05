@@ -1,4 +1,4 @@
-// src/store/hooks/useFileUploadHook.ts
+// src/hooks/useFileUploadHook.ts
 import { useAppDispatch, useAppSelector } from './useReduxHooks';
 import {
   uploadCourseFlyer,
@@ -7,7 +7,7 @@ import {
   clearCourseFlyerUrl,
   clearProfileImageUrl,
   resetFileUploadState,
-} from '../slices/fileUploadSlice';
+} from '../store/slices/fileUploadSlice';
 
 export const useFileUpload = () => {
   const dispatch = useAppDispatch();

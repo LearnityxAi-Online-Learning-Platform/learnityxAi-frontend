@@ -15,10 +15,21 @@ import {
   ApiError,
 } from '@/types/authTypes';
 
+// Helper function to safely parse user from localStorage
+const getStoredUser = (): any | null => {
+  if (typeof window === 'undefined') return null;
+  try {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+  } catch {
+    return null;
+  }
+};
+
 const initialState: AuthState = {
-  user: null,
+  user: getStoredUser(),
   accessToken: typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null,
-  isAuthenticated: false,
+  isAuthenticated: !!(typeof window !== 'undefined' && localStorage.getItem('accessToken') && getStoredUser()),
   loading: false,
   error: null,
 };

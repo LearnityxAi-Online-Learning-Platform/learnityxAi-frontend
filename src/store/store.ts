@@ -4,6 +4,7 @@ import authReducer from './slices/authSlice';
 import userReducer from './slices/userSlice';
 import instructorReducer from './slices/instructorSlice';
 import fileUploadReducer from './slices/fileUploadSlice';
+import courseReducer from './slices/courseSlice';
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     user: userReducer,
     instructor: instructorReducer,
     fileUpload: fileUploadReducer,
+    courses: courseReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -1,4 +1,4 @@
-// src/store/hooks/useAuthHook.ts
+// src/hooks/useAuthHook.ts
 import { useAppDispatch, useAppSelector } from './useReduxHooks';
 import {
   register,
@@ -12,7 +12,7 @@ import {
   logout,
   clearError,
   clearAuth,
-} from '../slices/authSlice';
+} from '../store/slices/authSlice';
 import {
   RegisterPayload,
   LoginPayload,

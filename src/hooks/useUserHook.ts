@@ -1,4 +1,4 @@
-// src/store/hooks/useUserHook.ts
+// src/hooks/useUserHook.ts
 import { useAppDispatch, useAppSelector } from './useReduxHooks';
 import {
   searchCourses,
@@ -18,7 +18,7 @@ import {
   clearUserError,
   clearCurrentCourse,
   clearCourseRating,
-} from '../slices/userSlice';
+} from '../store/slices/userSlice';
 import {
   SearchCoursesParams,
   CreateRatingPayload,
