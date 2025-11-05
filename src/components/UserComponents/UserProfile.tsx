@@ -16,7 +16,8 @@ import {
     Clock,
     Save,
     X,
-    AlertCircle
+    AlertCircle,
+    Upload
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuthHook';
 import { useFileUpload } from '@/hooks/useFileUploadHook';
