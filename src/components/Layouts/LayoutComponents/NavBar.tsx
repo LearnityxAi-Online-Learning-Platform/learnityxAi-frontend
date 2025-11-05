@@ -51,11 +51,14 @@ export default function NavBar(): JSX.Element {
 
     const handleSearch = (e: React.FormEvent): void => {
         e.preventDefault();
+        // Navigate to courses page with or without search query
         if (searchQuery.trim()) {
-            // Navigate to search results page with query parameter
             router.push(`/courses?search=${encodeURIComponent(searchQuery.trim())}`);
-            setSearchQuery(''); // Clear search after navigation
+        } else {
+            // Navigate to all courses page without filters
+            router.push('/courses');
         }
+        setSearchQuery(''); // Clear search after navigation
     };
 
     const handleLogout = async (): Promise<void> => {

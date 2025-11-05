@@ -16,6 +16,15 @@ export interface Course {
     lastName: string;
     profileImage: string;
   };
+  // Full instructor object with bio (from course detail endpoint)
+  instructorId?: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email?: string;
+    profileImage: string;
+    bio?: string;
+  };
   // Flat instructor name (from recommendations endpoint)
   instructorName?: string;
   category?: string;
@@ -345,6 +354,36 @@ class CourseService {
         expirationMinutes: this.CACHE_EXPIRATION.RECOMMENDATIONS,
       }),
     };
+  }
+
+  /**
+   * Get all available categories
+   */
+  async getCategories(): Promise<string[]> {
+    const response = await axiosInstance.get<ApiSuccessResponse<{ categories: string[] }>>(
+      '/api/courses/categories'
+    );
+    return response.data.data.categories;
+  }
+
+  /**
+   * Get all available tools
+   */
+  async getTools(): Promise<string[]> {
+    const response = await axiosInstance.get<ApiSuccessResponse<{ tools: string[] }>>(
+      '/api/courses/tools'
+    );
+    return response.data.data.tools;
+  }
+
+  /**
+   * Get all available durations
+   */
+  async getDurations(): Promise<string[]> {
+    const response = await axiosInstance.get<ApiSuccessResponse<{ durations: string[] }>>(
+      '/api/courses/durations'
+    );
+    return response.data.data.durations;
   }
 }
 

@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
     Star,
     Clock,
@@ -14,7 +15,9 @@ import {
     ChevronDown,
     ChevronUp
 } from 'lucide-react';
+import { useCourse } from '@/hooks/useCourseHook';
 import Pagination from '@/components/ui/Pagination';
+import courseService from '@/services/courseService';
 import styles from './CourseComponents.module.scss';
 
 interface Course {
@@ -33,99 +36,6 @@ interface Course {
     numberOfUserEnrolled?: number;
 }
 
-interface PaginationData {
-    currentPage: number;
-    pageSize: number;
-    totalCourses: number;
-    totalPages: number;
-    hasNextPage: boolean;
-    hasPrevPage: boolean;
-}
-
-interface ApiResponse {
-    success: boolean;
-    message: string;
-    data: {
-        courses: Course[];
-        pagination: PaginationData;
-    };
-}
-
-// API Data for filters
-const categories = [
-    "All Categories",
-    "Web Development",
-    "Mobile Development",
-    "Data Science",
-    "Machine Learning",
-    "Artificial Intelligence",
-    "Cloud Computing",
-    "Cybersecurity",
-    "DevOps",
-    "Database Management",
-    "UI/UX Design",
-    "Digital Marketing",
-    "Business Analytics",
-    "Project Management",
-    "Software Testing",
-    "Blockchain",
-    "Game Development",
-    "Other"
-];
-
-const tools = [
-    "All Tools",
-    "JavaScript",
-    "Python",
-    "Java",
-    "React",
-    "Node.js",
-    "MongoDB",
-    "MySQL",
-    "PostgreSQL",
-    "Docker",
-    "Kubernetes",
-    "AWS",
-    "Azure",
-    "Git",
-    "Jenkins",
-    "Tableau",
-    "Power BI",
-    "Figma",
-    "Adobe XD",
-    "TensorFlow",
-    "PyTorch",
-    "Angular",
-    "Vue.js",
-    "Django",
-    "Flask",
-    "Spring Boot",
-    "TypeScript",
-    "Go",
-    "Rust",
-    "Swift",
-    "Kotlin"
-];
-
-const durations = [
-    "All Durations",
-    "1 week",
-    "2 weeks",
-    "3 weeks",
-    "4 weeks",
-    "6 weeks",
-    "8 weeks",
-    "10 weeks",
-    "12 weeks",
-    "3 months",
-    "4 months",
-    "5 months",
-    "6 months",
-    "9 months",
-    "12 months",
-    "Self-paced"
-];
-
 const ratingOptions = [
     { label: "All Ratings", value: 0 },
     { label: "4.5 & above", value: 4.5 },
@@ -134,119 +44,207 @@ const ratingOptions = [
     { label: "3.0 & above", value: 3.0 }
 ];
 
-export default function AllCoursesPageAPI(): React.JSX.Element {
-    const router = useRouter();
+// LocalStorage cache keys for filter options
+const CACHE_KEYS = {
+    CATEGORIES: 'course_filter_categories',
+    TOOLS: 'course_filter_tools',
+    DURATIONS: 'course_filter_durations',
+} as const;
 
-    // State for API data
-    const [apiResponse, setApiResponse] = useState<ApiResponse>({
-        success: true,
-        message: "Courses retrieved successfully",
-        data: {
-            courses: [
-                {
-                    _id: "1",
-                    courseName: "Python for Everybody",
-                    courseCategory: "Web Development",
-                    instructorName: "University of Michigan",
-                    description: "Learn Python programming from scratch",
-                    rating: 4.8,
-                    skills: ["Python", "Programming"],
-                    tools: ["Python"],
-                    startingDate: "2024-12-01",
-                    duration: "8 weeks",
-                    price: 799,
-                    courseFlyerURL: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-                    numberOfUserEnrolled: 150000
-                },
-                {
-                    _id: "2",
-                    courseName: "Prompt Engineering",
-                    courseCategory: "Artificial Intelligence",
-                    instructorName: "Vanderbilt University",
-                    description: "Master prompt engineering techniques",
-                    rating: 4.9,
-                    skills: ["AI", "Prompt Engineering"],
-                    tools: ["Python", "TensorFlow"],
-                    startingDate: "2024-12-01",
-                    duration: "6 weeks",
-                    price: 899,
-                    courseFlyerURL: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-                    numberOfUserEnrolled: 85000
-                },
-                {
-                    _id: "3",
-                    courseName: "IBM Data Science",
-                    courseCategory: "Data Science",
-                    instructorName: "IBM",
-                    description: "Professional certificate in data science",
-                    rating: 4.7,
-                    skills: ["Data Science", "Python", "Machine Learning"],
-                    tools: ["Python", "Tableau"],
-                    startingDate: "2024-12-01",
-                    duration: "10 weeks",
-                    price: 999,
-                    courseFlyerURL: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-                    numberOfUserEnrolled: 200000
-                },
-                {
-                    _id: "4",
-                    courseName: "Complete Web Development",
-                    courseCategory: "Web Development",
-                    instructorName: "John Doe",
-                    description: "Learn full-stack web development",
-                    rating: 4.6,
-                    skills: ["HTML", "CSS", "JavaScript", "React"],
-                    tools: ["React", "Node.js"],
-                    startingDate: "2024-12-01",
-                    duration: "12 weeks",
-                    price: 999,
-                    courseFlyerURL: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-                    numberOfUserEnrolled: 120000
-                },
-                {
-                    _id: "5",
-                    courseName: "Machine Learning Specialization",
-                    courseCategory: "Machine Learning",
-                    instructorName: "Stanford University",
-                    description: "Deep dive into machine learning",
-                    rating: 4.9,
-                    skills: ["Machine Learning", "Python", "AI"],
-                    tools: ["Python", "TensorFlow"],
-                    startingDate: "2024-12-01",
-                    duration: "11 weeks",
-                    price: 1299,
-                    courseFlyerURL: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-                    numberOfUserEnrolled: 180000
-                },
-            ],
-            pagination: {
-                currentPage: 1,
-                pageSize: 10,
-                totalCourses: 5,
-                totalPages: 1,
-                hasNextPage: false,
-                hasPrevPage: false
-            }
+const CACHE_EXPIRATION_HOURS = 24;
+
+// Helper functions for localStorage caching
+const getCachedData = (key: string): string[] | null => {
+    try {
+        const cached = localStorage.getItem(key);
+        if (!cached) return null;
+
+        const { data, timestamp } = JSON.parse(cached);
+        const expirationTime = CACHE_EXPIRATION_HOURS * 60 * 60 * 1000; // Convert to milliseconds
+        const isExpired = Date.now() - timestamp > expirationTime;
+
+        if (isExpired) {
+            localStorage.removeItem(key);
+            return null;
         }
-    });
 
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('All Categories');
-    const [selectedTool, setSelectedTool] = useState('All Tools');
-    const [selectedDuration, setSelectedDuration] = useState('All Durations');
-    const [selectedRating, setSelectedRating] = useState(0);
-    const [sortBy, setSortBy] = useState('popular');
+        return data;
+    } catch (error) {
+        console.error(`Error reading cache for ${key}:`, error);
+        return null;
+    }
+};
+
+const setCachedData = (key: string, data: string[]): void => {
+    try {
+        const cacheObject = {
+            data,
+            timestamp: Date.now(),
+        };
+        localStorage.setItem(key, JSON.stringify(cacheObject));
+    } catch (error) {
+        console.error(`Error setting cache for ${key}:`, error);
+    }
+};
+
+export default function AllCoursesPage(): React.JSX.Element {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const { courses: apiCourses, total, page: currentPage, totalPages, loading, getAllCourses, searchCoursesQuery } = useCourse();
+
+    // Initialize search from URL query params
+    const urlSearch = searchParams.get('search') || '';
+    const urlCategory = searchParams.get('category') || '';
+    const urlTools = searchParams.get('tools') || '';
+
+    const [searchQuery, setSearchQuery] = useState(urlSearch);
+    const [selectedCategory, setSelectedCategory] = useState(urlCategory || 'All Categories');
+    const [selectedTool, setSelectedTool] = useState(urlTools || 'All Tools');
+    const [minRating, setMinRating] = useState(0);
+    const [sortBy, setSortBy] = useState<'rating' | 'price' | 'enrollmentCount' | 'createdAt'>('enrollmentCount');
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
     const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
     const [expandedSections, setExpandedSections] = useState({
         categories: true,
         tools: false,
-        duration: false,
         rating: false
     });
 
-    // Extract data from API response
-    const courses = apiResponse.data.courses;
-    const pagination = apiResponse.data.pagination;
+    // Dynamic filter options from API with localStorage caching
+    const [categories, setCategories] = useState<string[]>(['All Categories']);
+    const [tools, setTools] = useState<string[]>(['All Tools']);
+    const [durations, setDurations] = useState<string[]>([]);
+    const [filterOptionsLoading, setFilterOptionsLoading] = useState(true);
+
+    // Fetch filter options on component mount
+    useEffect(() => {
+        const fetchFilterOptions = async () => {
+            setFilterOptionsLoading(true);
+
+            try {
+                // Fetch all filter options in parallel
+                const [categoriesData, toolsData, durationsData] = await Promise.all([
+                    (async () => {
+                        const cached = getCachedData(CACHE_KEYS.CATEGORIES);
+                        if (cached) {
+                            console.log('Using cached categories:', cached);
+                            return cached;
+                        }
+                        console.log('Fetching categories from API...');
+                        const data = await courseService.getCategories();
+                        console.log('Fetched categories:', data);
+                        setCachedData(CACHE_KEYS.CATEGORIES, data);
+                        return data;
+                    })(),
+                    (async () => {
+                        const cached = getCachedData(CACHE_KEYS.TOOLS);
+                        if (cached) {
+                            console.log('Using cached tools:', cached);
+                            return cached;
+                        }
+                        console.log('Fetching tools from API...');
+                        const data = await courseService.getTools();
+                        console.log('Fetched tools:', data);
+                        setCachedData(CACHE_KEYS.TOOLS, data);
+                        return data;
+                    })(),
+                    (async () => {
+                        const cached = getCachedData(CACHE_KEYS.DURATIONS);
+                        if (cached) {
+                            console.log('Using cached durations:', cached);
+                            return cached;
+                        }
+                        console.log('Fetching durations from API...');
+                        const data = await courseService.getDurations();
+                        console.log('Fetched durations:', data);
+                        setCachedData(CACHE_KEYS.DURATIONS, data);
+                        return data;
+                    })()
+                ]);
+
+                // Update all states at once
+                setCategories(['All Categories', ...categoriesData]);
+                setTools(['All Tools', ...toolsData]);
+                setDurations(durationsData);
+
+                console.log('All filter options loaded successfully');
+            } catch (error) {
+                console.error('Error fetching filter options:', error);
+                // Fallback to default values if API fails
+                setCategories(['All Categories', 'Web Development', 'Data Science', 'Mobile Development']);
+                setTools(['All Tools', 'JavaScript', 'Python', 'React', 'Node.js']);
+                setDurations(['4 weeks', '8 weeks', '12 weeks']);
+            } finally {
+                setFilterOptionsLoading(false);
+            }
+        };
+
+        fetchFilterOptions();
+    }, []);
+
+    // Map API courses to component interface
+    const courses: Course[] = (apiCourses || []).map((course: any) => ({
+        _id: course._id,
+        courseName: course.courseName || course.title,
+        courseCategory: course.courseCategory || course.category,
+        instructorName: course.instructorName || `${course.instructor?.firstName || ''} ${course.instructor?.lastName || ''}`.trim(),
+        description: course.description,
+        rating: course.rating || 0,
+        skills: course.skills || [],
+        tools: course.tools || [],
+        startingDate: course.startingDate || course.createdAt,
+        duration: typeof course.duration === 'string' ? course.duration : `${course.duration} weeks`,
+        price: course.price || 0,
+        courseFlyerURL: course.courseFlyerURL || course.thumbnail || '/placeholder-course.jpg',
+        numberOfUserEnrolled: course.numberOfUserEnrolled || course.enrollmentCount || 0,
+    }));
+
+    // Fetch courses with filters
+    const fetchCourses = async (pageNumber: number = 1) => {
+        const params: any = {
+            page: pageNumber,
+            size: 12,
+            sortBy,
+            sortOrder,
+        };
+
+        // Add filters only if they're not default values
+        if (selectedCategory && selectedCategory !== 'All Categories') {
+            params.category = selectedCategory;
+        }
+        if (selectedTool && selectedTool !== 'All Tools') {
+            params.tools = selectedTool;
+        }
+        if (minRating > 0) {
+            params.minRating = minRating;
+        }
+        if (searchQuery.trim()) {
+            params.search = searchQuery.trim();
+        }
+
+        try {
+            await getAllCourses(params);
+        } catch (error) {
+            console.error('Failed to fetch courses:', error);
+        }
+    };
+
+    // Fetch courses on mount and when filters change
+    useEffect(() => {
+        fetchCourses(1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedCategory, selectedTool, minRating, sortBy, sortOrder, searchQuery]);
+
+    // Handle URL search param change
+    useEffect(() => {
+        const urlSearchParam = searchParams.get('search');
+        if (urlSearchParam && urlSearchParam !== searchQuery) {
+            setSearchQuery(urlSearchParam);
+        } else if (!urlSearchParam && searchQuery) {
+            // Clear search if URL has no search param but local state does
+            setSearchQuery('');
+        }
+    }, [searchParams]);
 
     const formatEnrollment = (count: number): string => {
         if (count >= 1000000) {
@@ -264,65 +262,55 @@ export default function AllCoursesPageAPI(): React.JSX.Element {
         }));
     };
 
-    const handlePageChange = (page: number) => {
-        // In production, fetch new data from API with the new page number
-        // Example: fetchCourses(page, pageSize, filters, sort)
-
-        setApiResponse(prev => ({
-            ...prev,
-            data: {
-                ...prev.data,
-                pagination: {
-                    ...prev.data.pagination,
-                    currentPage: page,
-                    hasNextPage: page < prev.data.pagination.totalPages,
-                    hasPrevPage: page > 1
-                }
-            }
-        }));
-
+    const handlePageChange = (pageNumber: number) => {
+        fetchCourses(pageNumber);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleSortChange = (value: string) => {
+        switch (value) {
+            case 'popular':
+                setSortBy('enrollmentCount');
+                setSortOrder('desc');
+                break;
+            case 'rating':
+                setSortBy('rating');
+                setSortOrder('desc');
+                break;
+            case 'newest':
+                setSortBy('createdAt');
+                setSortOrder('desc');
+                break;
+            case 'price-low':
+                setSortBy('price');
+                setSortOrder('asc');
+                break;
+            case 'price-high':
+                setSortBy('price');
+                setSortOrder('desc');
+                break;
+            default:
+                setSortBy('enrollmentCount');
+                setSortOrder('desc');
+        }
     };
 
     const clearAllFilters = () => {
         setSearchQuery('');
         setSelectedCategory('All Categories');
         setSelectedTool('All Tools');
-        setSelectedDuration('All Durations');
-        setSelectedRating(0);
-        setSortBy('popular');
+        setMinRating(0);
+        setSortBy('enrollmentCount');
+        setSortOrder('desc');
+        // Clear URL params
+        router.push('/courses');
     };
 
     const hasActiveFilters =
         searchQuery !== '' ||
         selectedCategory !== 'All Categories' ||
         selectedTool !== 'All Tools' ||
-        selectedDuration !== 'All Durations' ||
-        selectedRating !== 0;
-
-    /* 
-    // Example API integration:
-    const fetchCourses = async (page: number) => {
-        const params = new URLSearchParams({
-            page: page.toString(),
-            pageSize: '10',
-            ...(selectedCategory !== 'All Categories' && { category: selectedCategory }),
-            ...(selectedTool !== 'All Tools' && { tool: selectedTool }),
-            ...(selectedDuration !== 'All Durations' && { duration: selectedDuration }),
-            ...(selectedRating > 0 && { minRating: selectedRating.toString() }),
-            ...(searchQuery && { search: searchQuery }),
-            sort: sortBy
-        });
-        
-        const response = await fetch(`/api/courses?${params}`);
-        const data = await response.json();
-        setApiResponse(data);
-    };
-    
-    useEffect(() => {
-        fetchCourses(pagination.currentPage);
-    }, [pagination.currentPage, selectedCategory, selectedTool, selectedDuration, selectedRating, sortBy, searchQuery]);
-    */
+        minRating !== 0;
 
     return (
         <div className={`${styles.allCoursesPage} min-h-screen py-6 sm:py-8 lg:py-12`}>
@@ -333,7 +321,7 @@ export default function AllCoursesPageAPI(): React.JSX.Element {
                         All <span className={styles.gradientText}>Courses</span>
                     </h1>
                     <p className={`${styles.pageSubtitle} text-base sm:text-lg`}>
-                        Explore {pagination.totalCourses} courses to advance your skills
+                        Explore {total || 0} courses to advance your skills
                     </p>
                 </div>
 
@@ -345,7 +333,7 @@ export default function AllCoursesPageAPI(): React.JSX.Element {
                             <Search className={`${styles.searchIcon} absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5`} />
                             <input
                                 type="text"
-                                placeholder="Search by course name ..."
+                                placeholder="Search by course name, skills, or tools..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className={`${styles.searchInput} w-full pl-12 pr-4 py-3.5 rounded-xl text-sm sm:text-base`}
@@ -363,8 +351,8 @@ export default function AllCoursesPageAPI(): React.JSX.Element {
                         {/* Sort Dropdown and Filter Toggle */}
                         <div className="flex gap-3">
                             <select
-                                value={sortBy}
-                                onChange={(e) => setSortBy(e.target.value)}
+                                onChange={(e) => handleSortChange(e.target.value)}
+                                defaultValue="popular"
                                 className={`${styles.sortSelect} px-4 py-3.5 rounded-xl text-sm sm:text-base font-medium min-w-[160px]`}
                             >
                                 <option value="popular">Most Popular</option>
@@ -393,8 +381,7 @@ export default function AllCoursesPageAPI(): React.JSX.Element {
                                 {searchQuery && <span className="ml-2">Search: &quot;{searchQuery}&quot;</span>}
                                 {selectedCategory !== 'All Categories' && <span className="ml-2">• Category: {selectedCategory}</span>}
                                 {selectedTool !== 'All Tools' && <span className="ml-2">• Tool: {selectedTool}</span>}
-                                {selectedDuration !== 'All Durations' && <span className="ml-2">• Duration: {selectedDuration}</span>}
-                                {selectedRating > 0 && <span className="ml-2">• Rating: {selectedRating}+</span>}
+                                {minRating > 0 && <span className="ml-2">• Rating: {minRating}+</span>}
                             </div>
                             <button
                                 onClick={clearAllFilters}
@@ -496,37 +483,6 @@ export default function AllCoursesPageAPI(): React.JSX.Element {
                                     )}
                                 </div>
 
-                                {/* Duration Filter */}
-                                <div>
-                                    <button
-                                        onClick={() => toggleSection('duration')}
-                                        className="w-full flex items-center justify-between mb-3"
-                                    >
-                                        <span className={`${styles.filterSubLabel} text-sm font-semibold`}>
-                                            Course Duration
-                                        </span>
-                                        {expandedSections.duration ? (
-                                            <ChevronUp className="w-4 h-4" />
-                                        ) : (
-                                            <ChevronDown className="w-4 h-4" />
-                                        )}
-                                    </button>
-                                    {expandedSections.duration && (
-                                        <div className="flex flex-wrap gap-2">
-                                            {durations.map((duration) => (
-                                                <button
-                                                    key={duration}
-                                                    onClick={() => setSelectedDuration(duration)}
-                                                    className={`${styles.categoryChip} ${selectedDuration === duration ? styles.categoryChipActive : ''
-                                                        } px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300`}
-                                                >
-                                                    {duration}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-
                                 {/* Rating Filter */}
                                 <div>
                                     <button
@@ -547,8 +503,8 @@ export default function AllCoursesPageAPI(): React.JSX.Element {
                                             {ratingOptions.map((option) => (
                                                 <button
                                                     key={option.value}
-                                                    onClick={() => setSelectedRating(option.value)}
-                                                    className={`${styles.categoryChip} ${selectedRating === option.value ? styles.categoryChipActive : ''
+                                                    onClick={() => setMinRating(option.value)}
+                                                    className={`${styles.categoryChip} ${minRating === option.value ? styles.categoryChipActive : ''
                                                         } px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 flex items-center gap-1`}
                                                 >
                                                     {option.value > 0 && <Star className="w-3 h-3 fill-current" />}
@@ -565,7 +521,22 @@ export default function AllCoursesPageAPI(): React.JSX.Element {
                 </div>
 
                 {/* Course Grid */}
-                {courses.length > 0 ? (
+                {loading ? (
+                    // Loading skeletons
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6 mb-8 sm:mb-10 lg:mb-12">
+                        {Array.from({ length: 8 }).map((_, index) => (
+                            <div key={index} className={`${styles.courseCard} rounded-2xl overflow-hidden animate-pulse`}>
+                                <div className="w-full h-44 sm:h-48 lg:h-52 bg-gray-200 dark:bg-gray-700"></div>
+                                <div className="p-4 sm:p-5 space-y-3">
+                                    <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+                                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                                    <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : courses.length > 0 ? (
                     <>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6 mb-8 sm:mb-10 lg:mb-12">
                             {courses.map((course) => (
@@ -646,12 +617,12 @@ export default function AllCoursesPageAPI(): React.JSX.Element {
 
                         {/* Pagination - Always Show */}
                         <Pagination
-                            currentPage={pagination.currentPage}
-                            totalPages={pagination.totalPages}
-                            hasNextPage={pagination.hasNextPage}
-                            hasPrevPage={pagination.hasPrevPage}
-                            totalCourses={pagination.totalCourses}
-                            pageSize={pagination.pageSize}
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            hasNextPage={currentPage < totalPages}
+                            hasPrevPage={currentPage > 1}
+                            totalCourses={total}
+                            pageSize={12}
                             onPageChange={handlePageChange}
                             alwaysShow={true}
                         />
