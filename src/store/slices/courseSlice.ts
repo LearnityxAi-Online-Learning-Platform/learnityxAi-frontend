@@ -141,7 +141,7 @@ const courseSlice = createSlice({
       })
       .addCase(fetchRecommendations.fulfilled, (state, action: PayloadAction<RecommendationResponse>) => {
         state.recommendationsLoading = false;
-        state.recommendations = action.payload.recommendations;
+        state.recommendations = action.payload.courses;
         state.recommendationsError = null;
       })
       .addCase(fetchRecommendations.rejected, (state, action) => {
@@ -157,7 +157,7 @@ const courseSlice = createSlice({
       })
       .addCase(refreshRecommendations.fulfilled, (state, action: PayloadAction<RecommendationResponse>) => {
         state.recommendationsLoading = false;
-        state.recommendations = action.payload.recommendations;
+        state.recommendations = action.payload.courses;
         state.recommendationsError = null;
       })
       .addCase(refreshRecommendations.rejected, (state, action) => {

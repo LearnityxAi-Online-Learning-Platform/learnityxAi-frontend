@@ -27,6 +27,7 @@ export default function NavBar(): JSX.Element {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
     const [isExploreOpen, setIsExploreOpen] = useState<boolean>(false);
     const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
+    const [searchQuery, setSearchQuery] = useState<string>('');
     const exploreRef = useRef<HTMLDivElement>(null);
     const profileRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
@@ -46,6 +47,15 @@ export default function NavBar(): JSX.Element {
 
     const toggleProfile = (): void => {
         setIsProfileOpen(!isProfileOpen);
+    };
+
+    const handleSearch = (e: React.FormEvent): void => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            // Navigate to search results page with query parameter
+            router.push(`/courses?search=${encodeURIComponent(searchQuery.trim())}`);
+            setSearchQuery(''); // Clear search after navigation
+        }
     };
 
     const handleLogout = async (): Promise<void> => {
@@ -145,21 +155,23 @@ export default function NavBar(): JSX.Element {
 
                     {/* Center Section - Search Bar (Desktop & Tablet) */}
                     <div className="hidden md:flex flex-1 max-w-xl lg:max-w-2xl mx-2 lg:mx-4">
-                        <div className="relative w-full">
+                        <form onSubmit={handleSearch} className="relative w-full">
                             <input
                                 type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="What do you want to learn?"
                                 className={`w-full px-4 pr-12 py-3.5 rounded-full text-sm font-medium transition-all outline-none ${styles.searchInput}`}
                                 aria-label="Search courses"
                             />
                             <button
+                                type="submit"
                                 className={`absolute right-1.5 top-1/2 -translate-y-1/2 p-2 rounded-full transition-all ${styles.searchBtn}`}
-                                type="button"
                                 aria-label="Search"
                             >
                                 <Search size={20} />
                             </button>
-                        </div>
+                        </form>
                     </div>
 
                     {/* Right Section - Theme Toggle, Auth Buttons/Profile & Mobile Menu */}
@@ -299,21 +311,23 @@ export default function NavBar(): JSX.Element {
 
                 {/* Mobile Search Bar */}
                 <div className="md:hidden pb-3">
-                    <div className="relative w-full">
+                    <form onSubmit={handleSearch} className="relative w-full">
                         <input
                             type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="What do you want to learn?"
                             className={`w-full px-4 pr-12 py-2.5 rounded-full text-sm font-medium transition-all outline-none ${styles.searchInput}`}
                             aria-label="Search courses"
                         />
                         <button
+                            type="submit"
                             className={`absolute right-1.5 top-1/2 -translate-y-1/2 p-2 rounded-full transition-all active:scale-95 ${styles.searchBtn}`}
-                            type="button"
                             aria-label="Search"
                         >
                             <Search size={18} />
                         </button>
-                    </div>
+                    </form>
                 </div>
             </div>
 

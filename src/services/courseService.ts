@@ -5,38 +5,80 @@ import { localStorageCache } from '@/lib/localStorageCache';
 // Course Types
 export interface Course {
   _id: string;
-  title: string;
+  // Support both naming conventions
+  title?: string;
+  courseName?: string;
   description: string;
-  instructor: {
+  // Nested instructor object (from some endpoints)
+  instructor?: {
     _id: string;
     firstName: string;
     lastName: string;
     profileImage: string;
   };
-  category: string;
-  level: 'beginner' | 'intermediate' | 'advanced';
+  // Flat instructor name (from recommendations endpoint)
+  instructorName?: string;
+  category?: string;
+  courseCategory?: string;
+  level?: 'beginner' | 'intermediate' | 'advanced';
   price: number;
-  thumbnail: string;
+  thumbnail?: string;
+  courseFlyerURL?: string;
   rating: number;
-  enrollmentCount: number;
-  duration: number;
-  createdAt: string;
-  updatedAt: string;
+  totalRatings?: number;
+  enrollmentCount?: number;
+  numberOfUserEnrolled?: number;
+  duration?: number | string;
+  skills?: string[];
+  tools?: string[];
+  whatYouWillLearn?: string[];
+  startingDate?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface RecommendationResponse {
-  recommendations: Course[];
-  algorithm: string;
-  generatedAt: string;
+  courses: Course[];
+  pagination: {
+    currentPage: number;
+    pageSize: number;
+    totalCourses: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
+  recommendationType: string;
+  cached: boolean;
+  apiUsage?: {
+    global: {
+      used: number;
+      remaining: number;
+      limit: number;
+      percentageUsed: string;
+    };
+    personal: {
+      used: number;
+      remaining: number;
+      limit: number;
+      hoursUntilReset: number;
+    };
+  };
 }
 
 export interface GetCoursesParams {
   page?: number;
   limit?: number;
+  size?: number;
   category?: string;
   level?: string;
   search?: string;
+  skills?: string;
+  tools?: string;
+  instructorName?: string;
+  minPrice?: number;
+  maxPrice?: number;
   sortBy?: 'rating' | 'price' | 'enrollmentCount' | 'createdAt';
+  sortOrder?: 'asc' | 'desc';
   order?: 'asc' | 'desc';
 }
 
@@ -67,6 +109,8 @@ class CourseService {
   async getRecommendations(options?: {
     forceRefresh?: boolean;
     userId?: string;
+    page?: number;
+    size?: number;
   }): Promise<RecommendationResponse> {
     const cacheKey = options?.userId
       ? `${this.CACHE_KEYS.RECOMMENDATIONS}_${options.userId}`
@@ -80,8 +124,14 @@ class CourseService {
       },
       async () => {
         const response = await axiosInstance.get<ApiSuccessResponse<RecommendationResponse>>(
-          '/api/courses/recommendations',
-          { params: { userId: options?.userId } }
+          '/api/recommendations',
+          {
+            params: {
+              userId: options?.userId,
+              page: options?.page || 1,
+              size: options?.size || 10
+            }
+          }
         );
         return response.data.data;
       },
@@ -213,6 +263,37 @@ class CourseService {
       total: number;
     }>>('/api/courses/search', {
       params: { search: searchQuery, ...params },
+    });
+    return response.data.data;
+  }
+
+  /**
+   * Get top rated courses (sorted by rating descending)
+   */
+  async getTopRatedCourses(params?: { page?: number; size?: number }): Promise<{
+    courses: Course[];
+    pagination: {
+      currentPage: number;
+      pageSize: number;
+      totalCourses: number;
+      totalPages: number;
+    };
+  }> {
+    const response = await axiosInstance.get<ApiSuccessResponse<{
+      courses: Course[];
+      pagination: {
+        currentPage: number;
+        pageSize: number;
+        totalCourses: number;
+        totalPages: number;
+      };
+    }>>('/api/courses', {
+      params: {
+        sortBy: 'rating',
+        sortOrder: 'desc',
+        page: params?.page || 1,
+        size: params?.size || 15,
+      },
     });
     return response.data.data;
   }
