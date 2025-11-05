@@ -80,9 +80,14 @@ export default function Login() {
 
             const result = await login(payload);
 
-            // Only redirect if login was successful
+            // Role-based redirect after successful login
             if (result) {
-                router.push('/');
+                // Redirect based on user role
+                if (result.user.role === 'instructor') {
+                    router.push('/dashboard');
+                } else {
+                    router.push('/');
+                }
             }
 
         } catch (error: any) {
