@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuthHook';
 import styles from './AuthComponents.module.scss';
 
 interface LoginFormData {
@@ -18,6 +20,9 @@ interface FormErrors {
 }
 
 export default function Login() {
+    const router = useRouter();
+    const { login, loading, error: authError } = useAuth();
+
     const [formData, setFormData] = useState<LoginFormData>({
         email: '',
         password: ''
@@ -25,7 +30,6 @@ export default function Login() {
 
     const [errors, setErrors] = useState<FormErrors>({});
     const [showPassword, setShowPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
 
     const validateEmail = (email: string): boolean => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -64,7 +68,6 @@ export default function Login() {
 
         if (!validateForm()) return;
 
-        setIsLoading(true);
         setErrors({});
 
         try {
@@ -72,27 +75,16 @@ export default function Login() {
                 email: formData.email,
                 password: formData.password
             };
-            console.log('Login payload:', payload);
 
-            // Simulate API response
-            setTimeout(() => {
-                const isSuccess = Math.random() > 0.3;
+            await login(payload);
 
-                if (isSuccess) {
-                    setIsLoading(false);
-                    console.log('Login successful');
-                } else {
-                    setIsLoading(false);
-                    setErrors({
-                        backend: 'Invalid email or password. Please try again.'
-                    });
-                }
-            }, 1500);
+            // On success, redirect to home page
+            router.push('/');
 
-        } catch (error) {
-            setIsLoading(false);
+        } catch (error: any) {
+            const errorMessage = error?.message || authError || 'Invalid email or password. Please try again.';
             setErrors({
-                backend: 'An error occurred. Please try again later.'
+                backend: errorMessage
             });
         }
     };
@@ -146,7 +138,7 @@ export default function Login() {
                                     onChange={(e) => handleInputChange('email', e.target.value)}
                                     className={`${styles.formInput} ${errors.email ? styles.inputError : ''} w-full pl-10 pr-3 py-2.5 rounded-lg text-sm border-2 transition-all duration-200`}
                                     placeholder="Enter your email"
-                                    disabled={isLoading}
+                                    disabled={loading}
                                     autoComplete="email"
                                 />
                             </div>
@@ -169,14 +161,14 @@ export default function Login() {
                                     onChange={(e) => handleInputChange('password', e.target.value)}
                                     className={`${styles.formInput} ${errors.password ? styles.inputError : ''} w-full pl-10 pr-11 py-2.5 rounded-lg text-sm border-2 transition-all duration-200`}
                                     placeholder="Enter your password"
-                                    disabled={isLoading}
+                                    disabled={loading}
                                     autoComplete="current-password"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
                                     className={`${styles.passwordToggle} absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md transition-all duration-200`}
-                                    disabled={isLoading}
+                                    disabled={loading}
                                 >
                                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                 </button>
@@ -196,10 +188,10 @@ export default function Login() {
                         {/* Submit Button */}
                         <button
                             type="submit"
-                            disabled={isLoading}
+                            disabled={loading}
                             className={`${styles.authButton} w-full py-2.5 sm:py-3 rounded-lg font-semibold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed`}
                         >
-                            {isLoading ? (
+                            {loading ? (
                                 <>
                                     <span className={`${styles.spinner} w-4 h-4 border-2 rounded-full animate-spin`}></span>
                                     Logging in...

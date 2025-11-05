@@ -3,20 +3,15 @@
 import React, { JSX, useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Search, Menu, X, ChevronDown, User, BookOpen, Star, LogOut } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle/themeToggle';
+import { useAuth } from '@/hooks/useAuthHook';
 import styles from './NavBar.module.scss';
 
 interface NavLink {
     label: string;
     href: string;
-}
-
-interface UserProfile {
-    firstName: string;
-    lastName?: string;
-    email: string;
-    profilePicture?: string;
 }
 
 const exploreLinks: NavLink[] = [
@@ -34,16 +29,11 @@ export default function NavBar(): JSX.Element {
     const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
     const exploreRef = useRef<HTMLDivElement>(null);
     const profileRef = useRef<HTMLDivElement>(null);
+    const router = useRouter();
 
-    // Mock user data - Replace with actual auth context/state
-    const [user, setUser] = useState<UserProfile | null>({
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@example.com',
-        profilePicture: '' // Optional: URL to profile picture
-    });
-
-    const isLoggedIn = !!user;
+    // Use real auth state from Redux
+    const { user, isAuthenticated, logout } = useAuth();
+    const isLoggedIn = isAuthenticated && !!user;
 
     const toggleMobileMenu = (): void => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -57,10 +47,15 @@ export default function NavBar(): JSX.Element {
         setIsProfileOpen(!isProfileOpen);
     };
 
-    const handleLogout = (): void => {
-        // Add logout logic here
-        setUser(null);
-        setIsProfileOpen(false);
+    const handleLogout = async (): Promise<void> => {
+        try {
+            await logout();
+        } catch (error) {
+            console.error('Logout error:', error);
+        } finally {
+            setIsProfileOpen(false);
+            router.push('/login');
+        }
     };
 
     // Close dropdowns when clicking outside
@@ -185,9 +180,9 @@ export default function NavBar(): JSX.Element {
                                 >
                                     {/* Avatar */}
                                     <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm ${styles.avatar}`}>
-                                        {user.profilePicture ? (
+                                        {user.profileImage ? (
                                             <Image
-                                                src={user.profilePicture}
+                                                src={user.profileImage}
                                                 alt={user.firstName}
                                                 width={36}
                                                 height={36}
@@ -348,9 +343,9 @@ export default function NavBar(): JSX.Element {
                                     {/* User Info */}
                                     <div className={`flex items-center gap-3 mb-4 px-2 ${styles.mobileUserInfo}`}>
                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-base ${styles.avatar}`}>
-                                            {user.profilePicture ? (
+                                            {user.profileImage ? (
                                                 <Image
-                                                    src={user.profilePicture}
+                                                    src={user.profileImage}
                                                     alt={user.firstName}
                                                     width={48}
                                                     height={48}
