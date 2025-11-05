@@ -605,11 +605,17 @@ export default function InstructorProfile() {
         }
         onConfirm={handleDeleteConfirm}
         title="Delete Account"
-        description={`Are you sure you want to permanently delete your account? This action cannot be undone and will delete all your data including:\n\n• Your profile and personal information\n• All courses you've created\n• Student enrollments and progress\n• All associated records\n\nType your email (${profile?.email}) to confirm deletion.`}
+        description={`Are you sure you want to permanently delete your account? This action cannot be undone and will delete all your data including:
+
+• Your profile and personal information
+• All courses you've created
+• Student enrollments and progress
+• All associated records`}
         confirmText="Delete My Account"
         cancelText="Cancel"
         variant="danger"
         isLoading={deleteDialog.isLoading}
+        requirePassword={true}
       />
     </div>
   );
