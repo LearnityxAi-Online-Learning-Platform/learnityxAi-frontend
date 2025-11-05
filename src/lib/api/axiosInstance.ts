@@ -30,8 +30,13 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // If token expired and we haven't retried yet
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Skip auto-redirect for auth endpoints (login, register, etc.)
+    // These should handle their own errors and show messages to the user
+    const authEndpoints = ['/api/auth/login', '/api/auth/register', '/api/auth/forgot-password', '/api/auth/verify-otp', '/api/auth/reset-password'];
+    const isAuthEndpoint = authEndpoints.some(endpoint => originalRequest.url?.includes(endpoint));
+
+    // If token expired and we haven't retried yet, and NOT an auth endpoint
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
       originalRequest._retry = true;
 
       try {
@@ -40,6 +45,7 @@ axiosInstance.interceptors.response.use(
         if (!refreshToken) {
           // No refresh token, redirect to login
           localStorage.removeItem('accessToken');
+          localStorage.removeItem('user');
           window.location.href = '/login';
           return Promise.reject(error);
         }
@@ -52,6 +58,7 @@ axiosInstance.interceptors.response.use(
         if (response.data.success) {
           const newAccessToken = response.data.data.accessToken;
           localStorage.setItem('accessToken', newAccessToken);
+          Cookies.set('accessToken', newAccessToken, { expires: 1/24 });
 
           // Retry the original request with new token
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
@@ -60,6 +67,8 @@ axiosInstance.interceptors.response.use(
       } catch (refreshError) {
         // Refresh failed, clear tokens and redirect to login
         localStorage.removeItem('accessToken');
+        localStorage.removeItem('user');
+        Cookies.remove('accessToken');
         Cookies.remove('refreshToken');
         window.location.href = '/login';
         return Promise.reject(refreshError);

@@ -42,6 +42,7 @@ function NewPasswordContent() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [showToast, setShowToast] = useState(false);
+    const [backendErrorTimestamp, setBackendErrorTimestamp] = useState<number>(0);
 
     useEffect(() => {
         if (!email || !otp) {
@@ -104,7 +105,8 @@ function NewPasswordContent() {
         if (errors[field]) {
             setErrors({ ...errors, [field]: undefined });
         }
-        if (errors.backend) {
+        // Only clear backend error if it's been displayed for at least 2 seconds
+        if (errors.backend && Date.now() - backendErrorTimestamp >= 2000) {
             setErrors({ ...errors, backend: undefined });
         }
     };
@@ -131,10 +133,11 @@ function NewPasswordContent() {
             }, 2000);
 
         } catch (error: any) {
-            const errorMessage = error?.message || 'Failed to reset password. Please try again.';
+            const errorMessage = error || 'Failed to reset password. Please try again.';
             setErrors({
-                backend: errorMessage
+                backend: typeof errorMessage === 'string' ? errorMessage : errorMessage?.message || 'Failed to reset password. Please try again.'
             });
+            setBackendErrorTimestamp(Date.now());
         }
     };
 

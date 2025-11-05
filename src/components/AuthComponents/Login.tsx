@@ -30,6 +30,7 @@ export default function Login() {
 
     const [errors, setErrors] = useState<FormErrors>({});
     const [showPassword, setShowPassword] = useState(false);
+    const [backendErrorTimestamp, setBackendErrorTimestamp] = useState<number>(0);
 
     const validateEmail = (email: string): boolean => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -58,7 +59,8 @@ export default function Login() {
         if (errors[field]) {
             setErrors({ ...errors, [field]: undefined });
         }
-        if (errors.backend) {
+        // Only clear backend error if it's been displayed for at least 2 seconds
+        if (errors.backend && Date.now() - backendErrorTimestamp >= 2000) {
             setErrors({ ...errors, backend: undefined });
         }
     };
@@ -76,16 +78,20 @@ export default function Login() {
                 password: formData.password
             };
 
-            await login(payload);
+            const result = await login(payload);
 
-            // On success, redirect to home page
-            router.push('/');
+            // Only redirect if login was successful
+            if (result) {
+                router.push('/');
+            }
 
         } catch (error: any) {
-            const errorMessage = error?.message || authError || 'Invalid email or password. Please try again.';
+            // Handle error from unwrap() - this will contain the rejection value
+            const errorMessage = error || authError || 'Invalid email or password. Please try again.';
             setErrors({
-                backend: errorMessage
+                backend: typeof errorMessage === 'string' ? errorMessage : errorMessage?.message || 'Invalid email or password. Please try again.'
             });
+            setBackendErrorTimestamp(Date.now());
         }
     };
 

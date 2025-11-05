@@ -18,6 +18,7 @@ export default function ForgotPassword() {
     const { forgotPassword, loading } = useAuth();
     const [email, setEmail] = useState('');
     const [errors, setErrors] = useState<FormErrors>({});
+    const [backendErrorTimestamp, setBackendErrorTimestamp] = useState<number>(0);
 
     const validateEmail = (email: string): boolean => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -42,7 +43,8 @@ export default function ForgotPassword() {
         if (errors.email) {
             setErrors({ ...errors, email: undefined });
         }
-        if (errors.backend) {
+        // Only clear backend error if it's been displayed for at least 2 seconds
+        if (errors.backend && Date.now() - backendErrorTimestamp >= 2000) {
             setErrors({ ...errors, backend: undefined });
         }
     };
@@ -61,10 +63,11 @@ export default function ForgotPassword() {
             router.push(`/otp?email=${encodeURIComponent(email)}`);
 
         } catch (error: any) {
-            const errorMessage = error?.message || 'Failed to send verification code. Please try again.';
+            const errorMessage = error || 'Failed to send verification code. Please try again.';
             setErrors({
-                backend: errorMessage
+                backend: typeof errorMessage === 'string' ? errorMessage : errorMessage?.message || 'Failed to send verification code. Please try again.'
             });
+            setBackendErrorTimestamp(Date.now());
         }
     };
 

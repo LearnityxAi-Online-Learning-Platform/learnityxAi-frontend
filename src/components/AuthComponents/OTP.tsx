@@ -21,6 +21,7 @@ function OTPContent() {
 
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [errors, setErrors] = useState<FormErrors>({});
+    const [backendErrorTimestamp, setBackendErrorTimestamp] = useState<number>(0);
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
     useEffect(() => {
@@ -41,7 +42,8 @@ function OTPContent() {
         if (errors.otp) {
             setErrors({ ...errors, otp: undefined });
         }
-        if (errors.backend) {
+        // Only clear backend error if it's been displayed for at least 2 seconds
+        if (errors.backend && Date.now() - backendErrorTimestamp >= 2000) {
             setErrors({ ...errors, backend: undefined });
         }
 
@@ -93,7 +95,8 @@ function OTPContent() {
             if (errors.otp) {
                 setErrors({ ...errors, otp: undefined });
             }
-            if (errors.backend) {
+            // Only clear backend error if it's been displayed for at least 2 seconds
+            if (errors.backend && Date.now() - backendErrorTimestamp >= 2000) {
                 setErrors({ ...errors, backend: undefined });
             }
         }
@@ -127,10 +130,11 @@ function OTPContent() {
             router.push(`/new-password?email=${encodeURIComponent(email)}&otp=${otpValue}`);
 
         } catch (error: any) {
-            const errorMessage = error?.message || 'Invalid verification code. Please try again.';
+            const errorMessage = error || 'Invalid verification code. Please try again.';
             setErrors({
-                backend: errorMessage
+                backend: typeof errorMessage === 'string' ? errorMessage : errorMessage?.message || 'Invalid verification code. Please try again.'
             });
+            setBackendErrorTimestamp(Date.now());
         }
     };
 

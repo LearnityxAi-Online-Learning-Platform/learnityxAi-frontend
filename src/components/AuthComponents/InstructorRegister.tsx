@@ -45,6 +45,7 @@ export default function InstructorRegister() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [showToast, setShowToast] = useState(false);
+    const [backendErrorTimestamp, setBackendErrorTimestamp] = useState<number>(0);
 
     const validateEmail = (email: string): boolean => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -104,7 +105,8 @@ export default function InstructorRegister() {
         if (errors[field]) {
             setErrors({ ...errors, [field]: undefined });
         }
-        if (errors.backend) {
+        // Only clear backend error if it's been displayed for at least 2 seconds
+        if (errors.backend && Date.now() - backendErrorTimestamp >= 2000) {
             setErrors({ ...errors, backend: undefined });
         }
     };
@@ -147,10 +149,11 @@ export default function InstructorRegister() {
             }, 2000);
 
         } catch (error: any) {
-            const errorMessage = error?.message || 'Registration failed. Please try again.';
+            const errorMessage = error || 'Registration failed. Please try again.';
             setErrors({
-                backend: errorMessage
+                backend: typeof errorMessage === 'string' ? errorMessage : errorMessage?.message || 'Registration failed. Please try again.'
             });
+            setBackendErrorTimestamp(Date.now());
         }
     };
 
