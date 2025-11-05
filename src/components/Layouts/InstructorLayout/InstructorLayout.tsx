@@ -110,7 +110,7 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
       section: "Account",
       items: [
         {
-          href: "/instructor-profile.tsx",
+          href: "/instructor-profile",
           label: "Profile",
           icon: <User size={22} />,
         },

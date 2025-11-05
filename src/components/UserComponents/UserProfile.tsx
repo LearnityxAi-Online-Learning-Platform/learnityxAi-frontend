@@ -624,11 +624,17 @@ export default function UserProfile() {
                 onClose={() => setShowDeleteDialog(false)}
                 onConfirm={handleDeleteAccount}
                 title="Delete Account"
-                description="Are you absolutely sure you want to delete your account? This action cannot be undone. All your data, courses, and progress will be permanently removed."
+                description={`Are you absolutely sure you want to delete your account? This action cannot be undone and will delete all your data including:
+
+• Your profile and personal information
+• All your enrolled courses and progress
+• Your learning history and achievements
+• All associated records`}
                 confirmText="Yes, Delete My Account"
                 cancelText="Cancel"
                 variant="danger"
                 isLoading={isDeleting}
+                requirePassword={true}
             />
 
             {/* Success Toast Notification */}
