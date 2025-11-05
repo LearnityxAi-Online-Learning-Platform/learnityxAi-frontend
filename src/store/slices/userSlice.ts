@@ -206,6 +206,30 @@ export const deleteRating = createAsyncThunk(
   }
 );
 
+export const getAllUserRatings = createAsyncThunk(
+  'user/getAllUserRatings',
+  async ({ page, size }: { page?: number; size?: number }, { rejectWithValue }) => {
+    try {
+      const response = await userService.getAllUserRatings(page, size);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || { message: 'Failed to fetch user ratings' });
+    }
+  }
+);
+
+export const unenrollFromCourse = createAsyncThunk(
+  'user/unenrollFromCourse',
+  async (courseId: string, { rejectWithValue }) => {
+    try {
+      await userService.unenrollFromCourse(courseId);
+      return courseId;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || { message: 'Failed to unenroll from course' });
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -460,6 +484,52 @@ const userSlice = createSlice({
         state.loading = false;
         const error = action.payload as ApiError;
         state.error = error.message || 'Failed to delete rating';
+      });
+
+    // Get All User Ratings
+    builder
+      .addCase(getAllUserRatings.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllUserRatings.fulfilled, (state, action) => {
+        state.loading = false;
+        state.ratings = action.payload.ratings;
+        // Transform RatingsResponse pagination to match Pagination interface
+        state.pagination = {
+          currentPage: action.payload.pagination.currentPage,
+          pageSize: action.payload.pagination.pageSize,
+          totalCourses: action.payload.pagination.totalRatings, // Map totalRatings to totalCourses
+          totalPages: action.payload.pagination.totalPages,
+          hasNextPage: action.payload.pagination.hasNextPage,
+          hasPrevPage: action.payload.pagination.hasPrevPage,
+        };
+        state.error = null;
+      })
+      .addCase(getAllUserRatings.rejected, (state, action) => {
+        state.loading = false;
+        const error = action.payload as ApiError;
+        state.error = error.message || 'Failed to fetch user ratings';
+      });
+
+    // Unenroll From Course
+    builder
+      .addCase(unenrollFromCourse.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(unenrollFromCourse.fulfilled, (state, action) => {
+        state.loading = false;
+        // Remove the course from enrolledCourses
+        state.enrolledCourses = state.enrolledCourses.filter(
+          course => course._id !== action.payload
+        );
+        state.error = null;
+      })
+      .addCase(unenrollFromCourse.rejected, (state, action) => {
+        state.loading = false;
+        const error = action.payload as ApiError;
+        state.error = error.message || 'Failed to unenroll from course';
       });
   },
 });

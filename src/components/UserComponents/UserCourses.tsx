@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import {
     BookOpen,
     Clock,
@@ -16,123 +18,27 @@ import styles from './UserComponents.module.scss';
 import AlertDialog from '../ui/AlertDialog';
 import Toast from '../ui/Toast';
 import Pagination from '../ui/Pagination';
-
-interface Course {
-    _id: string;
-    courseName: string;
-    courseCategory: string;
-    instructorId: string;
-    instructorName: string;
-    description: string;
-    rating: number;
-    totalRatings: number;
-    numberOfUserEnrolled: number;
-    skills: string[];
-    tools: string[];
-    startingDate: string;
-    duration: string;
-    price: number;
-    courseFlyerURL: string;
-    isActive: boolean;
-    createdAt: string;
-    updatedAt: string;
-}
-
-interface ApiResponse {
-    success: boolean;
-    message: string;
-    data: {
-        courses: Course[];
-        pagination: {
-            currentPage: number;
-            pageSize: number;
-            totalCourses: number;
-            totalPages: number;
-            hasNextPage: boolean;
-            hasPrevPage: boolean;
-        };
-    };
-}
+import { useUser } from '@/hooks/useUserHook';
+import { useAuth } from '@/hooks/useAuthHook';
+import { Course } from '@/types/userTypes';
 
 export default function UserCourses() {
-    // Mock API response - Replace with actual API call
-    const [coursesData, setCoursesData] = useState<ApiResponse>({
-        success: true,
-        message: "Enrolled courses retrieved successfully",
-        data: {
-            courses: [
-                {
-                    _id: "69055847ebcd89cbc8eecee9",
-                    courseName: "Complete Python Programming",
-                    courseCategory: "Web Development",
-                    instructorId: "690553d08deac7a86c92c678",
-                    instructorName: "Jane Instructor",
-                    description: "Learn Python from basics to advanced topics including Django and Flask. Master web development with real-world projects.",
-                    rating: 4.8,
-                    totalRatings: 156,
-                    numberOfUserEnrolled: 1243,
-                    skills: ["Python", "Django", "Flask", "REST APIs"],
-                    tools: ["Python", "Django", "PostgreSQL", "Git"],
-                    startingDate: "2024-02-01T00:00:00.000Z",
-                    duration: "12 weeks",
-                    price: 89.99,
-                    courseFlyerURL: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-                    isActive: true,
-                    createdAt: "2025-11-01T00:45:59.350Z",
-                    updatedAt: "2025-11-01T00:54:19.505Z",
-                },
-                {
-                    _id: "69055847ebcd89cbc8eecee8",
-                    courseName: "Modern React Development",
-                    courseCategory: "Frontend Development",
-                    instructorId: "690553d08deac7a86c92c677",
-                    instructorName: "John Developer",
-                    description: "Master React, Next.js, and modern frontend development practices with hands-on projects.",
-                    rating: 4.9,
-                    totalRatings: 203,
-                    numberOfUserEnrolled: 1567,
-                    skills: ["React", "Next.js", "TypeScript", "Tailwind CSS"],
-                    tools: ["VS Code", "Node.js", "Git", "Vercel"],
-                    startingDate: "2024-03-15T00:00:00.000Z",
-                    duration: "10 weeks",
-                    price: 99.99,
-                    courseFlyerURL: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-                    isActive: true,
-                    createdAt: "2025-10-28T00:45:59.350Z",
-                    updatedAt: "2025-10-28T00:54:19.505Z",
-                },
-                {
-                    _id: "69055847ebcd89cbc8eecee7",
-                    courseName: "Full Stack JavaScript",
-                    courseCategory: "Full Stack Development",
-                    instructorId: "690553d08deac7a86c92c676",
-                    instructorName: "Sarah Engineer",
-                    description: "Complete full-stack JavaScript course covering Node.js, Express, MongoDB, and React.",
-                    rating: 4.7,
-                    totalRatings: 187,
-                    numberOfUserEnrolled: 1098,
-                    skills: ["Node.js", "Express", "MongoDB", "React"],
-                    tools: ["MongoDB", "Express", "React", "Node.js"],
-                    startingDate: "2024-01-10T00:00:00.000Z",
-                    duration: "16 weeks",
-                    price: 129.99,
-                    courseFlyerURL: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-                    isActive: true,
-                    createdAt: "2025-10-20T00:45:59.350Z",
-                    updatedAt: "2025-10-20T00:54:19.505Z",
-                }
-            ],
-            pagination: {
-                currentPage: 1,
-                pageSize: 10,
-                totalCourses: 3,
-                totalPages: 1,
-                hasNextPage: false,
-                hasPrevPage: false
-            }
-        }
-    });
+    const router = useRouter();
 
+    // Redux hooks
+    const { user } = useAuth();
+    const {
+        enrolledCourses,
+        pagination,
+        loading,
+        error,
+        getEnrolledCourses,
+        unenrollFromCourse,
+        rateCourse
+    } = useUser();
+
+    // Local state for UI
+    const [currentPage, setCurrentPage] = useState(1);
     const [showUnenrollDialog, setShowUnenrollDialog] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
     const [isUnenrolling, setIsUnenrolling] = useState(false);
@@ -145,6 +51,12 @@ export default function UserCourses() {
     const [newRating, setNewRating] = useState(0);
     const [newComment, setNewComment] = useState('');
     const [isSubmittingRating, setIsSubmittingRating] = useState(false);
+
+    // Fetch enrolled courses on mount and page change
+    useEffect(() => {
+        getEnrolledCourses(currentPage, 10);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentPage]);
 
     const formatDate = (dateString: string): string => {
         const date = new Date(dateString);
@@ -165,36 +77,18 @@ export default function UserCourses() {
 
         setIsUnenrolling(true);
 
-        // Simulate API call
-        setTimeout(() => {
-            const isSuccess = Math.random() > 0.1; // 90% success rate
-
-            if (isSuccess) {
-                // Remove course from the list
-                setCoursesData({
-                    ...coursesData,
-                    data: {
-                        ...coursesData.data,
-                        courses: coursesData.data.courses.filter(
-                            course => course._id !== selectedCourse._id
-                        ),
-                        pagination: {
-                            ...coursesData.data.pagination,
-                            totalCourses: coursesData.data.pagination.totalCourses - 1
-                        }
-                    }
-                });
-                setIsUnenrolling(false);
-                setShowUnenrollDialog(false);
-                setSelectedCourse(null);
-                setToastMessage('Successfully unenrolled from course');
-                setShowSuccessToast(true);
-            } else {
-                setIsUnenrolling(false);
-                setToastMessage('Failed to unenroll from course');
-                setShowErrorToast(true);
-            }
-        }, 1500);
+        try {
+            await unenrollFromCourse(selectedCourse._id);
+            setToastMessage('Successfully unenrolled from course');
+            setShowSuccessToast(true);
+            setShowUnenrollDialog(false);
+            setSelectedCourse(null);
+        } catch (error: any) {
+            setToastMessage(error?.message || 'Failed to unenroll from course');
+            setShowErrorToast(true);
+        } finally {
+            setIsUnenrolling(false);
+        }
     };
 
     const handleRateClick = (course: Course) => {
@@ -215,34 +109,24 @@ export default function UserCourses() {
 
         setIsSubmittingRating(true);
 
-        // Simulate API call with the expected payload
-        const payload = {
-            courseId: selectedCourse._id,
-            userId: "690555578deac7a86c92c6b0", // This should come from auth context in production
-            rating: newRating,
-            comment: newComment
-        };
-
-        console.log('Submitting rating:', payload);
-
-        // Simulate API call
-        setTimeout(() => {
-            const isSuccess = Math.random() > 0.1; // 90% success rate
-
-            if (isSuccess) {
-                setIsSubmittingRating(false);
-                setShowRateDialog(false);
-                setSelectedCourse(null);
-                setNewRating(0);
-                setNewComment('');
-                setToastMessage('Rating submitted successfully');
-                setShowSuccessToast(true);
-            } else {
-                setIsSubmittingRating(false);
-                setToastMessage('Failed to submit rating');
-                setShowErrorToast(true);
-            }
-        }, 1500);
+        try {
+            await rateCourse({
+                courseId: selectedCourse._id,
+                rating: newRating,
+                comment: newComment
+            });
+            setToastMessage('Rating submitted successfully');
+            setShowSuccessToast(true);
+            setShowRateDialog(false);
+            setSelectedCourse(null);
+            setNewRating(0);
+            setNewComment('');
+        } catch (error: any) {
+            setToastMessage(error?.message || 'Failed to submit rating');
+            setShowErrorToast(true);
+        } finally {
+            setIsSubmittingRating(false);
+        }
     };
 
     const renderStars = (rating: number, interactive: boolean = false, onRatingChange?: (rating: number) => void) => {
@@ -267,15 +151,11 @@ export default function UserCourses() {
         );
     };
 
-    const courses = coursesData.data.courses;
+    const courses = enrolledCourses;
     const hasNoCourses = courses.length === 0;
-    const pagination = coursesData.data.pagination;
 
     const handlePageChange = (page: number) => {
-        // In production, this would call the API with the new page number
-        console.log('Changing to page:', page);
-        // Simulate API call to fetch new page data
-        // fetchCourses(page);
+        setCurrentPage(page);
     };
 
     return (
@@ -321,7 +201,10 @@ export default function UserCourses() {
                         <p className={`text-base mb-6 ${styles.emptyStateText}`}>
                             Start your learning journey by enrolling in a course
                         </p>
-                        <button className={`${styles.primaryBtn} px-8 py-3 rounded-xl font-semibold text-base transition-all duration-300 hover:scale-105`}>
+                        <button
+                            onClick={() => router.push('/courses')}
+                            className={`${styles.primaryBtn} px-8 py-3 rounded-xl font-semibold text-base transition-all duration-300 hover:scale-105`}
+                        >
                             Browse Courses
                         </button>
                     </div>
@@ -437,7 +320,7 @@ export default function UserCourses() {
                 )}
 
                 {/* Pagination */}
-                {!hasNoCourses && (
+                {!hasNoCourses && pagination && (
                     <div className="mt-8">
                         <Pagination
                             currentPage={pagination.currentPage}

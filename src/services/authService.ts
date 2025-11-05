@@ -62,12 +62,24 @@ class AuthService {
   // Get User Profile
   async getUserProfile(): Promise<ApiSuccessResponse<{ user: User }>> {
     const response = await axiosInstance.get('/api/auth/get-user-profile');
+
+    if (response.data.success && response.data.data.user) {
+      // Update user data in localStorage
+      localStorage.setItem('user', JSON.stringify(response.data.data.user));
+    }
+
     return response.data;
   }
 
   // Update Profile
   async updateProfile(payload: UpdateProfilePayload): Promise<ApiSuccessResponse<{ user: User }>> {
     const response = await axiosInstance.post('/api/auth/update-user-profile', payload);
+
+    if (response.data.success && response.data.data.user) {
+      // Update user data in localStorage
+      localStorage.setItem('user', JSON.stringify(response.data.data.user));
+    }
+
     return response.data;
   }
 
