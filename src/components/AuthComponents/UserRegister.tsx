@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Mail, Lock, Eye, EyeOff, User, Phone } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuthHook';
 import Toast from '@/components/ui/Toast';
 import styles from './AuthComponents.module.scss';
 
@@ -27,6 +29,9 @@ interface FormErrors {
 }
 
 export default function UserRegister() {
+    const router = useRouter();
+    const { register, loading } = useAuth();
+
     const [formData, setFormData] = useState<RegisterFormData>({
         firstName: '',
         lastName: '',
@@ -39,8 +44,8 @@ export default function UserRegister() {
     const [errors, setErrors] = useState<FormErrors>({});
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const [showToast, setShowToast] = useState(false);
+    const [backendErrorTimestamp, setBackendErrorTimestamp] = useState<number>(0);
 
     const validateEmail = (email: string): boolean => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -100,7 +105,8 @@ export default function UserRegister() {
         if (errors[field]) {
             setErrors({ ...errors, [field]: undefined });
         }
-        if (errors.backend) {
+        // Only clear backend error if it's been displayed for at least 2 seconds
+        if (errors.backend && Date.now() - backendErrorTimestamp >= 2000) {
             setErrors({ ...errors, backend: undefined });
         }
     };
@@ -110,7 +116,6 @@ export default function UserRegister() {
 
         if (!validateForm()) return;
 
-        setIsLoading(true);
         setErrors({});
 
         try {
@@ -119,41 +124,36 @@ export default function UserRegister() {
                 lastName: formData.lastName.trim(),
                 email: formData.email,
                 password: formData.password,
-                role: 'student',
+                role: 'student' as const,
                 phone: formData.phone
             };
-            console.log('Registration payload:', payload);
 
-            // Simulate API response
-            setTimeout(() => {
-                const isSuccess = Math.random() > 0.3;
+            await register(payload);
 
-                if (isSuccess) {
-                    setIsLoading(false);
-                    setShowToast(true);
-                    console.log('Registration successful');
-                    // Reset form
-                    setFormData({
-                        firstName: '',
-                        lastName: '',
-                        email: '',
-                        phone: '',
-                        password: '',
-                        confirmPassword: ''
-                    });
-                } else {
-                    setIsLoading(false);
-                    setErrors({
-                        backend: 'Email already exists. Please use a different email or log in.'
-                    });
-                }
-            }, 1500);
+            // Show success toast
+            setShowToast(true);
 
-        } catch (error) {
-            setIsLoading(false);
-            setErrors({
-                backend: 'An error occurred during registration. Please try again later.'
+            // Reset form
+            setFormData({
+                firstName: '',
+                lastName: '',
+                email: '',
+                phone: '',
+                password: '',
+                confirmPassword: ''
             });
+
+            // Redirect to home page after a short delay
+            setTimeout(() => {
+                router.push('/');
+            }, 2000);
+
+        } catch (error: any) {
+            const errorMessage = error || 'Registration failed. Please try again.';
+            setErrors({
+                backend: typeof errorMessage === 'string' ? errorMessage : errorMessage?.message || 'Registration failed. Please try again.'
+            });
+            setBackendErrorTimestamp(Date.now());
         }
     };
 
@@ -256,7 +256,7 @@ export default function UserRegister() {
                                                     onChange={(e) => handleInputChange('firstName', e.target.value)}
                                                     className={`${styles.formInput} ${errors.firstName ? styles.inputError : ''} w-full pl-9 pr-2.5 py-2 rounded-lg text-xs border-2 transition-all duration-200`}
                                                     placeholder="Enter first name"
-                                                    disabled={isLoading}
+                                                    disabled={loading}
                                                     autoComplete="given-name"
                                                 />
                                             </div>
@@ -279,7 +279,7 @@ export default function UserRegister() {
                                                     onChange={(e) => handleInputChange('lastName', e.target.value)}
                                                     className={`${styles.formInput} ${errors.lastName ? styles.inputError : ''} w-full pl-9 pr-2.5 py-2 rounded-lg text-xs border-2 transition-all duration-200`}
                                                     placeholder="Enter last name"
-                                                    disabled={isLoading}
+                                                    disabled={loading}
                                                     autoComplete="family-name"
                                                 />
                                             </div>
@@ -303,7 +303,7 @@ export default function UserRegister() {
                                                 onChange={(e) => handleInputChange('email', e.target.value)}
                                                 className={`${styles.formInput} ${errors.email ? styles.inputError : ''} w-full pl-9 pr-2.5 py-2 rounded-lg text-xs border-2 transition-all duration-200`}
                                                 placeholder="Enter your email"
-                                                disabled={isLoading}
+                                                disabled={loading}
                                                 autoComplete="email"
                                             />
                                         </div>
@@ -326,7 +326,7 @@ export default function UserRegister() {
                                                 onChange={(e) => handleInputChange('phone', e.target.value)}
                                                 className={`${styles.formInput} ${errors.phone ? styles.inputError : ''} w-full pl-9 pr-2.5 py-2 rounded-lg text-xs border-2 transition-all duration-200`}
                                                 placeholder="0XXXXXXXXX"
-                                                disabled={isLoading}
+                                                disabled={loading}
                                                 autoComplete="tel"
                                             />
                                         </div>
@@ -349,14 +349,14 @@ export default function UserRegister() {
                                                 onChange={(e) => handleInputChange('password', e.target.value)}
                                                 className={`${styles.formInput} ${errors.password ? styles.inputError : ''} w-full pl-9 pr-10 py-2 rounded-lg text-xs border-2 transition-all duration-200`}
                                                 placeholder="Create a password"
-                                                disabled={isLoading}
+                                                disabled={loading}
                                                 autoComplete="new-password"
                                             />
                                             <button
                                                 type="button"
                                                 onClick={() => setShowPassword(!showPassword)}
                                                 className={`${styles.passwordToggle} absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md transition-all duration-200`}
-                                                disabled={isLoading}
+                                                disabled={loading}
                                             >
                                                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                             </button>
@@ -380,14 +380,14 @@ export default function UserRegister() {
                                                 onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
                                                 className={`${styles.formInput} ${errors.confirmPassword ? styles.inputError : ''} w-full pl-9 pr-10 py-2 rounded-lg text-xs border-2 transition-all duration-200`}
                                                 placeholder="Confirm your password"
-                                                disabled={isLoading}
+                                                disabled={loading}
                                                 autoComplete="new-password"
                                             />
                                             <button
                                                 type="button"
                                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                                 className={`${styles.passwordToggle} absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md transition-all duration-200`}
-                                                disabled={isLoading}
+                                                disabled={loading}
                                             >
                                                 {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                             </button>
@@ -400,10 +400,10 @@ export default function UserRegister() {
                                     {/* Submit Button */}
                                     <button
                                         type="submit"
-                                        disabled={isLoading}
+                                        disabled={loading}
                                         className={`${styles.authButton} w-full py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed`}
                                     >
-                                        {isLoading ? (
+                                        {loading ? (
                                             <>
                                                 <span className={`${styles.spinner} w-3.5 h-3.5 border-2 rounded-full animate-spin`}></span>
                                                 Creating account...
