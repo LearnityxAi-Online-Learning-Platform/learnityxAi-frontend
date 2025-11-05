@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/contexts/ThemeContext";
-import {ReduxProvider} from "@/components/Providers/ReduxProvider";
+import {ReduxProvider} from "@/providers/ReduxProvider";
 
 import "./globals.css";
 
