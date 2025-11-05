@@ -279,12 +279,12 @@ export default function UserProfile() {
 
                                     {/* Upload Progress Overlay */}
                                     {uploadLoading && (
-                                        <div className="absolute inset-0 bg-black bg-opacity-60 rounded-full flex items-center justify-center">
-                                            <div className="text-center">
+                                        <div className={styles.uploadOverlay}>
+                                            <div className={styles.uploadContent}>
                                                 <div className={`${styles.spinner} mx-auto mb-2`} />
                                                 <div className="flex flex-col items-center gap-1">
-                                                    <Upload size={20} className="text-white animate-pulse" />
-                                                    <span className="text-white text-xs font-semibold">Uploading...</span>
+                                                    <Upload size={20} className={styles.uploadIcon} />
+                                                    <span className={styles.uploadText}>Uploading...</span>
                                                 </div>
                                             </div>
                                         </div>

@@ -32,8 +32,9 @@ export default function NavBar(): JSX.Element {
     const router = useRouter();
 
     // Use real auth state from Redux
-    const { user, isAuthenticated, logout } = useAuth();
+    const { user, isAuthenticated, loading, logout } = useAuth();
     const isLoggedIn = isAuthenticated && !!user;
+    const isAuthLoading = loading;
 
     const toggleMobileMenu = (): void => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -169,8 +170,16 @@ export default function NavBar(): JSX.Element {
                         </div>
 
                         {/* Profile Dropdown or Auth Buttons - Desktop */}
-                        {isLoggedIn ? (
-                            <div className="hidden lg:block relative" ref={profileRef}>
+                        {isAuthLoading ? (
+                            // Loading skeleton
+                            <div className="hidden lg:flex items-center gap-2">
+                                <div className="w-24 h-10 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                                <div className="w-28 h-10 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                            </div>
+                        ) : (
+                            <>
+                                {isLoggedIn ? (
+                                    <div className="hidden lg:block relative" ref={profileRef}>
                                 <button
                                     onClick={toggleProfile}
                                     className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${styles.profileBtn}`}
@@ -253,21 +262,23 @@ export default function NavBar(): JSX.Element {
                                     </div>
                                 )}
                             </div>
-                        ) : (
-                            <div className="hidden lg:flex items-center gap-2">
-                                <Link
-                                    href="/login"
-                                    className={`px-4 xl:px-5 py-2 xl:py-2.5 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${styles.loginBtn}`}
-                                >
-                                    Log In
-                                </Link>
-                                <Link
-                                    href="/role"
-                                    className={`px-4 xl:px-5 py-2 xl:py-2.5 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${styles.joinBtn}`}
-                                >
-                                    Join for Free
-                                </Link>
-                            </div>
+                                ) : (
+                                    <div className="hidden lg:flex items-center gap-2">
+                                        <Link
+                                            href="/login"
+                                            className={`px-4 xl:px-5 py-2 xl:py-2.5 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${styles.loginBtn}`}
+                                        >
+                                            Log In
+                                        </Link>
+                                        <Link
+                                            href="/role"
+                                            className={`px-4 xl:px-5 py-2 xl:py-2.5 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${styles.joinBtn}`}
+                                        >
+                                            Join for Free
+                                        </Link>
+                                    </div>
+                                )}
+                            </>
                         )}
 
                         {/* Mobile Menu Button */}
@@ -338,7 +349,17 @@ export default function NavBar(): JSX.Element {
                     <div className="flex-1 overflow-y-auto overscroll-contain">
                         <div className="p-4 sm:p-6 space-y-6">
                             {/* User Profile or Auth Buttons - Mobile */}
-                            {isLoggedIn ? (
+                            {isAuthLoading ? (
+                                // Loading skeleton for mobile
+                                <div className="pb-6 border-b border-white/10">
+                                    <div className="flex flex-col gap-3">
+                                        <div className="w-full h-12 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                                        <div className="w-full h-12 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    {isLoggedIn ? (
                                 <div className="pb-6 border-b border-white/10">
                                     {/* User Info */}
                                     <div className={`flex items-center gap-3 mb-4 px-2 ${styles.mobileUserInfo}`}>
@@ -399,23 +420,25 @@ export default function NavBar(): JSX.Element {
                                         </button>
                                     </div>
                                 </div>
-                            ) : (
-                                <div className="flex flex-col gap-3 pb-6 border-b border-white/10">
-                                    <Link
-                                        href="/login"
-                                        className={`w-full px-4 py-3.5 rounded-lg font-semibold text-center transition-all active:scale-95 min-h-[48px] flex items-center justify-center ${styles.mobileLoginBtn}`}
-                                        onClick={toggleMobileMenu}
-                                    >
-                                        Log In
-                                    </Link>
-                                    <Link
-                                        href="/role"
-                                        className={`w-full px-4 py-3.5 rounded-lg font-semibold text-center transition-all active:scale-95 min-h-[48px] flex items-center justify-center ${styles.mobileJoinBtn}`}
-                                        onClick={toggleMobileMenu}
-                                    >
-                                        Join for Free
-                                    </Link>
-                                </div>
+                                    ) : (
+                                        <div className="flex flex-col gap-3 pb-6 border-b border-white/10">
+                                            <Link
+                                                href="/login"
+                                                className={`w-full px-4 py-3.5 rounded-lg font-semibold text-center transition-all active:scale-95 min-h-[48px] flex items-center justify-center ${styles.mobileLoginBtn}`}
+                                                onClick={toggleMobileMenu}
+                                            >
+                                                Log In
+                                            </Link>
+                                            <Link
+                                                href="/role"
+                                                className={`w-full px-4 py-3.5 rounded-lg font-semibold text-center transition-all active:scale-95 min-h-[48px] flex items-center justify-center ${styles.mobileJoinBtn}`}
+                                                onClick={toggleMobileMenu}
+                                            >
+                                                Join for Free
+                                            </Link>
+                                        </div>
+                                    )}
+                                </>
                             )}
 
                             {/* Explore Section */}
