@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuthHook';
 import styles from './AuthComponents.module.scss';
 
 interface FormErrors {
@@ -16,10 +17,10 @@ function OTPContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const email = searchParams.get('email') || '';
+    const { verifyOTP, loading } = useAuth();
 
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [errors, setErrors] = useState<FormErrors>({});
-    const [isLoading, setIsLoading] = useState(false);
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
     useEffect(() => {
@@ -115,33 +116,20 @@ function OTPContent() {
 
         if (!validateForm()) return;
 
-        setIsLoading(true);
         setErrors({});
 
         try {
             const otpValue = otp.join('');
-            console.log('Verifying OTP:', otpValue, 'for email:', email);
 
-            // Simulate API response
-            setTimeout(() => {
-                const isSuccess = Math.random() > 0.2;
+            await verifyOTP({ email, otp: otpValue });
 
-                if (isSuccess) {
-                    setIsLoading(false);
-                    // Navigate to new password page with email and OTP
-                    router.push(`/new-password?email=${encodeURIComponent(email)}&otp=${otpValue}`);
-                } else {
-                    setIsLoading(false);
-                    setErrors({
-                        backend: 'Invalid verification code. Please try again.'
-                    });
-                }
-            }, 1500);
+            // Navigate to new password page with email and OTP
+            router.push(`/new-password?email=${encodeURIComponent(email)}&otp=${otpValue}`);
 
-        } catch {
-            setIsLoading(false);
+        } catch (error: any) {
+            const errorMessage = error?.message || 'Invalid verification code. Please try again.';
             setErrors({
-                backend: 'An error occurred. Please try again later.'
+                backend: errorMessage
             });
         }
     };
@@ -213,7 +201,7 @@ function OTPContent() {
                                         onKeyDown={(e) => handleKeyDown(index, e)}
                                         onPaste={handlePaste}
                                         className={`${styles.formInput} ${errors.otp ? styles.inputError : ''} w-full aspect-square text-center text-lg sm:text-xl font-bold rounded-lg border-2 transition-all duration-200`}
-                                        disabled={isLoading}
+                                        disabled={loading}
                                         autoComplete="off"
                                     />
                                 ))}
@@ -231,7 +219,7 @@ function OTPContent() {
                                     type="button"
                                     onClick={handleResendCode}
                                     className={`${styles.authLink} text-xs font-semibold transition-colors duration-200 hover:underline`}
-                                    disabled={isLoading}
+                                    disabled={loading}
                                 >
                                     Resend Code
                                 </button>
@@ -241,10 +229,10 @@ function OTPContent() {
                         {/* Submit Button */}
                         <button
                             type="submit"
-                            disabled={isLoading}
+                            disabled={loading}
                             className={`${styles.authButton} w-full py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed`}
                         >
-                            {isLoading ? (
+                            {loading ? (
                                 <>
                                     <span className={`${styles.spinner} w-3.5 h-3.5 border-2 rounded-full animate-spin`}></span>
                                     Verifying...

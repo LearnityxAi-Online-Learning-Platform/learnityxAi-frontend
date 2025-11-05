@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Mail, ArrowLeft } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuthHook';
 import styles from './AuthComponents.module.scss';
 
 interface FormErrors {
@@ -14,9 +15,9 @@ interface FormErrors {
 
 export default function ForgotPassword() {
     const router = useRouter();
+    const { forgotPassword, loading } = useAuth();
     const [email, setEmail] = useState('');
     const [errors, setErrors] = useState<FormErrors>({});
-    const [isLoading, setIsLoading] = useState(false);
 
     const validateEmail = (email: string): boolean => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -51,32 +52,18 @@ export default function ForgotPassword() {
 
         if (!validateForm()) return;
 
-        setIsLoading(true);
         setErrors({});
 
         try {
-            console.log('Sending OTP to:', email);
+            await forgotPassword({ email });
 
-            // Simulate API response
-            setTimeout(() => {
-                const isSuccess = Math.random() > 0.2;
+            // Navigate to OTP page with email as query parameter
+            router.push(`/otp?email=${encodeURIComponent(email)}`);
 
-                if (isSuccess) {
-                    setIsLoading(false);
-                    // Navigate to OTP page with email as query parameter
-                    router.push(`/otp?email=${encodeURIComponent(email)}`);
-                } else {
-                    setIsLoading(false);
-                    setErrors({
-                        backend: 'Email not found. Please check and try again.'
-                    });
-                }
-            }, 1500);
-
-        } catch {
-            setIsLoading(false);
+        } catch (error: any) {
+            const errorMessage = error?.message || 'Failed to send verification code. Please try again.';
             setErrors({
-                backend: 'An error occurred. Please try again later.'
+                backend: errorMessage
             });
         }
     };
@@ -136,7 +123,7 @@ export default function ForgotPassword() {
                                     onChange={(e) => handleInputChange(e.target.value)}
                                     className={`${styles.formInput} ${errors.email ? styles.inputError : ''} w-full pl-9 pr-2.5 py-2 rounded-lg text-xs border-2 transition-all duration-200`}
                                     placeholder="Enter your email"
-                                    disabled={isLoading}
+                                    disabled={loading}
                                     autoComplete="email"
                                 />
                             </div>
@@ -148,10 +135,10 @@ export default function ForgotPassword() {
                         {/* Submit Button */}
                         <button
                             type="submit"
-                            disabled={isLoading}
+                            disabled={loading}
                             className={`${styles.authButton} w-full py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed`}
                         >
-                            {isLoading ? (
+                            {loading ? (
                                 <>
                                     <span className={`${styles.spinner} w-3.5 h-3.5 border-2 rounded-full animate-spin`}></span>
                                     Sending Code...

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Lock, Eye, EyeOff, Check, X } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuthHook';
 import Toast from '@/components/ui/Toast';
 import styles from './AuthComponents.module.scss';
 
@@ -30,6 +31,7 @@ function NewPasswordContent() {
     const searchParams = useSearchParams();
     const email = searchParams.get('email') || '';
     const otp = searchParams.get('otp') || '';
+    const { resetPassword, loading } = useAuth();
 
     const [formData, setFormData] = useState<FormData>({
         password: '',
@@ -39,7 +41,6 @@ function NewPasswordContent() {
     const [errors, setErrors] = useState<FormErrors>({});
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const [showToast, setShowToast] = useState(false);
 
     useEffect(() => {
@@ -113,40 +114,26 @@ function NewPasswordContent() {
 
         if (!validateForm()) return;
 
-        setIsLoading(true);
         setErrors({});
 
         try {
-            const payload = {
+            await resetPassword({
                 email,
                 otp,
-                password: formData.password
-            };
-            console.log('Resetting password:', payload);
+                newPassword: formData.password
+            });
 
-            // Simulate API response
+            setShowToast(true);
+
+            // Redirect to login after showing toast
             setTimeout(() => {
-                const isSuccess = Math.random() > 0.2;
+                router.push('/login');
+            }, 2000);
 
-                if (isSuccess) {
-                    setIsLoading(false);
-                    setShowToast(true);
-                    // Redirect to login after showing toast
-                    setTimeout(() => {
-                        router.push('/login');
-                    }, 2000);
-                } else {
-                    setIsLoading(false);
-                    setErrors({
-                        backend: 'Failed to reset password. Please try again.'
-                    });
-                }
-            }, 1500);
-
-        } catch {
-            setIsLoading(false);
+        } catch (error: any) {
+            const errorMessage = error?.message || 'Failed to reset password. Please try again.';
             setErrors({
-                backend: 'An error occurred. Please try again later.'
+                backend: errorMessage
             });
         }
     };
@@ -201,14 +188,14 @@ function NewPasswordContent() {
                                         onChange={(e) => handleInputChange('password', e.target.value)}
                                         className={`${styles.formInput} ${errors.password ? styles.inputError : ''} w-full pl-9 pr-10 py-2 rounded-lg text-xs border-2 transition-all duration-200`}
                                         placeholder="Create a new password"
-                                        disabled={isLoading}
+                                        disabled={loading}
                                         autoComplete="new-password"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
                                         className={`${styles.passwordToggle} absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md transition-all duration-200`}
-                                        disabled={isLoading}
+                                        disabled={loading}
                                     >
                                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                     </button>
@@ -272,14 +259,14 @@ function NewPasswordContent() {
                                         onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
                                         className={`${styles.formInput} ${errors.confirmPassword ? styles.inputError : ''} w-full pl-9 pr-10 py-2 rounded-lg text-xs border-2 transition-all duration-200`}
                                         placeholder="Confirm your new password"
-                                        disabled={isLoading}
+                                        disabled={loading}
                                         autoComplete="new-password"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                         className={`${styles.passwordToggle} absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md transition-all duration-200`}
-                                        disabled={isLoading}
+                                        disabled={loading}
                                     >
                                         {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                     </button>
@@ -292,10 +279,10 @@ function NewPasswordContent() {
                             {/* Submit Button */}
                             <button
                                 type="submit"
-                                disabled={isLoading}
+                                disabled={loading}
                                 className={`${styles.authButton} w-full py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed`}
                             >
-                                {isLoading ? (
+                                {loading ? (
                                     <>
                                         <span className={`${styles.spinner} w-3.5 h-3.5 border-2 rounded-full animate-spin`}></span>
                                         Resetting Password...
