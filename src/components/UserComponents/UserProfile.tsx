@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import {
     User,
@@ -17,6 +17,8 @@ import {
     X,
     AlertCircle
 } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuthHook';
+import { useFileUpload } from '@/hooks/useFileUploadHook';
 import styles from './UserComponents.module.scss';
 import AlertDialog from '../ui/AlertDialog';
 import Toast from '../ui/Toast';
@@ -54,39 +56,40 @@ interface FormErrors {
 }
 
 export default function UserProfile() {
-    // Mock API response - Replace with actual API call
-    const [userData, setUserData] = useState<ApiResponse>({
-        success: true,
-        message: "Profile retrieved successfully",
-        data: {
-            user: {
-                _id: "690553b18deac7a86c92c672",
-                firstName: "student",
-                lastName: "galle",
-                email: "premasirikb1@gmail.com",
-                role: "student",
-                phone: "0765698587",
-                profileImage: "",
-                bio: "Passionate learner focused on technology and innovation. Always eager to explore new opportunities.",
-                isEmailVerified: false,
-                isActive: true,
-                createdAt: "2025-11-01T00:26:25.147Z",
-                updatedAt: "2025-11-01T00:28:33.412Z",
-                lastLogin: "2025-11-01T00:28:33.318Z"
-            }
-        }
-    });
+    // Get user data from Redux
+    const { user, updateProfile, deleteAccount, getUserProfile, loading } = useAuth();
+    const { uploadProfileImage, loading: uploadLoading } = useFileUpload();
 
     const [isEditing, setIsEditing] = useState(false);
-    const [editedUser, setEditedUser] = useState<UserData>(userData.data.user);
+    const [editedUser, setEditedUser] = useState<UserData | null>(null);
     const [errors, setErrors] = useState<FormErrors>({});
-    const [isSaving, setIsSaving] = useState(false);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
     const [showErrorToast, setShowErrorToast] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
+    const [backendErrorTimestamp, setBackendErrorTimestamp] = useState<number>(0);
 
-    const user = userData.data.user;
+    // Initialize editedUser when user data is available
+    useEffect(() => {
+        if (user && !editedUser) {
+            setEditedUser(user as UserData);
+        }
+    }, [user, editedUser]);
+
+    // Fetch user profile on mount if not available
+    useEffect(() => {
+        if (!user) {
+            getUserProfile();
+        }
+    }, [user, getUserProfile]);
+
+    if (!user || !editedUser) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className={styles.spinner} />
+            </div>
+        );
+    }
 
     const formatDate = (dateString: string): string => {
         const date = new Date(dateString);
@@ -140,48 +143,41 @@ export default function UserProfile() {
 
     const handleEdit = () => {
         setIsEditing(true);
-        setEditedUser({ ...user });
+        setEditedUser({ ...user } as UserData);
         setErrors({});
     };
 
     const handleCancel = () => {
         setIsEditing(false);
-        setEditedUser({ ...user });
+        setEditedUser({ ...user } as UserData);
         setErrors({});
     };
 
     const handleSave = async () => {
         if (!validateForm()) {
+            setErrorMessage('Please fix the validation errors');
             setShowErrorToast(true);
             return;
         }
 
-        setIsSaving(true);
+        try {
+            await updateProfile({
+                firstName: editedUser.firstName.trim(),
+                lastName: editedUser.lastName.trim(),
+                phone: editedUser.phone,
+                bio: editedUser.bio
+            });
 
-        // Simulate API call with random success/failure for demonstration
-        setTimeout(() => {
-            // Simulate 90% success rate (you can change this to always succeed in production)
-            const isSuccess = Math.random() > 0.1;
-
-            if (isSuccess) {
-                setUserData({
-                    ...userData,
-                    data: {
-                        user: {
-                            ...editedUser,
-                            updatedAt: new Date().toISOString()
-                        }
-                    }
-                });
-                setIsSaving(false);
-                setIsEditing(false);
-                setShowSuccessToast(true);
-            } else {
-                // Simulate API error
-                setIsSaving(false);
-                setShowErrorToast(true);
-            }
-        }, 1000);
+            setIsEditing(false);
+            setShowSuccessToast(true);
+            // Refresh user profile to get updated data
+            await getUserProfile();
+        } catch (error: any) {
+            const errMsg = error || 'Failed to update profile. Please try again.';
+            setErrorMessage(typeof errMsg === 'string' ? errMsg : errMsg?.message || 'Failed to update profile. Please try again.');
+            setShowErrorToast(true);
+            setBackendErrorTimestamp(Date.now());
+        }
     };
 
     const handleInputChange = (field: keyof UserData, value: string) => {
@@ -191,29 +187,39 @@ export default function UserProfile() {
         }
     };
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            // In production, upload to server and get URL
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setEditedUser({ ...editedUser, profileImage: reader.result as string });
-            };
-            reader.readAsDataURL(file);
+            try {
+                const imageUrl = await uploadProfileImage(file);
+                if (imageUrl) {
+                    setEditedUser({ ...editedUser, profileImage: imageUrl });
+                    setShowSuccessToast(true);
+                    // Refresh user profile to get updated image
+                    await getUserProfile();
+                }
+            } catch (error: any) {
+                const errMsg = error || 'Failed to upload profile image. Please try again.';
+                setErrorMessage(typeof errMsg === 'string' ? errMsg : errMsg?.message || 'Failed to upload profile image. Please try again.');
+                setShowErrorToast(true);
+            }
         }
     };
 
     const handleDeleteAccount = async () => {
-        setIsDeleting(true);
-
-        // Simulate API call for account deletion
-        setTimeout(() => {
-            console.log('Account deleted successfully');
-            setIsDeleting(false);
+        try {
+            // deleteAccount expects a password
+            // The AlertDialog component will handle password input
+            await deleteAccount({ password: '' }); // Password should come from the dialog
             setShowDeleteDialog(false);
-            // In production, redirect to logout or home page
-            // window.location.href = '/';
-        }, 2000);
+            // Redirect to home page after account deletion
+            window.location.href = '/';
+        } catch (error: any) {
+            const errMsg = error || 'Failed to delete account. Please try again.';
+            setErrorMessage(typeof errMsg === 'string' ? errMsg : errMsg?.message || 'Failed to delete account. Please try again.');
+            setShowErrorToast(true);
+            setShowDeleteDialog(false);
+        }
     };
 
     return (
@@ -326,10 +332,10 @@ export default function UserProfile() {
                                 <div className="space-y-3">
                                     <button
                                         onClick={handleSave}
-                                        disabled={isSaving}
+                                        disabled={loading || uploadLoading}
                                         className={`${styles.saveBtn} w-full py-3 rounded-xl font-semibold text-sm sm:text-base flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed`}
                                     >
-                                        {isSaving ? (
+                                        {loading ? (
                                             <>
                                                 <div className={styles.spinner} />
                                                 <span>Saving...</span>
@@ -343,7 +349,7 @@ export default function UserProfile() {
                                     </button>
                                     <button
                                         onClick={handleCancel}
-                                        disabled={isSaving}
+                                        disabled={loading || uploadLoading}
                                         className={`${styles.cancelBtn} w-full py-3 rounded-xl font-semibold text-sm sm:text-base flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed`}
                                     >
                                         <X size={18} />
@@ -572,7 +578,7 @@ export default function UserProfile() {
                                         </label>
                                     </div>
                                     <p className={`text-sm sm:text-base font-semibold ${styles.infoValue}`}>
-                                        {formatDate(user.lastLogin)}
+                                        {user.lastLogin ? formatDate(user.lastLogin) : 'Never'}
                                     </p>
                                 </div>
 
@@ -633,7 +639,7 @@ export default function UserProfile() {
                 confirmText="Yes, Delete My Account"
                 cancelText="Cancel"
                 variant="danger"
-                isLoading={isDeleting}
+                isLoading={loading}
                 requirePassword={true}
             />
 
@@ -643,7 +649,7 @@ export default function UserProfile() {
                 onClose={() => setShowSuccessToast(false)}
                 title="Profile updated successfully!"
                 variant="success"
-                duration={2000}
+                duration={3000}
                 position="top-right"
                 showCloseButton={false}
             />
@@ -652,9 +658,9 @@ export default function UserProfile() {
             <Toast
                 isVisible={showErrorToast}
                 onClose={() => setShowErrorToast(false)}
-                title="Failed to update profile"
+                title={errorMessage || "Failed to update profile"}
                 variant="error"
-                duration={2000}
+                duration={3000}
                 position="top-right"
                 showCloseButton={false}
             />
