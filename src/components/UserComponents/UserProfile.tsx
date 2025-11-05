@@ -167,7 +167,8 @@ export default function UserProfile() {
                 firstName: editedUser.firstName.trim(),
                 lastName: editedUser.lastName.trim(),
                 phone: editedUser.phone,
-                bio: editedUser.bio
+                bio: editedUser.bio,
+                profileImage: editedUser.profileImage
             });
 
             setIsEditing(false);
@@ -195,10 +196,9 @@ export default function UserProfile() {
             try {
                 const imageUrl = await uploadProfileImage(file);
                 if (imageUrl) {
+                    // Update the edited user state with the new image URL
                     setEditedUser({ ...editedUser, profileImage: imageUrl });
-                    setShowSuccessToast(true);
-                    // Refresh user profile to get updated image
-                    await getUserProfile();
+                    // Don't auto-save - user needs to click "Save Changes" button
                 }
             } catch (error: any) {
                 const errMsg = error || 'Failed to upload profile image. Please try again.';
