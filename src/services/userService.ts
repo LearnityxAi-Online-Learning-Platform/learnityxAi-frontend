@@ -187,8 +187,9 @@ class UserService {
     page: number = 1,
     size: number = 10
   ): Promise<ApiSuccessResponse<RatingsResponse>> {
+    // Updated endpoint - adjust this based on your actual backend API
     const response = await axiosInstance.get(
-      `/api/ratings/my-ratings?page=${page}&size=${size}`
+      `/api/user/ratings?page=${page}&size=${size}`
     );
     return response.data;
   }

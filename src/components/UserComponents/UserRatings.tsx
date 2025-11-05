@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -17,7 +18,8 @@ import { useUser } from '@/hooks/useUserHook';
 import { Rating as BaseRating } from '@/types/userTypes';
 
 // Extended Rating type with course details
-interface Rating extends BaseRating {
+interface Rating extends Omit<BaseRating, 'courseId'> {
+    courseId: string | { _id: string; [key: string]: any };
     courseName?: string;
     courseCategory?: string;
 }
@@ -90,7 +92,12 @@ export default function UserRatings() {
         setIsDeleting(true);
 
         try {
-            await deleteRating(selectedRating.courseId);
+            // Ensure courseId is a string
+            const courseId = typeof selectedRating.courseId === 'string'
+                ? selectedRating.courseId
+                : (selectedRating.courseId as any)?._id || selectedRating.courseId;
+
+            await deleteRating(courseId);
             setToastMessage('Rating deleted successfully');
             setShowSuccessToast(true);
             setShowDeleteDialog(false);
@@ -117,8 +124,13 @@ export default function UserRatings() {
         setIsSaving(true);
 
         try {
+            // Ensure courseId is a string
+            const courseId = typeof selectedRating.courseId === 'string'
+                ? selectedRating.courseId
+                : (selectedRating.courseId as any)?._id || selectedRating.courseId;
+
             await updateRating({
-                courseId: selectedRating.courseId,
+                courseId: courseId,
                 rating: editRating,
                 comment: editComment
             });
