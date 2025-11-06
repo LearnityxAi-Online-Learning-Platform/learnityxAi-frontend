@@ -7,7 +7,7 @@ class FileUploadService {
   // Upload course flyer
   async uploadCourseFlyer(file: File): Promise<ApiSuccessResponse<UploadFileResponse>> {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('courseFlyerImage', file);
 
     const response = await axiosInstance.post('/api/upload/course-flyer', formData, {
       headers: {
@@ -21,7 +21,7 @@ class FileUploadService {
   // Upload profile image
   async uploadProfileImage(file: File): Promise<ApiSuccessResponse<UploadFileResponse>> {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('profileImage', file);
 
     const response = await axiosInstance.post('/api/upload/profile-image', formData, {
       headers: {

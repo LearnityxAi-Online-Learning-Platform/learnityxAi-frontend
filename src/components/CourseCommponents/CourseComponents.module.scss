@@ -810,6 +810,15 @@
         transform: translateY(0);
     }
 
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        &:hover {
+            filter: none;
+            transform: none;
+        }
+    }
+
     :global(.dark) & {
         box-shadow: 0 10px 20px -5px rgba(107, 143, 238, 0.3),
             0 5px 10px -5px rgba(139, 92, 246, 0.2);
@@ -818,6 +827,30 @@
             box-shadow: 0 15px 30px -5px rgba(107, 143, 238, 0.4),
                 0 10px 15px -5px rgba(139, 92, 246, 0.3);
         }
+    }
+}
+
+.enrolledButton {
+    color: var(--color-text-inverse);
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: var(--shadow-lg);
+    transition: all var(--transition-normal);
+    cursor: default;
+    opacity: 0.9;
+
+    &:hover {
+        filter: none;
+        transform: none;
+    }
+
+    &:disabled {
+        opacity: 0.9;
+        cursor: default;
+    }
+
+    :global(.dark) & {
+        box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.3),
+            0 5px 10px -5px rgba(5, 150, 105, 0.2);
     }
 }
 

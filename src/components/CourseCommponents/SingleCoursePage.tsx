@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import {
     Star,
@@ -17,109 +18,94 @@ import {
     Smartphone,
     Trophy,
     Share2,
-    Heart
+    Heart,
+    CheckCircle2,
+    GraduationCap
 } from 'lucide-react';
+import { useCourse } from '@/hooks/useCourseHook';
+import { useUser } from '@/hooks/useUserHook';
+import AlertDialog from '@/components/ui/AlertDialog';
+import Toast from '@/components/ui/Toast';
 import styles from './CourseComponents.module.scss';
 
-interface CourseData {
-    success: boolean;
-    message: string;
-    data: {
-        course: {
-            _id: string;
-            courseName: string;
-            courseCategory: string;
-            instructorId: {
-                _id: string;
-                firstName: string;
-                lastName: string;
-                email: string;
-                profileImage: string;
-                bio: string;
-            };
-            instructorName: string;
-            description: string;
-            rating: number;
-            totalRatings: number;
-            numberOfUserEnrolled: number;
-            skills: string[];
-            tools: string[];
-            startingDate: string;
-            duration: string;
-            price: number;
-            courseFlyerURL: string;
-            isActive: boolean;
-            enrolledStudents: Array<{
-                _id: string;
-                firstName: string;
-                lastName: string;
-                email: string;
-                profileImage: string;
-            }>;
-            createdAt: string;
-            updatedAt: string;
-            __v: number;
-        };
-    };
+interface SingleCoursePageProps {
+    courseId: string;
 }
 
-// Mock data for demonstration
-const mockCourseData: CourseData = {
-    "success": true,
-    "message": "Course retrieved successfully",
-    "data": {
-        "course": {
-            "_id": "69055847ebcd89cbc8eecee9",
-            "courseName": "Complete Python Programming - Updated",
-            "courseCategory": "Web Development",
-            "instructorId": {
-                "_id": "690553d08deac7a86c92c678",
-                "firstName": "Jane",
-                "lastName": "Instructor",
-                "email": "cpriyadasun@gmail.com",
-                "profileImage": "",
-                "bio": "Professional software developer with 10+ years of experience in Python development. Passionate about teaching and helping students master programming."
-            },
-            "instructorName": "Jane Instructor",
-            "description": "Learn Python from basics to advanced topics including Django and Flask. Master the most popular programming language used in web development, data science, artificial intelligence, and more. This comprehensive course takes you from beginner to advanced with hands-on projects and real-world examples.",
-            "rating": 4,
-            "totalRatings": 1,
-            "numberOfUserEnrolled": 1,
-            "skills": [
-                "Python",
-                "Django",
-                "Flask",
-                "REST APIs"
-            ],
-            "tools": [
-                "Python",
-                "Django",
-                "PostgreSQL",
-                "Git"
-            ],
-            "startingDate": "2024-02-01T00:00:00.000Z",
-            "duration": "12 weeks",
-            "price": 89.99,
-            "courseFlyerURL": "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-            "isActive": true,
-            "enrolledStudents": [
-                {
-                    "_id": "690555578deac7a86c92c6b0",
-                    "firstName": "student",
-                    "lastName": "galle",
-                    "email": "premasirikb1@gmail.com",
-                    "profileImage": ""
-                }
-            ],
-            "createdAt": "2025-11-01T00:45:59.350Z",
-            "updatedAt": "2025-11-01T00:55:40.445Z",
-            "__v": 1
-        }
-    }
-};
+export default function SingleCoursePage({ courseId }: SingleCoursePageProps): React.JSX.Element {
+    const { selectedCourse, loading, getCourseById } = useCourse();
+    const { enrollInCourse, enrolledCourses, getEnrolledCourses, loading: enrollmentLoading } = useUser();
 
-export default function SingleCoursePage(): React.JSX.Element {
-    const { course } = mockCourseData.data;
+    const [showEnrollDialog, setShowEnrollDialog] = useState(false);
+    const [isEnrolling, setIsEnrolling] = useState(false);
+    const [isEnrolled, setIsEnrolled] = useState(false);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState({ title: '', message: '', variant: 'success' as 'success' | 'error' });
+
+    // Fetch course data on mount
+    useEffect(() => {
+        if (courseId) {
+            getCourseById(courseId);
+        }
+    }, [courseId, getCourseById]);
+
+    // Check if user is already enrolled - fetch only once on mount
+    useEffect(() => {
+        const checkEnrollment = async () => {
+            // Only fetch if enrolledCourses is empty or null
+            if (!enrolledCourses || enrolledCourses.length === 0) {
+                try {
+                    await getEnrolledCourses(1, 10);
+                } catch (error) {
+                    console.error('Error fetching enrolled courses:', error);
+                }
+            }
+        };
+        checkEnrollment();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // Only run once on mount
+
+    // Update enrollment status when enrolled courses change
+    useEffect(() => {
+        if (enrolledCourses && courseId) {
+            const enrolled = enrolledCourses.some((course: any) => course._id === courseId || course.courseId === courseId);
+            setIsEnrolled(enrolled);
+        }
+    }, [enrolledCourses, courseId]);
+
+    // Handle enrollment button click
+    const handleEnrollClick = () => {
+        setShowEnrollDialog(true);
+    };
+
+    // Handle enrollment confirmation
+    const handleConfirmEnrollment = async () => {
+        setIsEnrolling(true);
+        try {
+            await enrollInCourse(courseId);
+            setIsEnrolled(true);
+            setShowEnrollDialog(false);
+            // Show success toast
+            setToastMessage({
+                title: 'Enrollment Successful!',
+                message: `You have successfully enrolled in ${selectedCourse?.courseName || 'this course'}.`,
+                variant: 'success'
+            });
+            setShowToast(true);
+        } catch (error: any) {
+            console.error('Enrollment failed:', error);
+            setShowEnrollDialog(false);
+            // Show error toast
+            setToastMessage({
+                title: 'Enrollment Failed',
+                message: error?.message || 'Failed to enroll in course. Please try again.',
+                variant: 'error'
+            });
+            setShowToast(true);
+        } finally {
+            setIsEnrolling(false);
+        }
+    };
 
     // Format date helper
     const formatDate = (dateString: string) => {
@@ -143,6 +129,60 @@ export default function SingleCoursePage(): React.JSX.Element {
         ));
     };
 
+    // Loading state
+    if (loading) {
+        return (
+            <div className={`${styles.coursePageContainer} min-h-screen`}>
+                <section className={`${styles.heroSection} py-6 sm:py-8`}>
+                    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+                            <div className="lg:col-span-2 space-y-4 animate-pulse">
+                                <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+                                <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                                <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                                <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                            </div>
+                            <div className="lg:col-span-1">
+                                <div className="w-full aspect-video bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        );
+    }
+
+    // No course found
+    if (!selectedCourse) {
+        return (
+            <div className={`${styles.coursePageContainer} min-h-screen flex items-center justify-center`}>
+                <div className="text-center">
+                    <h2 className="text-2xl font-bold mb-2">Course not found</h2>
+                    <p className="text-gray-600 dark:text-gray-400">The course you&apos;re looking for doesn&apos;t exist.</p>
+                </div>
+            </div>
+        );
+    }
+
+    const course = selectedCourse;
+
+    // Extract data with fallbacks
+    const courseName = course.courseName || course.title || 'Untitled Course';
+    const courseCategory = course.courseCategory || course.category || 'General';
+    const instructorName = course.instructorName || (course.instructor ? `${course.instructor.firstName} ${course.instructor.lastName}` : 'Unknown Instructor');
+    const description = course.description || 'No description available';
+    const rating = course.rating || 0;
+    const totalRatings = course.totalRatings || 0;
+    const numberOfUserEnrolled = course.numberOfUserEnrolled || course.enrollmentCount || 0;
+    const skills = course.skills || [];
+    const tools = course.tools || [];
+    const startingDate = course.startingDate || course.createdAt || new Date().toISOString();
+    const duration = typeof course.duration === 'string' ? course.duration : `${course.duration || 0} weeks`;
+    const price = course.price || 0;
+    const courseFlyerURL = course.courseFlyerURL || course.thumbnail || '';
+    const updatedAt = course.updatedAt || course.createdAt || new Date().toISOString();
+    const instructorBio = course.instructorId?.bio || "Professional instructor with years of experience in the field.";
+
     return (
         <div className={`${styles.coursePageContainer} min-h-screen`}>
             {/* Hero Section */}
@@ -154,36 +194,36 @@ export default function SingleCoursePage(): React.JSX.Element {
                             {/* Category Badge */}
                             <div className={`${styles.categoryBadge} inline-flex items-center px-3 py-1.5 rounded-md text-xs font-semibold mb-3`}>
                                 <Award className="w-3 h-3 mr-1.5" />
-                                {course.courseCategory}
+                                {courseCategory}
                             </div>
 
                             {/* Title */}
                             <h1 className={`${styles.courseTitle} text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 leading-tight`}>
-                                {course.courseName}
+                                {courseName}
                             </h1>
 
                             {/* Subtitle */}
                             <p className={`${styles.courseSubtitle} text-sm sm:text-base lg:text-lg mb-4`}>
-                                {course.description}
+                                {description}
                             </p>
 
                             {/* Rating & Stats */}
                             <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-4">
                                 <div className={`${styles.ratingSection} flex items-center gap-2`}>
                                     <span className={`${styles.ratingNumber} font-bold text-sm sm:text-base`}>
-                                        {course.rating}.0
+                                        {rating.toFixed(1)}
                                     </span>
                                     <div className="flex items-center gap-1">
-                                        {renderStars(course.rating)}
+                                        {renderStars(Math.round(rating))}
                                     </div>
                                     <span className={`${styles.ratingCount} text-xs sm:text-sm`}>
-                                        ({course.totalRatings} {course.totalRatings === 1 ? 'rating' : 'ratings'})
+                                        ({totalRatings} {totalRatings === 1 ? 'rating' : 'ratings'})
                                     </span>
                                 </div>
 
                                 <div className={`${styles.studentCount} flex items-center gap-1.5 text-xs sm:text-sm`}>
                                     <Users className="w-4 h-4" />
-                                    <span>{course.numberOfUserEnrolled} students</span>
+                                    <span>{numberOfUserEnrolled} students</span>
                                 </div>
                             </div>
 
@@ -191,11 +231,11 @@ export default function SingleCoursePage(): React.JSX.Element {
                             <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm">
                                 <div className={`${styles.instructorInfo} flex items-center gap-1.5`}>
                                     <span>Created by</span>
-                                    <span className="font-semibold">{course.instructorName}</span>
+                                    <span className="font-semibold">{instructorName}</span>
                                 </div>
                                 <div className={`${styles.lastUpdated} flex items-center gap-1.5`}>
                                     <Clock className="w-3.5 h-3.5" />
-                                    <span>Last updated {formatDate(course.updatedAt)}</span>
+                                    <span>Last updated {formatDate(updatedAt)}</span>
                                 </div>
                             </div>
                         </div>
@@ -204,10 +244,10 @@ export default function SingleCoursePage(): React.JSX.Element {
                         <div className="lg:hidden">
                             <div className={`${styles.mobilePreviewCard} rounded-lg overflow-hidden p-4`}>
                                 <div className={`${styles.courseImage} relative w-full aspect-video rounded-lg overflow-hidden mb-4`}>
-                                    {course.courseFlyerURL ? (
+                                    {courseFlyerURL ? (
                                         <Image
-                                            src={course.courseFlyerURL}
-                                            alt={course.courseName}
+                                            src={courseFlyerURL}
+                                            alt={courseName}
                                             fill
                                             className="object-cover"
                                             priority
@@ -220,10 +260,21 @@ export default function SingleCoursePage(): React.JSX.Element {
                                 </div>
                                 <div className="text-center">
                                     <p className={`${styles.priceAmount} text-3xl font-bold mb-2`}>
-                                        ${course.price}
+                                        ${price}
                                     </p>
-                                    <button className={`${styles.enrollButton} w-full py-3 rounded-lg font-semibold text-base`}>
-                                        Enroll Now
+                                    <button
+                                        onClick={handleEnrollClick}
+                                        disabled={isEnrolled || isEnrolling}
+                                        className={`${isEnrolled ? styles.enrolledButton : styles.enrollButton} w-full py-3 rounded-lg font-semibold text-base flex items-center justify-center gap-2`}
+                                    >
+                                        {isEnrolled ? (
+                                            <>
+                                                <CheckCircle2 className="w-5 h-5" />
+                                                Already Enrolled
+                                            </>
+                                        ) : (
+                                            'Enroll Now'
+                                        )}
                                     </button>
                                 </div>
                             </div>
@@ -239,25 +290,27 @@ export default function SingleCoursePage(): React.JSX.Element {
                         {/* Main Column */}
                         <div className="lg:col-span-2 space-y-6">
                             {/* What You'll Learn */}
-                            <div className={`${styles.sectionCard} rounded-lg p-5 sm:p-6 lg:p-8`}>
-                                <h2 className={`${styles.sectionTitle} text-xl sm:text-2xl font-bold mb-4 sm:mb-6`}>
-                                    What you&apos;ll learn
-                                </h2>
-                                <div className={`${styles.learningGrid} grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4`}>
-                                    {course.skills.map((skill, index) => (
-                                        <div key={index} className="flex items-start gap-2 sm:gap-3">
-                                            <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 flex-shrink-0" />
-                                            <span className="text-sm sm:text-base">Master {skill} from scratch</span>
-                                        </div>
-                                    ))}
-                                    {course.tools.map((tool, index) => (
-                                        <div key={index} className="flex items-start gap-2 sm:gap-3">
-                                            <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 flex-shrink-0" />
-                                            <span className="text-sm sm:text-base">Work with {tool}</span>
-                                        </div>
-                                    ))}
+                            {(skills.length > 0 || tools.length > 0) && (
+                                <div className={`${styles.sectionCard} rounded-lg p-5 sm:p-6 lg:p-8`}>
+                                    <h2 className={`${styles.sectionTitle} text-xl sm:text-2xl font-bold mb-4 sm:mb-6`}>
+                                        What you&apos;ll learn
+                                    </h2>
+                                    <div className={`${styles.learningGrid} grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4`}>
+                                        {skills.map((skill, index) => (
+                                            <div key={`skill-${index}`} className="flex items-start gap-2 sm:gap-3">
+                                                <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 flex-shrink-0" />
+                                                <span className="text-sm sm:text-base">Master {skill} from scratch</span>
+                                            </div>
+                                        ))}
+                                        {tools.map((tool, index) => (
+                                            <div key={`tool-${index}`} className="flex items-start gap-2 sm:gap-3">
+                                                <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 flex-shrink-0" />
+                                                <span className="text-sm sm:text-base">Work with {tool}</span>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
                             {/* Course Content Stats */}
                             <div className={`${styles.statsContainer} rounded-lg p-5 sm:p-6`}>
@@ -267,19 +320,19 @@ export default function SingleCoursePage(): React.JSX.Element {
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                                     <div className={`${styles.statItem} text-center sm:text-left`}>
                                         <Clock className="w-5 h-5 sm:w-6 sm:h-6 mb-2 mx-auto sm:mx-0" />
-                                        <p className="text-xs sm:text-sm"><strong className="block text-base sm:text-lg">{course.duration}</strong>Duration</p>
+                                        <p className="text-xs sm:text-sm"><strong className="block text-base sm:text-lg">{duration}</strong>Duration</p>
                                     </div>
                                     <div className={`${styles.statItem} text-center sm:text-left`}>
                                         <Calendar className="w-5 h-5 sm:w-6 sm:h-6 mb-2 mx-auto sm:mx-0" />
-                                        <p className="text-xs sm:text-sm"><strong className="block text-base sm:text-lg">{formatDate(course.startingDate)}</strong>Starts</p>
+                                        <p className="text-xs sm:text-sm"><strong className="block text-base sm:text-lg">{formatDate(startingDate)}</strong>Starts</p>
                                     </div>
                                     <div className={`${styles.statItem} text-center sm:text-left`}>
                                         <Users className="w-5 h-5 sm:w-6 sm:h-6 mb-2 mx-auto sm:mx-0" />
-                                        <p className="text-xs sm:text-sm"><strong className="block text-base sm:text-lg">{course.numberOfUserEnrolled}</strong>Students</p>
+                                        <p className="text-xs sm:text-sm"><strong className="block text-base sm:text-lg">{numberOfUserEnrolled}</strong>Students</p>
                                     </div>
                                     <div className={`${styles.statItem} text-center sm:text-left`}>
                                         <Trophy className="w-5 h-5 sm:w-6 sm:h-6 mb-2 mx-auto sm:mx-0" />
-                                        <p className="text-xs sm:text-sm"><strong className="block text-base sm:text-lg">{course.rating}.0</strong>Rating</p>
+                                        <p className="text-xs sm:text-sm"><strong className="block text-base sm:text-lg">{rating.toFixed(1)}</strong>Rating</p>
                                     </div>
                                 </div>
                             </div>
@@ -290,44 +343,48 @@ export default function SingleCoursePage(): React.JSX.Element {
                                     Description
                                 </h2>
                                 <p className={`${styles.sectionText} text-sm sm:text-base leading-relaxed`}>
-                                    {course.description}
+                                    {description}
                                 </p>
                             </div>
 
                             {/* Skills Section */}
-                            <div className={`${styles.sectionCard} rounded-lg p-5 sm:p-6 lg:p-8`}>
-                                <h2 className={`${styles.sectionTitle} text-xl sm:text-2xl font-bold mb-4 sm:mb-6`}>
-                                    Skills you&apos;ll gain
-                                </h2>
-                                <div className="flex flex-wrap gap-2 sm:gap-3">
-                                    {course.skills.map((skill, index) => (
-                                        <span
-                                            key={index}
-                                            className={`${styles.skillTag} px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-semibold`}
-                                        >
-                                            {skill}
-                                        </span>
-                                    ))}
+                            {skills.length > 0 && (
+                                <div className={`${styles.sectionCard} rounded-lg p-5 sm:p-6 lg:p-8`}>
+                                    <h2 className={`${styles.sectionTitle} text-xl sm:text-2xl font-bold mb-4 sm:mb-6`}>
+                                        Skills you&apos;ll gain
+                                    </h2>
+                                    <div className="flex flex-wrap gap-2 sm:gap-3">
+                                        {skills.map((skill, index) => (
+                                            <span
+                                                key={index}
+                                                className={`${styles.skillTag} px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-semibold`}
+                                            >
+                                                {skill}
+                                            </span>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
                             {/* Tools & Technologies */}
-                            <div className={`${styles.sectionCard} rounded-lg p-5 sm:p-6 lg:p-8`}>
-                                <h2 className={`${styles.sectionTitle} text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2`}>
-                                    <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />
-                                    Tools & Technologies
-                                </h2>
-                                <div className="flex flex-wrap gap-2 sm:gap-3">
-                                    {course.tools.map((tool, index) => (
-                                        <span
-                                            key={index}
-                                            className={`${styles.toolTag} px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-semibold`}
-                                        >
-                                            {tool}
-                                        </span>
-                                    ))}
+                            {tools.length > 0 && (
+                                <div className={`${styles.sectionCard} rounded-lg p-5 sm:p-6 lg:p-8`}>
+                                    <h2 className={`${styles.sectionTitle} text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2`}>
+                                        <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />
+                                        Tools & Technologies
+                                    </h2>
+                                    <div className="flex flex-wrap gap-2 sm:gap-3">
+                                        {tools.map((tool, index) => (
+                                            <span
+                                                key={index}
+                                                className={`${styles.toolTag} px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-semibold`}
+                                            >
+                                                {tool}
+                                            </span>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
                             {/* Instructor */}
                             <div className={`${styles.instructorCard} rounded-lg p-5 sm:p-6 lg:p-8`}>
@@ -336,23 +393,33 @@ export default function SingleCoursePage(): React.JSX.Element {
                                 </h2>
                                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                                     <div className={`${styles.instructorAvatar} w-28 h-28 sm:w-30 sm:h-30 rounded-full flex items-center justify-center flex-shrink-0 mx-auto sm:mx-0`}>
-                                        <User className="w-10 h-10 sm:w-12 sm:h-12" />
+                                        {(course.instructor?.profileImage || course.instructorId?.profileImage) ? (
+                                            <Image
+                                                src={course.instructor?.profileImage || course.instructorId?.profileImage || ''}
+                                                alt={instructorName}
+                                                width={120}
+                                                height={120}
+                                                className="rounded-full object-cover"
+                                            />
+                                        ) : (
+                                            <User className="w-10 h-10 sm:w-12 sm:h-12" />
+                                        )}
                                     </div>
                                     <div className="flex-1 text-center sm:text-left">
                                         <h3 className={`${styles.instructorName} text-lg sm:text-xl font-bold mb-2`}>
-                                            {course.instructorName}
+                                            {instructorName}
                                         </h3>
                                         <p className={`${styles.instructorBio} text-sm sm:text-base mb-4`}>
-                                            {course.instructorId.bio || "Professional instructor with years of experience in the field."}
+                                            {instructorBio}
                                         </p>
                                         <div className="flex flex-wrap justify-center sm:justify-start gap-4 sm:gap-6">
                                             <div className={`${styles.instructorStat} flex items-center gap-2 text-xs sm:text-sm`}>
                                                 <Star className="w-4 h-4" />
-                                                <span>{course.rating}.0 Rating</span>
+                                                <span>{rating.toFixed(1)} Rating</span>
                                             </div>
                                             <div className={`${styles.instructorStat} flex items-center gap-2 text-xs sm:text-sm`}>
                                                 <Users className="w-4 h-4" />
-                                                <span>{course.numberOfUserEnrolled} Students</span>
+                                                <span>{numberOfUserEnrolled} Students</span>
                                             </div>
                                         </div>
                                     </div>
@@ -366,10 +433,10 @@ export default function SingleCoursePage(): React.JSX.Element {
                                 <div className={`${styles.sidebarCard} rounded-lg overflow-hidden`}>
                                     {/* Course Image */}
                                     <div className={`${styles.courseImage} relative w-full aspect-video`}>
-                                        {course.courseFlyerURL ? (
+                                        {courseFlyerURL ? (
                                             <Image
-                                                src={course.courseFlyerURL}
-                                                alt={course.courseName}
+                                                src={courseFlyerURL}
+                                                alt={courseName}
                                                 fill
                                                 className="object-cover"
                                                 priority
@@ -391,10 +458,10 @@ export default function SingleCoursePage(): React.JSX.Element {
                                         <div className={`${styles.priceSection} pb-6 mb-6`}>
                                             <div className="flex items-end gap-3 mb-2">
                                                 <span className={`${styles.priceAmount} text-3xl font-bold`}>
-                                                    ${course.price}
+                                                    ${price}
                                                 </span>
                                                 <span className={`${styles.priceOriginal} text-lg line-through mb-1`}>
-                                                    ${(course.price * 1.5).toFixed(2)}
+                                                    ${(price * 1.5).toFixed(2)}
                                                 </span>
                                             </div>
                                             <span className={`${styles.priceDiscount} inline-block px-2 py-1 rounded text-xs font-semibold`}>
@@ -403,11 +470,21 @@ export default function SingleCoursePage(): React.JSX.Element {
                                         </div>
 
                                         <div className="space-y-3">
-                                            <button className={`${styles.enrollButton} w-full py-3.5 rounded-lg font-bold text-base`}>
-                                                Enroll Now
-                                            </button>
-                                            <button className={`${styles.secondaryButton} w-full py-3.5 rounded-lg font-semibold text-base`}>
-                                                Add to Cart
+                                            <button
+                                                onClick={handleEnrollClick}
+                                                disabled={isEnrolled || isEnrolling}
+                                                className={`${isEnrolled ? styles.enrolledButton : styles.enrollButton} w-full py-3.5 rounded-lg font-bold text-base flex items-center justify-center gap-2`}
+                                            >
+                                                {isEnrolled ? (
+                                                    <>
+                                                        <CheckCircle2 className="w-5 h-5" />
+                                                        Already Enrolled
+                                                    </>
+                                                ) : isEnrolling ? (
+                                                    'Processing...'
+                                                ) : (
+                                                    'Enroll Now'
+                                                )}
                                             </button>
                                         </div>
 
@@ -417,10 +494,7 @@ export default function SingleCoursePage(): React.JSX.Element {
                                                 This course includes:
                                             </h3>
                                             <div className="space-y-3">
-                                                <div className={`${styles.includeItem} flex items-center gap-3 text-sm`}>
-                                                    <Clock className="w-4 h-4 flex-shrink-0" />
-                                                    <span>{course.duration} on-demand content</span>
-                                                </div>
+                                                
                                                 <div className={`${styles.includeItem} flex items-center gap-3 text-sm`}>
                                                     <Download className="w-4 h-4 flex-shrink-0" />
                                                     <span>Downloadable resources</span>
@@ -440,17 +514,7 @@ export default function SingleCoursePage(): React.JSX.Element {
                                             </div>
                                         </div>
 
-                                        {/* Share buttons */}
-                                        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                                            <div className="flex items-center justify-center gap-4">
-                                                <button className={`${styles.shareButton} p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors`}>
-                                                    <Share2 className="w-5 h-5" />
-                                                </button>
-                                                <button className={`${styles.shareButton} p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors`}>
-                                                    <Heart className="w-5 h-5" />
-                                                </button>
-                                            </div>
-                                        </div>
+                                    
                                     </div>
                                 </div>
                             </div>
@@ -458,6 +522,31 @@ export default function SingleCoursePage(): React.JSX.Element {
                     </div>
                 </div>
             </section>
+
+            {/* Enrollment Confirmation Dialog */}
+            <AlertDialog
+                isOpen={showEnrollDialog}
+                onClose={() => setShowEnrollDialog(false)}
+                onConfirm={handleConfirmEnrollment}
+                title="Confirm Enrollment"
+                description={`Are you sure you want to enroll in "${courseName}"?\n\nYou will be charged $${price} for this course.`}
+                confirmText="Enroll Now"
+                cancelText="Cancel"
+                variant="info"
+                icon={<GraduationCap className="w-12 h-12" />}
+                isLoading={isEnrolling}
+            />
+
+            {/* Toast Notification */}
+            <Toast
+                isVisible={showToast}
+                onClose={() => setShowToast(false)}
+                title={toastMessage.title}
+                message={toastMessage.message}
+                variant={toastMessage.variant}
+                duration={5000}
+                position="top-right"
+            />
         </div>
     );
 }
