@@ -746,3 +746,55 @@ select.formInput {
     border-color: rgba(107, 114, 128, 0.3);
   }
 }
+
+// Skeleton Loader Styles
+.skeletonBox {
+  background: linear-gradient(
+    90deg,
+    var(--color-background-secondary) 25%,
+    var(--color-border) 50%,
+    var(--color-background-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+
+  :global(.dark) & {
+    background: linear-gradient(
+      90deg,
+      rgba(30, 41, 59, 0.5) 25%,
+      rgba(71, 85, 105, 0.3) 50%,
+      rgba(30, 41, 59, 0.5) 75%
+    );
+    background-size: 200% 100%;
+  }
+}
+
+.skeletonChart {
+  background: linear-gradient(
+    90deg,
+    var(--color-background-secondary) 25%,
+    var(--color-border) 50%,
+    var(--color-background-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+
+  :global(.dark) & {
+    background: linear-gradient(
+      90deg,
+      rgba(30, 41, 59, 0.3) 25%,
+      rgba(71, 85, 105, 0.2) 50%,
+      rgba(30, 41, 59, 0.3) 75%
+    );
+    background-size: 200% 100%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   BarChart,
   Bar,
@@ -76,14 +76,18 @@ export default function DashboardStats() {
   const { dashboardStats, loading: statsLoading, getDashboardStats } = useInstructor();
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const hasFetchedRef = useRef(false);
 
   // Toast state
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState({ title: '', message: '', variant: 'error' as 'success' | 'error' });
 
-  // Fetch dashboard stats on mount
+  // Fetch dashboard stats on mount (only once)
   useEffect(() => {
+    if (hasFetchedRef.current) return;
+
     const fetchStats = async () => {
+      hasFetchedRef.current = true;
       try {
         await getDashboardStats();
       } catch (err) {
@@ -114,23 +118,84 @@ export default function DashboardStats() {
 
   if (loading || !dashboardData) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-text-secondary">Loading dashboard...</p>
+      <>
+        {/* Mobile Skeleton - Show only on small screens */}
+        <div className="block md:hidden">
+          <MobileDashboard />
         </div>
-      </div>
+
+        {/* Desktop Skeleton - Show only on medium screens and above */}
+        <div className="hidden md:block w-full space-y-6 animate-pulse">
+          {/* Stats Cards Skeleton */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className={`rounded-xl border p-4 md:p-6 ${styles.statsCard}`}>
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`w-12 h-12 rounded-lg ${styles.statsIcon} opacity-30`}></div>
+                  <div className={`w-16 h-6 rounded ${styles.skeletonBox}`}></div>
+                </div>
+                <div className="space-y-2">
+                  <div className={`w-20 h-8 rounded ${styles.skeletonBox}`}></div>
+                  <div className={`w-24 h-4 rounded ${styles.skeletonBox}`}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Charts Skeleton */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+            {[1, 2].map((i) => (
+              <div key={i} className={`rounded-xl border p-4 md:p-6 ${styles.chartCard}`}>
+                <div className={`w-48 h-6 rounded mb-4 ${styles.skeletonBox}`}></div>
+                <div className={`w-full h-[300px] rounded ${styles.skeletonChart}`}></div>
+              </div>
+            ))}
+          </div>
+
+          {/* Top Courses Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            {[1, 2].map((i) => (
+              <div key={i} className={`rounded-xl border p-4 md:p-6 ${styles.chartCard}`}>
+                <div className={`w-48 h-6 rounded mb-4 ${styles.skeletonBox}`}></div>
+                <div className={`p-4 rounded-lg border ${styles.courseCard}`}>
+                  <div className={`w-3/4 h-6 rounded mb-2 ${styles.skeletonBox}`}></div>
+                  <div className={`w-32 h-4 rounded ${styles.skeletonBox}`}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* All Courses Skeleton */}
+          <div className={`rounded-xl border p-4 md:p-6 ${styles.chartCard}`}>
+            <div className={`w-32 h-6 rounded mb-4 ${styles.skeletonBox}`}></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className={`rounded-lg border p-4 ${styles.courseCard}`}>
+                  <div className={`w-full h-5 rounded mb-3 ${styles.skeletonBox}`}></div>
+                  <div className={`w-20 h-4 rounded mb-3 ${styles.skeletonBox}`}></div>
+                  <div className="space-y-2">
+                    <div className={`w-24 h-4 rounded ${styles.skeletonBox}`}></div>
+                    <div className={`w-28 h-4 rounded ${styles.skeletonBox}`}></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </>
     );
   }
 
   const { overview, topCourses, coursesByCategory, allCourses } = dashboardData;
 
   // Prepare chart data
-  const categoryChartData = Object.entries(coursesByCategory).map(([category, data]) => ({
-    name: category,
-    courses: data.count,
-    students: data.totalEnrolled,
-  }));
+  const categoryChartData = coursesByCategory
+    ? Object.entries(coursesByCategory).map(([category, data]) => ({
+        name: category,
+        courses: data.count,
+        students: data.totalEnrolled,
+      }))
+    : [];
 
   // Professional color palette for charts
   const COLORS = [
@@ -274,17 +339,23 @@ export default function DashboardStats() {
               Most Popular Course
             </h3>
           </div>
-          <div className={`p-4 rounded-lg border ${styles.courseCard}`}>
-            <h4 className={`font-semibold text-base md:text-lg mb-2 ${styles.courseTitle}`}>
-              {topCourses.mostPopular.courseName}
-            </h4>
-            <div className="flex items-center gap-2 text-sm md:text-base">
-              <Users className="w-4 h-4" />
-              <span className={styles.courseInfo}>
-                {topCourses.mostPopular.enrolledStudents} students enrolled
-              </span>
+          {topCourses?.mostPopular ? (
+            <div className={`p-4 rounded-lg border ${styles.courseCard}`}>
+              <h4 className={`font-semibold text-base md:text-lg mb-2 ${styles.courseTitle}`}>
+                {topCourses.mostPopular.courseName}
+              </h4>
+              <div className="flex items-center gap-2 text-sm md:text-base">
+                <Users className="w-4 h-4" />
+                <span className={styles.courseInfo}>
+                  {topCourses.mostPopular.enrolledStudents} students enrolled
+                </span>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className={`p-4 rounded-lg border ${styles.courseCard}`}>
+              <p className={`text-sm ${styles.courseInfo}`}>No courses available yet</p>
+            </div>
+          )}
         </div>
 
         {/* Highest Rated Course */}
@@ -295,22 +366,28 @@ export default function DashboardStats() {
               Highest Rated Course
             </h3>
           </div>
-          <div className={`p-4 rounded-lg border ${styles.courseCard}`}>
-            <h4 className={`font-semibold text-base md:text-lg mb-2 ${styles.courseTitle}`}>
-              {topCourses.highestRated.courseName}
-            </h4>
-            <div className="flex items-center gap-4 text-sm md:text-base">
-              <div className="flex items-center gap-1">
-                <Star className={`w-4 h-4 ${styles.courseRating}`} fill="currentColor" />
-                <span className={`font-medium ${styles.courseRating}`}>
-                  {topCourses.highestRated.rating}
+          {topCourses?.highestRated ? (
+            <div className={`p-4 rounded-lg border ${styles.courseCard}`}>
+              <h4 className={`font-semibold text-base md:text-lg mb-2 ${styles.courseTitle}`}>
+                {topCourses.highestRated.courseName}
+              </h4>
+              <div className="flex items-center gap-4 text-sm md:text-base">
+                <div className="flex items-center gap-1">
+                  <Star className={`w-4 h-4 ${styles.courseRating}`} fill="currentColor" />
+                  <span className={`font-medium ${styles.courseRating}`}>
+                    {topCourses.highestRated.rating}
+                  </span>
+                </div>
+                <span className={styles.courseInfo}>
+                  ({topCourses.highestRated.totalRatings} ratings)
                 </span>
               </div>
-              <span className={styles.courseInfo}>
-                ({topCourses.highestRated.totalRatings} ratings)
-              </span>
             </div>
-          </div>
+          ) : (
+            <div className={`p-4 rounded-lg border ${styles.courseCard}`}>
+              <p className={`text-sm ${styles.courseInfo}`}>No rated courses available yet</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -319,8 +396,9 @@ export default function DashboardStats() {
         <h3 className={`text-lg md:text-xl font-bold mb-4 pb-3 border-b ${styles.chartTitle}`}>
           All Courses
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {allCourses.map((course) => (
+        {allCourses && allCourses.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {allCourses.map((course) => (
             <div
               key={course.courseId}
               className={`rounded-lg border p-4 transition-all duration-200 hover:shadow-md ${styles.courseCard}`}
@@ -369,8 +447,24 @@ export default function DashboardStats() {
             </div>
           ))}
         </div>
+        ) : (
+          <div className={`p-4 rounded-lg border ${styles.courseCard} text-center`}>
+            <p className={`text-sm ${styles.courseInfo}`}>No courses available yet</p>
+          </div>
+        )}
       </div>
       </div>
+
+      {/* Toast Notification */}
+      <Toast
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+        title={toastMessage.title}
+        message={toastMessage.message}
+        variant={toastMessage.variant}
+        duration={3000}
+        position="top-right"
+      />
     </>
   );
 }

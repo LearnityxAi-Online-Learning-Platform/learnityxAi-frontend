@@ -5,6 +5,7 @@ import {
   UpdateCoursePayload,
   InstructorCourse,
   InstructorCoursesResponse,
+  DashboardStats,
 } from '@/types/instructorTypes';
 import { ApiSuccessResponse } from '@/types/authTypes';
 
@@ -57,6 +58,12 @@ class InstructorService {
     isActive: boolean
   ): Promise<ApiSuccessResponse<{ course: InstructorCourse }>> {
     const response = await axiosInstance.put(`/api/courses/${courseId}`, { isActive });
+    return response.data;
+  }
+
+  // Get instructor dashboard statistics
+  async getDashboardStats(): Promise<ApiSuccessResponse<DashboardStats>> {
+    const response = await axiosInstance.get('/api/courses/instructor/dashboard');
     return response.data;
   }
 }

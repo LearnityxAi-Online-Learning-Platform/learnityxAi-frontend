@@ -65,10 +65,54 @@ export interface InstructorCoursesResponse {
   pagination: InstructorPagination;
 }
 
+export interface DashboardStats {
+  instructor: {
+    name: string;
+    email: string;
+  };
+  overview: {
+    totalCourses: number;
+    totalStudents: number;
+    averageRating: number;
+    totalRevenue: number;
+  };
+  topCourses: {
+    mostPopular: {
+      courseId: string;
+      courseName: string;
+      enrolledStudents: number;
+    };
+    highestRated: {
+      courseId: string;
+      courseName: string;
+      rating: number;
+      totalRatings: number;
+    };
+  };
+  coursesByCategory: {
+    [key: string]: {
+      count: number;
+      totalEnrolled: number;
+    };
+  };
+  allCourses: Array<{
+    courseId: string;
+    courseName: string;
+    courseCategory: string;
+    enrolledStudents: number;
+    rating: number;
+    totalRatings: number;
+    price: number;
+    startingDate: string;
+    duration: string;
+  }>;
+}
+
 export interface InstructorState {
   courses: InstructorCourse[];
   currentCourse: InstructorCourse | null;
   pagination: InstructorPagination | null;
+  dashboardStats: DashboardStats | null;
   loading: boolean;
   error: string | null;
 }
