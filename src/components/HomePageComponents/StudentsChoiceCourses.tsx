@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -119,7 +120,7 @@ export default function StudentsChoiceCourses(): React.JSX.Element {
                             <p className="text-gray-500 dark:text-gray-400">No top-rated courses available at this time.</p>
                         </div>
                     ) : (
-                        courses.map((course) => (
+                        courses.slice(0, 4).map((course) => (
                         <div
                             key={course._id}
                             onClick={() => router.push(`/courses/${course._id}`)}

@@ -126,37 +126,22 @@ export default function AllCoursesPage(): React.JSX.Element {
                 const [categoriesData, toolsData, durationsData] = await Promise.all([
                     (async () => {
                         const cached = getCachedData(CACHE_KEYS.CATEGORIES);
-                        if (cached) {
-                            console.log('Using cached categories:', cached);
-                            return cached;
-                        }
-                        console.log('Fetching categories from API...');
+                        if (cached) return cached;
                         const data = await courseService.getCategories();
-                        console.log('Fetched categories:', data);
                         setCachedData(CACHE_KEYS.CATEGORIES, data);
                         return data;
                     })(),
                     (async () => {
                         const cached = getCachedData(CACHE_KEYS.TOOLS);
-                        if (cached) {
-                            console.log('Using cached tools:', cached);
-                            return cached;
-                        }
-                        console.log('Fetching tools from API...');
+                        if (cached) return cached;
                         const data = await courseService.getTools();
-                        console.log('Fetched tools:', data);
                         setCachedData(CACHE_KEYS.TOOLS, data);
                         return data;
                     })(),
                     (async () => {
                         const cached = getCachedData(CACHE_KEYS.DURATIONS);
-                        if (cached) {
-                            console.log('Using cached durations:', cached);
-                            return cached;
-                        }
-                        console.log('Fetching durations from API...');
+                        if (cached) return cached;
                         const data = await courseService.getDurations();
-                        console.log('Fetched durations:', data);
                         setCachedData(CACHE_KEYS.DURATIONS, data);
                         return data;
                     })()
@@ -166,8 +151,6 @@ export default function AllCoursesPage(): React.JSX.Element {
                 setCategories(['All Categories', ...categoriesData]);
                 setTools(['All Tools', ...toolsData]);
                 setDurations(durationsData);
-
-                console.log('All filter options loaded successfully');
             } catch (error) {
                 console.error('Error fetching filter options:', error);
                 // Fallback to default values if API fails

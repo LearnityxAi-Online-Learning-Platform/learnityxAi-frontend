@@ -63,7 +63,9 @@ export const fetchAllCourses = createAsyncThunk(
   'courses/fetchAllCourses',
   async (params: GetCoursesParams | undefined, { rejectWithValue }) => {
     try {
-      const response = await courseService.getAllCourses(params);
+      // Disable cache if search query is present to ensure backend receives search for user history
+      const useCache = !params?.search;
+      const response = await courseService.getAllCourses(params, useCache);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch courses');
