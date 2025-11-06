@@ -16,9 +16,11 @@ import {
   X
 } from "lucide-react";
 import { ThemeToggle } from "../../ThemeToggle/themeToggle";
+import { useAuth } from "@/hooks/useAuthHook";
 import styles from "./InstructorLayout.module.scss";
 
 export default function InstructorLayout({ children }: { children: React.ReactNode }) {
+  const { user, logout, getUserProfile } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const pathname = usePathname();
@@ -74,10 +76,39 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
     setIsProfileDropdownOpen(!isProfileDropdownOpen);
   };
 
-  const handleLogout = () => {
-    // Add your logout logic here
-    console.log("Logging out...");
-    router.push("/login");
+  // Fetch user profile on mount
+  useEffect(() => {
+    if (!user) {
+      getUserProfile().catch((err) => {
+        console.error("Error fetching user profile:", err);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.push("/login");
+    } catch (err) {
+      console.error("Logout error:", err);
+      // Force redirect even if logout fails
+      router.push("/login");
+    }
+  };
+
+  // Helper function to get user initials
+  const getInitials = (firstName?: string, lastName?: string) => {
+    if (!firstName && !lastName) return "U";
+    const first = firstName?.charAt(0) || "";
+    const last = lastName?.charAt(0) || "";
+    return (first + last).toUpperCase();
+  };
+
+  // Get display name
+  const getDisplayName = () => {
+    if (!user) return "Loading...";
+    return `${user.firstName || ""} ${user.lastName || ""}`.trim() || "User";
   };
 
   const navigationItems = [
@@ -223,10 +254,17 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
                 onClick={toggleProfileDropdown}
                 aria-label="Profile menu"
               >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm ${styles.profileAvatar}`}>
-                  JD
-                </div>
-                <span className="text-sm font-medium hidden sm:block">John Doe</span>
+                {user?.profileImage ? (
+                  <div
+                    className="w-8 h-8 rounded-full bg-cover bg-center"
+                    style={{ backgroundImage: `url(${user.profileImage})` }}
+                  />
+                ) : (
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm ${styles.profileAvatar}`}>
+                    {getInitials(user?.firstName, user?.lastName)}
+                  </div>
+                )}
+                <span className="text-sm font-medium hidden sm:block">{getDisplayName()}</span>
                 <ChevronDown
                   size={16}
                   className={`transition-transform duration-150 hidden sm:block ${
@@ -244,16 +282,16 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
               >
                 <div className={`p-4 border-b ${styles.dropdownHeader}`}>
                   <h3 className={`text-[15px] font-semibold m-0 mb-1 ${styles.dropdownUserName}`}>
-                    John Doe
+                    {getDisplayName()}
                   </h3>
                   <p className={`text-[13px] m-0 ${styles.dropdownUserEmail}`}>
-                    john.doe@example.com
+                    {user?.email || ""}
                   </p>
                 </div>
 
                 <div className="p-2">
                   <Link
-                    href="/instructor-profile.tsx"
+                    href="/instructor-profile"
                     className={`flex items-center gap-3 px-4 py-3 rounded-md no-underline text-sm font-medium cursor-pointer transition-all duration-150 border-0 w-full text-left ${styles.dropdownItem}`}
                     onClick={() => setIsProfileDropdownOpen(false)}
                   >

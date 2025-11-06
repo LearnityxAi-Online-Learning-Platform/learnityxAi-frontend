@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
@@ -15,8 +16,11 @@ import {
   Upload,
 } from "lucide-react";
 import styles from "./InstructorComponents.module.scss";
-import { useToast } from "../ui/useToast";
+import Toast from "../ui/Toast";
 import CustomSelect from "./CustomSelect";
+import { useInstructor } from "@/hooks/useInstructorHook";
+import { useFileUpload } from "@/hooks/useFileUploadHook";
+import courseService from "@/services/courseService";
 
 interface CourseFormData {
   courseName: string;
@@ -44,24 +48,7 @@ interface ValidationErrors {
   courseFlyer?: string;
 }
 
-const COURSE_CATEGORIES = [
-  "Web Development",
-  "Mobile Development",
-  "Data Science",
-  "Machine Learning",
-  "Artificial Intelligence",
-  "Cloud Computing",
-  "Cybersecurity",
-  "DevOps",
-  "Blockchain",
-  "Game Development",
-  "UI/UX Design",
-  "Digital Marketing",
-  "Business Analytics",
-  "Programming Languages",
-  "Database Management",
-];
-
+// Skills options (frontend only, not from backend)
 const SKILLS_OPTIONS = [
   "Python",
   "JavaScript",
@@ -104,56 +91,21 @@ const SKILLS_OPTIONS = [
   "Ruby on Rails",
 ];
 
-const TOOLS_OPTIONS = [
-  "VS Code",
-  "Git",
-  "GitHub",
-  "GitLab",
-  "Bitbucket",
-  "Postman",
-  "Insomnia",
-  "Docker",
-  "Kubernetes",
-  "Jenkins",
-  "CircleCI",
-  "Travis CI",
-  "PostgreSQL",
-  "MongoDB",
-  "MySQL",
-  "Redis",
-  "Nginx",
-  "Apache",
-  "Linux",
-  "Windows",
-  "macOS",
-  "Figma",
-  "Adobe XD",
-  "Sketch",
-  "Jira",
-  "Trello",
-  "Slack",
-  "Notion",
-];
-
-const DURATION_OPTIONS = [
-  "4 weeks",
-  "6 weeks",
-  "8 weeks",
-  "10 weeks",
-  "12 weeks",
-  "16 weeks",
-  "20 weeks",
-  "24 weeks",
-  "6 months",
-  "9 months",
-  "12 months",
-];
-
 function CreateCourseForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const editId = searchParams?.get("edit");
   const isEditMode = !!editId;
+
+  // Hooks
+  const {
+    currentCourse,
+    createCourse,
+    updateCourse,
+    getCourseById,
+    loading: instructorLoading
+  } = useInstructor();
+  const { uploadCourseFlyer, loading: uploadLoading } = useFileUpload();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(isEditMode);
@@ -161,7 +113,24 @@ function CreateCourseForm() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
-  const { success, error, ToastComponent } = useToast();
+
+  // Upload progress state
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadFileName, setUploadFileName] = useState<string>("");
+
+  // Toast state
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState({
+    title: '',
+    message: '',
+    variant: 'success' as 'success' | 'error'
+  });
+
+  // Dynamic options from backend
+  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
+  const [toolOptions, setToolOptions] = useState<string[]>([]);
+  const [durationOptions, setDurationOptions] = useState<string[]>([]);
 
   const [formData, setFormData] = useState<CourseFormData>({
     courseName: "",
@@ -176,6 +145,31 @@ function CreateCourseForm() {
     courseFlyer: null,
   });
 
+  // Fetch dynamic options from backend
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const [categories, tools, durations] = await Promise.all([
+          courseService.getCategories(),
+          courseService.getTools(),
+          courseService.getDurations()
+        ]);
+        setCategoryOptions(categories);
+        setToolOptions(tools);
+        setDurationOptions(durations);
+      } catch (err) {
+        console.error('Error fetching filter options:', err);
+        setToastMessage({
+          title: 'Error',
+          message: 'Failed to load form options. Some fields may be unavailable.',
+          variant: 'error'
+        });
+        setShowToast(true);
+      }
+    };
+    fetchOptions();
+  }, []);
+
   // Fetch course data if in edit mode
   useEffect(() => {
     if (isEditMode && editId) {
@@ -184,55 +178,42 @@ function CreateCourseForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editId]);
 
-  const fetchCourseData = async (courseId: string) => {
-    setIsLoading(true);
-    try {
-      // TODO: Replace with actual API call
-      // const response = await fetch(`/api/instructor/courses/${courseId}`);
-      // const data = await response.json();
-
-      // Mock data for demonstration
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const mockCourseData = {
-        courseName: "Complete Python Programming",
-        courseCategory: "Web Development",
-        description:
-          "Learn Python from basics to advanced topics including Django and Flask with comprehensive hands-on projects",
-        whatYouWillLearn: [
-          "Master Python from scratch",
-          "Master Django from scratch",
-          "Master Flask from scratch",
-          "Master REST APIs from scratch",
-        ],
-        skills: ["Python", "Django", "Flask", "REST APIs"],
-        tools: ["Python", "Django", "PostgreSQL", "Git"],
-        startingDate: "2024-02-01",
-        duration: "12 weeks",
-        price: "99.99",
-        courseFlyerURL: "https://example.com/python-course-flyer.jpg",
-      };
-
+  // Sync course data from Redux when fetched
+  useEffect(() => {
+    if (currentCourse && isEditMode) {
       setFormData({
-        courseName: mockCourseData.courseName,
-        courseCategory: mockCourseData.courseCategory,
-        description: mockCourseData.description,
-        whatYouWillLearn: mockCourseData.whatYouWillLearn,
-        skills: mockCourseData.skills,
-        tools: mockCourseData.tools,
-        startingDate: mockCourseData.startingDate,
-        duration: mockCourseData.duration,
-        price: mockCourseData.price,
+        courseName: currentCourse.courseName || "",
+        courseCategory: currentCourse.courseCategory || "",
+        description: currentCourse.description || "",
+        whatYouWillLearn: currentCourse.whatYouWillLearn || [],
+        skills: currentCourse.skills || [],
+        tools: currentCourse.tools || [],
+        startingDate: currentCourse.startingDate ? new Date(currentCourse.startingDate).toISOString().split('T')[0] : "",
+        duration: typeof currentCourse.duration === 'string' ? currentCourse.duration : "",
+        price: currentCourse.price?.toString() || "",
         courseFlyer: null,
       });
 
       // Set image preview if URL exists
-      if (mockCourseData.courseFlyerURL) {
-        setImagePreview(mockCourseData.courseFlyerURL);
+      if (currentCourse.courseFlyerURL) {
+        setImagePreview(currentCourse.courseFlyerURL);
       }
+      setIsLoading(false);
+    }
+  }, [currentCourse, isEditMode]);
+
+  const fetchCourseData = async (courseId: string) => {
+    setIsLoading(true);
+    try {
+      await getCourseById(courseId);
     } catch (err) {
       console.error("Error fetching course data:", err);
-      error("Failed to load course data. Please try again.");
-    } finally {
+      setToastMessage({
+        title: 'Error',
+        message: 'Failed to load course data. Please try again.',
+        variant: 'error'
+      });
+      setShowToast(true);
       setIsLoading(false);
     }
   };
@@ -396,7 +377,12 @@ function CreateCourseForm() {
       // Show first error in toast
       const firstError = Object.values(errors).find((err) => err !== undefined);
       if (firstError) {
-        error(firstError);
+        setToastMessage({
+          title: 'Validation Error',
+          message: firstError,
+          variant: 'error'
+        });
+        setShowToast(true);
       }
     }
 
@@ -457,11 +443,21 @@ function CreateCourseForm() {
   const addLearnItem = () => {
     if (currentLearnItem.trim()) {
       if (currentLearnItem.trim().length < 10) {
-        error("Learning outcome must be at least 10 characters long");
+        setToastMessage({
+          title: 'Validation Error',
+          message: 'Learning outcome must be at least 10 characters long',
+          variant: 'error'
+        });
+        setShowToast(true);
         return;
       }
       if (currentLearnItem.trim().length > 200) {
-        error("Learning outcome must not exceed 200 characters");
+        setToastMessage({
+          title: 'Validation Error',
+          message: 'Learning outcome must not exceed 200 characters',
+          variant: 'error'
+        });
+        setShowToast(true);
         return;
       }
 
@@ -502,32 +498,90 @@ function CreateCourseForm() {
     });
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       // Validate file type
       if (!file.type.startsWith("image/")) {
-        error("Please upload an image file");
+        setToastMessage({
+          title: 'Error',
+          message: 'Please upload an image file',
+          variant: 'error'
+        });
+        setShowToast(true);
         return;
       }
 
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        error("Image size should be less than 5MB");
+        setToastMessage({
+          title: 'Error',
+          message: 'Image size should be less than 5MB',
+          variant: 'error'
+        });
+        setShowToast(true);
         return;
       }
 
-      setFormData((prev) => ({
-        ...prev,
-        courseFlyer: file,
-      }));
+      try {
+        // Reset progress and start upload
+        setUploadProgress(0);
+        setIsUploading(true);
+        setUploadFileName(file.name);
 
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+        // Simulate progress (since we don't have real progress from backend)
+        const progressInterval = setInterval(() => {
+          setUploadProgress((prev) => {
+            if (prev >= 90) {
+              clearInterval(progressInterval);
+              return 90;
+            }
+            return prev + 10;
+          });
+        }, 200);
+
+        // Upload to backend
+        const uploadedUrl = await uploadCourseFlyer(file);
+
+        // Complete progress
+        clearInterval(progressInterval);
+        setUploadProgress(100);
+
+        if (uploadedUrl) {
+          setFormData((prev) => ({
+            ...prev,
+            courseFlyer: file,
+          }));
+
+          // Set preview to uploaded URL
+          setImagePreview(uploadedUrl);
+
+          // Wait a bit to show 100% before hiding progress
+          setTimeout(() => {
+            setIsUploading(false);
+            setUploadProgress(0);
+            setUploadFileName("");
+          }, 500);
+
+          setToastMessage({
+            title: 'Success',
+            message: 'Course flyer uploaded successfully!',
+            variant: 'success'
+          });
+          setShowToast(true);
+        }
+      } catch (err) {
+        console.error('Error uploading course flyer:', err);
+        setIsUploading(false);
+        setUploadProgress(0);
+        setUploadFileName("");
+        setToastMessage({
+          title: 'Error',
+          message: 'Failed to upload course flyer. Please try again.',
+          variant: 'error'
+        });
+        setShowToast(true);
+      }
     }
   };
 
@@ -550,58 +604,82 @@ function CreateCourseForm() {
     setIsSubmitting(true);
 
     try {
-      // Prepare data for API
-      const courseData = {
-        ...formData,
-        price: parseFloat(formData.price),
-      };
-
       if (isEditMode && editId) {
-        // TODO: Replace with actual API call for update
-        // const response = await fetch(`/api/instructor/courses/${editId}`, {
-        //   method: 'PUT',
-        //   body: JSON.stringify(courseData),
-        // });
+        // Update existing course
+        await updateCourse({
+          courseId: editId,
+          courseName: formData.courseName,
+          courseCategory: formData.courseCategory,
+          description: formData.description,
+          whatYouWillLearn: formData.whatYouWillLearn,
+          skills: formData.skills,
+          tools: formData.tools,
+          startingDate: formData.startingDate,
+          duration: formData.duration,
+          price: parseFloat(formData.price),
+          courseFlyerURL: imagePreview || undefined,
+        });
 
-        console.log("Updating Course:", courseData);
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        success("Course updated successfully!");
+        setToastMessage({
+          title: 'Success',
+          message: 'Course updated successfully!',
+          variant: 'success'
+        });
+        setShowToast(true);
 
         // Navigate back to instructor courses after successful update
         setTimeout(() => {
           router.push("/instructor-courses");
         }, 1500);
       } else {
-        // TODO: Replace with actual API call for create
-        // const response = await fetch('/api/instructor/courses', {
-        //   method: 'POST',
-        //   body: JSON.stringify(courseData),
-        // });
+        // Create new course
+        await createCourse({
+          courseName: formData.courseName,
+          courseCategory: formData.courseCategory,
+          description: formData.description,
+          whatYouWillLearn: formData.whatYouWillLearn,
+          skills: formData.skills,
+          tools: formData.tools,
+          startingDate: formData.startingDate,
+          duration: formData.duration,
+          price: parseFloat(formData.price),
+          courseFlyerURL: imagePreview || undefined,
+        });
 
-        console.log("Creating Course:", courseData);
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        success("Course created successfully!");
+        setToastMessage({
+          title: 'Success',
+          message: 'Course created successfully!',
+          variant: 'success'
+        });
+        setShowToast(true);
 
         // Reset form after creating
-        setFormData({
-          courseName: "",
-          courseCategory: "",
-          description: "",
-          whatYouWillLearn: [],
-          skills: [],
-          tools: [],
-          startingDate: "",
-          duration: "",
-          price: "",
-          courseFlyer: null,
-        });
-        setImagePreview(null);
-        setValidationErrors({});
-        setTouched({});
+        setTimeout(() => {
+          setFormData({
+            courseName: "",
+            courseCategory: "",
+            description: "",
+            whatYouWillLearn: [],
+            skills: [],
+            tools: [],
+            startingDate: "",
+            duration: "",
+            price: "",
+            courseFlyer: null,
+          });
+          setImagePreview(null);
+          setValidationErrors({});
+          setTouched({});
+        }, 1000);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(`Error ${isEditMode ? "updating" : "creating"} course:`, err);
-      error(`Failed to ${isEditMode ? "update" : "create"} course. Please try again.`);
+      setToastMessage({
+        title: 'Error',
+        message: err?.message || `Failed to ${isEditMode ? "update" : "create"} course. Please try again.`,
+        variant: 'error'
+      });
+      setShowToast(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -621,7 +699,6 @@ function CreateCourseForm() {
 
   return (
     <>
-      <ToastComponent />
       <div className="w-full pb-8">
         {/* Page Title */}
         <div className="mb-6">
@@ -674,7 +751,7 @@ function CreateCourseForm() {
 
             <div>
               <CustomSelect
-                options={COURSE_CATEGORIES}
+                options={categoryOptions}
                 value={formData.courseCategory}
                 onChange={(value) => {
                   setFormData((prev) => ({ ...prev, courseCategory: value }));
@@ -839,7 +916,7 @@ function CreateCourseForm() {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {TOOLS_OPTIONS.map((tool) => (
+            {toolOptions.map((tool) => (
               <button
                 key={tool}
                 type="button"
@@ -905,7 +982,7 @@ function CreateCourseForm() {
 
             <div>
               <CustomSelect
-                options={DURATION_OPTIONS}
+                options={durationOptions}
                 value={formData.duration}
                 onChange={(value) => {
                   setFormData((prev) => ({ ...prev, duration: value }));
@@ -962,19 +1039,44 @@ function CreateCourseForm() {
                     accept="image/*"
                     onChange={handleImageUpload}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    disabled={isUploading}
                   />
                   <div className="flex flex-col items-center gap-3">
                     <div className={`p-4 rounded-full ${styles.uploadIconBg}`}>
-                      <Upload className={`w-8 h-8 ${styles.uploadIcon}`} />
+                      {isUploading ? (
+                        <Loader2 className={`w-8 h-8 animate-spin ${styles.uploadIcon}`} />
+                      ) : (
+                        <Upload className={`w-8 h-8 ${styles.uploadIcon}`} />
+                      )}
                     </div>
                     <div>
                       <p className={`text-sm md:text-base font-medium mb-1 ${styles.uploadText}`}>
-                        Click to upload or drag and drop
+                        {isUploading ? "Uploading..." : "Click to upload or drag and drop"}
                       </p>
                       <p className={`text-xs md:text-sm ${styles.uploadSubtext}`}>
                         PNG, JPG, GIF up to 5MB
                       </p>
                     </div>
+
+                    {/* Upload Progress Indicator */}
+                    {isUploading && (
+                      <div className="w-full max-w-md mt-2">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className={`text-xs font-medium truncate flex-1 mr-2 ${styles.uploadText}`}>
+                            {uploadFileName}
+                          </span>
+                          <span className={`text-xs font-bold ${styles.uploadPercentage}`}>
+                            {uploadProgress}%
+                          </span>
+                        </div>
+                        <div className={`w-full h-2 rounded-full overflow-hidden ${styles.progressBarBg}`}>
+                          <div
+                            className={`h-full rounded-full transition-all duration-300 ease-out ${styles.progressBarFill}`}
+                            style={{ width: `${uploadProgress}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               ) : (
@@ -1048,6 +1150,17 @@ function CreateCourseForm() {
         </div>
       </form>
       </div>
+
+      {/* Toast Notification */}
+      <Toast
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+        title={toastMessage.title}
+        message={toastMessage.message}
+        variant={toastMessage.variant}
+        duration={3000}
+        position="top-right"
+      />
     </>
   );
 }

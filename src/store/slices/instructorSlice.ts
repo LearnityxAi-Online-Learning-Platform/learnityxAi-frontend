@@ -13,6 +13,7 @@ const initialState: InstructorState = {
   courses: [],
   currentCourse: null,
   pagination: null,
+  dashboardStats: null,
   loading: false,
   error: null,
 };
@@ -89,6 +90,20 @@ export const toggleCourseStatus = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data || { message: 'Failed to toggle course status' }
+      );
+    }
+  }
+);
+
+export const getDashboardStats = createAsyncThunk(
+  'instructor/getDashboardStats',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await instructorService.getDashboardStats();
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data || { message: 'Failed to fetch dashboard stats' }
       );
     }
   }
@@ -222,6 +237,23 @@ const instructorSlice = createSlice({
         state.loading = false;
         const error = action.payload as ApiError;
         state.error = error.message || 'Failed to toggle course status';
+      });
+
+    // Get Dashboard Stats
+    builder
+      .addCase(getDashboardStats.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getDashboardStats.fulfilled, (state, action) => {
+        state.loading = false;
+        state.dashboardStats = action.payload;
+        state.error = null;
+      })
+      .addCase(getDashboardStats.rejected, (state, action) => {
+        state.loading = false;
+        const error = action.payload as ApiError;
+        state.error = error.message || 'Failed to fetch dashboard stats';
       });
   },
 });

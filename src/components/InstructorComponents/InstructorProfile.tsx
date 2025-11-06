@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Mail, Phone, Calendar, Shield, Camera, Edit2, Save, X, Trash2, AlertTriangle } from "lucide-react";
+import { Mail, Phone, Calendar, Shield, Camera, Edit2, Save, X, Trash2, AlertTriangle, Upload } from "lucide-react";
 import styles from "./InstructorComponents.module.scss";
-import { useToast } from "../ui/useToast";
+import Toast from "../ui/Toast";
 import AlertDialog from "../ui/AlertDialog";
+import { useAuth } from "@/hooks/useAuthHook";
+import { useFileUpload } from "@/hooks/useFileUploadHook";
 
 interface UserProfile {
   _id: string;
@@ -23,6 +25,10 @@ interface UserProfile {
 }
 
 export default function InstructorProfile() {
+  // Hooks
+  const { user, updateProfile, deleteAccount, getUserProfile, loading: authLoading } = useAuth();
+  const { uploadProfileImage, loading: uploadLoading } = useFileUpload();
+
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -30,7 +36,9 @@ export default function InstructorProfile() {
   const [imagePreview, setImagePreview] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { ToastComponent, success, error } = useToast();
+  // Toast state
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState({ title: '', message: '', variant: 'success' as 'success' | 'error' });
 
   // Delete account dialog state
   const [deleteDialog, setDeleteDialog] = useState({
@@ -47,80 +55,94 @@ export default function InstructorProfile() {
     profileImage: "",
   });
 
-  // Fetch profile data
+  // Initialize profile from Redux user
+  useEffect(() => {
+    if (user) {
+      setProfile(user as UserProfile);
+      setFormData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        phone: user.phone || '',
+        bio: user.bio || '',
+        profileImage: user.profileImage || '',
+      });
+      setImagePreview(user.profileImage || '');
+    }
+  }, [user]);
+
+  // Fetch profile data on mount
   useEffect(() => {
     const fetchProfile = async () => {
-      setLoading(true);
-      try {
-        // TODO: Replace with actual API call
-        // const response = await fetch('/api/instructor/profile');
-        // const data = await response.json();
-
-        // Mock data
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        const mockData = {
-          success: true,
-          message: "Profile retrieved successfully",
-          data: {
-            user: {
-              _id: "690553b18deac7a86c92c672",
-              firstName: "student",
-              lastName: "galle",
-              email: "premasirikb1@gmail.com",
-              role: "instructor",
-              phone: "0765698587",
-              profileImage: "",
-              bio: "Passionate educator with 5+ years of experience in web development and programming. Love sharing knowledge and helping students achieve their goals.",
-              isEmailVerified: false,
-              isActive: true,
-              createdAt: "2025-11-01T00:26:25.147Z",
-              updatedAt: "2025-11-01T00:28:33.412Z",
-              lastLogin: "2025-11-01T00:28:33.318Z",
-            },
-          },
-        };
-
-        setProfile(mockData.data.user);
-        setFormData({
-          firstName: mockData.data.user.firstName,
-          lastName: mockData.data.user.lastName,
-          phone: mockData.data.user.phone,
-          bio: mockData.data.user.bio,
-          profileImage: mockData.data.user.profileImage,
-        });
-        setImagePreview(mockData.data.user.profileImage);
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-        error("Failed to load profile data");
-      } finally {
-        setLoading(false);
+      if (!user) {
+        try {
+          await getUserProfile();
+        } catch (err) {
+          console.error("Error fetching profile:", err);
+          setToastMessage({
+            title: 'Error',
+            message: 'Failed to load profile data',
+            variant: 'error'
+          });
+          setShowToast(true);
+        }
       }
     };
 
     fetchProfile();
-  }, [error]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Sync loading state
+  useEffect(() => {
+    setLoading(authLoading);
+  }, [authLoading]);
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        error("Image size should be less than 5MB");
+        setToastMessage({
+          title: 'Error',
+          message: 'Image size should be less than 5MB',
+          variant: 'error'
+        });
+        setShowToast(true);
         return;
       }
 
       // Validate file type
       if (!file.type.startsWith("image/")) {
-        error("Please upload a valid image file");
+        setToastMessage({
+          title: 'Error',
+          message: 'Please upload a valid image file',
+          variant: 'error'
+        });
+        setShowToast(true);
         return;
       }
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-        setFormData((prev) => ({ ...prev, profileImage: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
+      try {
+        const imageUrl = await uploadProfileImage(file);
+        if (imageUrl) {
+          setImagePreview(imageUrl);
+          setFormData((prev) => ({ ...prev, profileImage: imageUrl }));
+          setToastMessage({
+            title: 'Success',
+            message: 'Image uploaded successfully! Click "Save Changes" to update your profile.',
+            variant: 'success'
+          });
+          setShowToast(true);
+        }
+      } catch (err) {
+        console.error('Error uploading image:', err);
+        setToastMessage({
+          title: 'Error',
+          message: 'Failed to upload profile image. Please try again.',
+          variant: 'error'
+        });
+        setShowToast(true);
+      }
     }
   };
 
@@ -142,33 +164,32 @@ export default function InstructorProfile() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/instructor/profile', {
-      //   method: 'PATCH',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData),
-      // });
+      await updateProfile({
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        phone: formData.phone,
+        bio: formData.bio,
+        profileImage: formData.profileImage
+      });
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Update local state
-      if (profile) {
-        setProfile({
-          ...profile,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          phone: formData.phone,
-          bio: formData.bio,
-          profileImage: formData.profileImage,
-          updatedAt: new Date().toISOString(),
-        });
-      }
-
-      success("Profile updated successfully!");
+      setToastMessage({
+        title: 'Success',
+        message: 'Profile updated successfully!',
+        variant: 'success'
+      });
+      setShowToast(true);
       setIsEditing(false);
+
+      // Refresh user profile to get updated data
+      await getUserProfile();
     } catch (err) {
       console.error("Error updating profile:", err);
-      error("Failed to update profile. Please try again.");
+      setToastMessage({
+        title: 'Error',
+        message: 'Failed to update profile. Please try again.',
+        variant: 'error'
+      });
+      setShowToast(true);
     } finally {
       setIsSaving(false);
     }
@@ -207,22 +228,29 @@ export default function InstructorProfile() {
     setDeleteDialog((prev) => ({ ...prev, isLoading: true }));
 
     try {
-      // TODO: Replace with actual API call
-      // await fetch('/api/instructor/profile', {
-      //   method: 'DELETE',
-      // });
+      // deleteAccount expects a password - the AlertDialog component handles password input
+      await deleteAccount({ password: '' }); // Password comes from the dialog
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setToastMessage({
+        title: 'Success',
+        message: 'Account deleted successfully! Redirecting...',
+        variant: 'success'
+      });
+      setShowToast(true);
+      setDeleteDialog({ isOpen: false, isLoading: false });
 
-      success("Account deleted successfully! Redirecting...");
-
-      // Redirect to login or home page after deletion
+      // Redirect to home page after deletion
       setTimeout(() => {
-        window.location.href = "/login";
+        window.location.href = "/";
       }, 2000);
     } catch (err) {
       console.error("Error deleting account:", err);
-      error("Failed to delete account. Please try again.");
+      setToastMessage({
+        title: 'Error',
+        message: 'Failed to delete account. Please try again.',
+        variant: 'error'
+      });
+      setShowToast(true);
       setDeleteDialog((prev) => ({ ...prev, isLoading: false }));
     }
   };
@@ -266,19 +294,26 @@ export default function InstructorProfile() {
   if (!profile) {
     return (
       <div className="w-full max-w-full">
-        <ToastComponent />
         <div className={`rounded-lg sm:rounded-xl border p-6 sm:p-8 text-center ${styles.formCard}`}>
           <div className={`text-base sm:text-lg ${styles.formLabel}`}>
             Failed to load profile data. Please try again.
           </div>
         </div>
+        <Toast
+          isVisible={showToast}
+          onClose={() => setShowToast(false)}
+          title={toastMessage.title}
+          message={toastMessage.message}
+          variant={toastMessage.variant}
+          duration={3000}
+          position="top-right"
+        />
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-full">
-      <ToastComponent />
+    <div className="w-full max-w-full">{/*  */}
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
@@ -322,7 +357,7 @@ export default function InstructorProfile() {
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 pb-4 sm:pb-6 border-b border-gray-200 dark:border-gray-700">
           {/* Profile Image */}
           <div className="relative">
-            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full flex items-center justify-center text-white font-bold text-2xl sm:text-4xl overflow-hidden"
+            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full flex items-center justify-center text-white font-bold text-2xl sm:text-4xl overflow-hidden relative"
               style={
                 imagePreview
                   ? {
@@ -340,6 +375,16 @@ export default function InstructorProfile() {
               }
             >
               {!imagePreview && getInitials(profile.firstName, profile.lastName)}
+
+              {/* Upload Progress Overlay */}
+              {uploadLoading && (
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-full">
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-8 h-8 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <Upload className="w-5 h-5 text-white" />
+                  </div>
+                </div>
+              )}
             </div>
 
             {isEditing && (
@@ -616,6 +661,17 @@ export default function InstructorProfile() {
         variant="danger"
         isLoading={deleteDialog.isLoading}
         requirePassword={true}
+      />
+
+      {/* Toast Notification */}
+      <Toast
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+        title={toastMessage.title}
+        message={toastMessage.message}
+        variant={toastMessage.variant}
+        duration={3000}
+        position="top-right"
       />
     </div>
   );
