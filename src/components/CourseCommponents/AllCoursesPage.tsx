@@ -36,14 +36,6 @@ interface Course {
     numberOfUserEnrolled?: number;
 }
 
-const ratingOptions = [
-    { label: "All Ratings", value: 0 },
-    { label: "4.5 & above", value: 4.5 },
-    { label: "4.0 & above", value: 4.0 },
-    { label: "3.5 & above", value: 3.5 },
-    { label: "3.0 & above", value: 3.0 }
-];
-
 // Fallback data for filter options if API fails
 const FALLBACK_CATEGORIES = [
     'Web Development',
@@ -87,20 +79,20 @@ export default function AllCoursesPage(): React.JSX.Element {
     const [searchQuery, setSearchQuery] = useState(urlSearch);
     const [selectedCategory, setSelectedCategory] = useState(urlCategory || 'All Categories');
     const [selectedTool, setSelectedTool] = useState(urlTools || 'All Tools');
-    const [minRating, setMinRating] = useState(0);
-    const [sortBy, setSortBy] = useState<'rating' | 'price' | 'enrollmentCount' | 'createdAt'>('enrollmentCount');
+    const [selectedDuration, setSelectedDuration] = useState('All Durations');
+    const [sortBy, setSortBy] = useState<'price' | 'enrollmentCount' | 'createdAt'>('enrollmentCount');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
     const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
     const [expandedSections, setExpandedSections] = useState({
         categories: true,
         tools: false,
-        rating: false
+        duration: false
     });
 
     // Dynamic filter options from API with localStorage caching
     const [categories, setCategories] = useState<string[]>(['All Categories']);
     const [tools, setTools] = useState<string[]>(['All Tools']);
-    const [durations, setDurations] = useState<string[]>([]);
+    const [durations, setDurations] = useState<string[]>(['All Durations']);
     const [filterOptionsLoading, setFilterOptionsLoading] = useState(true);
 
     // Fetch filter options on component mount - directly from backend without caching
@@ -119,13 +111,13 @@ export default function AllCoursesPage(): React.JSX.Element {
                 // Update all states at once
                 setCategories(['All Categories', ...categoriesData]);
                 setTools(['All Tools', ...toolsData]);
-                setDurations(durationsData);
+                setDurations(['All Durations', ...durationsData]);
             } catch (error) {
                 console.error('Error fetching filter options:', error);
                 // Fallback to default values if API fails
                 setCategories(['All Categories', ...FALLBACK_CATEGORIES]);
                 setTools(['All Tools', ...FALLBACK_TOOLS]);
-                setDurations(FALLBACK_DURATIONS);
+                setDurations(['All Durations', ...FALLBACK_DURATIONS]);
             } finally {
                 setFilterOptionsLoading(false);
             }
@@ -167,8 +159,9 @@ export default function AllCoursesPage(): React.JSX.Element {
         if (selectedTool && selectedTool !== 'All Tools') {
             params.tools = selectedTool;
         }
-        if (minRating > 0) {
-            params.minRating = minRating;
+        if (selectedDuration && selectedDuration !== 'All Durations') {
+            // Pass the exact duration value from the endpoint (e.g., "6 weeks", "3 months", "Self-paced")
+            params.duration = selectedDuration;
         }
         if (searchQuery.trim()) {
             params.search = searchQuery.trim();
@@ -185,7 +178,7 @@ export default function AllCoursesPage(): React.JSX.Element {
     useEffect(() => {
         fetchCourses(1);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedCategory, selectedTool, minRating, sortBy, sortOrder, searchQuery]);
+    }, [selectedCategory, selectedTool, selectedDuration, sortBy, sortOrder, searchQuery]);
 
     // Handle URL search and category param changes
     useEffect(() => {
@@ -240,10 +233,6 @@ export default function AllCoursesPage(): React.JSX.Element {
                 setSortBy('enrollmentCount');
                 setSortOrder('desc');
                 break;
-            case 'rating':
-                setSortBy('rating');
-                setSortOrder('desc');
-                break;
             case 'newest':
                 setSortBy('createdAt');
                 setSortOrder('desc');
@@ -266,7 +255,7 @@ export default function AllCoursesPage(): React.JSX.Element {
         setSearchQuery('');
         setSelectedCategory('All Categories');
         setSelectedTool('All Tools');
-        setMinRating(0);
+        setSelectedDuration('All Durations');
         setSortBy('enrollmentCount');
         setSortOrder('desc');
         // Clear URL params
@@ -277,7 +266,7 @@ export default function AllCoursesPage(): React.JSX.Element {
         searchQuery !== '' ||
         selectedCategory !== 'All Categories' ||
         selectedTool !== 'All Tools' ||
-        minRating !== 0;
+        selectedDuration !== 'All Durations';
 
     return (
         <div className={`${styles.allCoursesPage} min-h-screen py-6 sm:py-8 lg:py-12`}>
@@ -323,7 +312,6 @@ export default function AllCoursesPage(): React.JSX.Element {
                                 className={`${styles.sortSelect} px-4 py-3.5 rounded-xl text-sm sm:text-base font-medium min-w-[160px]`}
                             >
                                 <option value="popular">Most Popular</option>
-                                <option value="rating">Highest Rated</option>
                                 <option value="newest">Newest First</option>
                                 <option value="price-low">Price: Low to High</option>
                                 <option value="price-high">Price: High to Low</option>
@@ -348,7 +336,7 @@ export default function AllCoursesPage(): React.JSX.Element {
                                 {searchQuery && <span className="ml-2">Search: &quot;{searchQuery}&quot;</span>}
                                 {selectedCategory !== 'All Categories' && <span className="ml-2">• Category: {selectedCategory}</span>}
                                 {selectedTool !== 'All Tools' && <span className="ml-2">• Tool: {selectedTool}</span>}
-                                {minRating > 0 && <span className="ml-2">• Rating: {minRating}+</span>}
+                                {selectedDuration !== 'All Durations' && <span className="ml-2">• Duration: {selectedDuration}</span>}
                             </div>
                             <button
                                 onClick={clearAllFilters}
@@ -450,32 +438,32 @@ export default function AllCoursesPage(): React.JSX.Element {
                                     )}
                                 </div>
 
-                                {/* Rating Filter */}
+                                {/* Duration Filter */}
                                 <div>
                                     <button
-                                        onClick={() => toggleSection('rating')}
+                                        onClick={() => toggleSection('duration')}
                                         className="w-full flex items-center justify-between mb-3"
                                     >
                                         <span className={`${styles.filterSubLabel} text-sm font-semibold`}>
-                                            Minimum Rating
+                                            Duration
                                         </span>
-                                        {expandedSections.rating ? (
+                                        {expandedSections.duration ? (
                                             <ChevronUp className="w-4 h-4" />
                                         ) : (
                                             <ChevronDown className="w-4 h-4" />
                                         )}
                                     </button>
-                                    {expandedSections.rating && (
+                                    {expandedSections.duration && (
                                         <div className="flex flex-wrap gap-2">
-                                            {ratingOptions.map((option) => (
+                                            {durations.map((duration) => (
                                                 <button
-                                                    key={option.value}
-                                                    onClick={() => setMinRating(option.value)}
-                                                    className={`${styles.categoryChip} ${minRating === option.value ? styles.categoryChipActive : ''
+                                                    key={duration}
+                                                    onClick={() => setSelectedDuration(duration)}
+                                                    className={`${styles.categoryChip} ${selectedDuration === duration ? styles.categoryChipActive : ''
                                                         } px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 flex items-center gap-1`}
                                                 >
-                                                    {option.value > 0 && <Star className="w-3 h-3 fill-current" />}
-                                                    {option.label}
+                                                    <Clock className="w-3 h-3" />
+                                                    {duration}
                                                 </button>
                                             ))}
                                         </div>
@@ -584,11 +572,11 @@ export default function AllCoursesPage(): React.JSX.Element {
 
                         {/* Pagination - Always Show */}
                         <Pagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            hasNextPage={currentPage < totalPages}
-                            hasPrevPage={currentPage > 1}
-                            totalCourses={total}
+                            currentPage={currentPage || 1}
+                            totalPages={totalPages || 1}
+                            hasNextPage={(currentPage || 1) < (totalPages || 1)}
+                            hasPrevPage={(currentPage || 1) > 1}
+                            totalCourses={total || 0}
                             pageSize={12}
                             onPageChange={handlePageChange}
                             alwaysShow={true}
