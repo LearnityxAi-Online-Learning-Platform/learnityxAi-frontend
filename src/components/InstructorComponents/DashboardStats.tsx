@@ -26,6 +26,8 @@ import {
 } from "lucide-react";
 import styles from "./InstructorComponents.module.scss";
 import MobileDashboard from "./MobileDashboard";
+import { useInstructor } from "@/hooks/useInstructorHook";
+import Toast from "../ui/Toast";
 
 interface DashboardData {
   instructor: {
@@ -71,71 +73,44 @@ interface DashboardData {
 }
 
 export default function DashboardStats() {
+  const { dashboardStats, loading: statsLoading, getDashboardStats } = useInstructor();
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Mock data for demonstration
+  // Toast state
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState({ title: '', message: '', variant: 'error' as 'success' | 'error' });
+
+  // Fetch dashboard stats on mount
   useEffect(() => {
-    // Simulating API call
-    setTimeout(() => {
-      setDashboardData({
-        instructor: {
-          name: "Jane Instructor",
-          email: "cpriyadasun@gmail.com",
-        },
-        overview: {
-          totalCourses: 2,
-          totalStudents: 1,
-          averageRating: 4,
-          totalRevenue: 89.99,
-        },
-        topCourses: {
-          mostPopular: {
-            courseId: "69055847ebcd89cbc8eecee9",
-            courseName: "Complete Python Programming - Updated",
-            enrolledStudents: 1,
-          },
-          highestRated: {
-            courseId: "69055847ebcd89cbc8eecee9",
-            courseName: "Complete Python Programming - Updated",
-            rating: 4,
-            totalRatings: 1,
-          },
-        },
-        coursesByCategory: {
-          "Web Development": {
-            count: 2,
-            totalEnrolled: 1,
-          },
-        },
-        allCourses: [
-          {
-            courseId: "69055847ebcd89cbc8eecee9",
-            courseName: "Complete Python Programming - Updated",
-            courseCategory: "Web Development",
-            enrolledStudents: 1,
-            rating: 4,
-            totalRatings: 1,
-            price: 89.99,
-            startingDate: "2024-02-01T00:00:00.000Z",
-            duration: "12 weeks",
-          },
-          {
-            courseId: "6909651a4a31f9aea645d58c",
-            courseName: "Complete Python Programming",
-            courseCategory: "Web Development",
-            enrolledStudents: 0,
-            rating: 0,
-            totalRatings: 0,
-            price: 99.99,
-            startingDate: "2024-02-01T00:00:00.000Z",
-            duration: "12 weeks",
-          },
-        ],
-      });
-      setLoading(false);
-    }, 500);
+    const fetchStats = async () => {
+      try {
+        await getDashboardStats();
+      } catch (err) {
+        console.error('Error fetching dashboard stats:', err);
+        setToastMessage({
+          title: 'Error',
+          message: 'Failed to load dashboard stats. Please try again.',
+          variant: 'error'
+        });
+        setShowToast(true);
+      }
+    };
+    fetchStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Sync dashboard data from Redux
+  useEffect(() => {
+    if (dashboardStats) {
+      setDashboardData(dashboardStats as unknown as DashboardData);
+    }
+  }, [dashboardStats]);
+
+  // Sync loading state
+  useEffect(() => {
+    setLoading(statsLoading);
+  }, [statsLoading]);
 
   if (loading || !dashboardData) {
     return (
