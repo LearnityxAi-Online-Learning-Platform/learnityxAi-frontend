@@ -187,15 +187,30 @@ export default function AllCoursesPage(): React.JSX.Element {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCategory, selectedTool, minRating, sortBy, sortOrder, searchQuery]);
 
-    // Handle URL search param change
+    // Handle URL search and category param changes
     useEffect(() => {
         const urlSearchParam = searchParams.get('search');
+        const urlCategoryParam = searchParams.get('category');
+
+        // Handle search parameter
         if (urlSearchParam && urlSearchParam !== searchQuery) {
             setSearchQuery(urlSearchParam);
-        } else if (!urlSearchParam && searchQuery) {
-            // Clear search if URL has no search param but local state does
+        } else if (!urlSearchParam && searchQuery && !urlCategoryParam) {
+            // Clear search if URL has no search param but local state does (and no category param)
             setSearchQuery('');
         }
+
+        // Handle category parameter
+        if (urlCategoryParam) {
+            // Set the category from URL if it exists in our categories list
+            if (categories.includes(urlCategoryParam)) {
+                setSelectedCategory(urlCategoryParam);
+            } else {
+                // If category from URL doesn't exist in list, still set it (backend will validate)
+                setSelectedCategory(urlCategoryParam);
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams]);
 
     const formatEnrollment = (count: number): string => {
