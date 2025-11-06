@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import {
     Star,
@@ -17,9 +18,14 @@ import {
     Smartphone,
     Trophy,
     Share2,
-    Heart
+    Heart,
+    CheckCircle2,
+    GraduationCap
 } from 'lucide-react';
 import { useCourse } from '@/hooks/useCourseHook';
+import { useUser } from '@/hooks/useUserHook';
+import AlertDialog from '@/components/ui/AlertDialog';
+import Toast from '@/components/ui/Toast';
 import styles from './CourseComponents.module.scss';
 
 interface SingleCoursePageProps {
@@ -28,6 +34,13 @@ interface SingleCoursePageProps {
 
 export default function SingleCoursePage({ courseId }: SingleCoursePageProps): React.JSX.Element {
     const { selectedCourse, loading, getCourseById } = useCourse();
+    const { enrollInCourse, enrolledCourses, getEnrolledCourses, loading: enrollmentLoading } = useUser();
+
+    const [showEnrollDialog, setShowEnrollDialog] = useState(false);
+    const [isEnrolling, setIsEnrolling] = useState(false);
+    const [isEnrolled, setIsEnrolled] = useState(false);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState({ title: '', message: '', variant: 'success' as 'success' | 'error' });
 
     // Fetch course data on mount
     useEffect(() => {
@@ -35,6 +48,64 @@ export default function SingleCoursePage({ courseId }: SingleCoursePageProps): R
             getCourseById(courseId);
         }
     }, [courseId, getCourseById]);
+
+    // Check if user is already enrolled - fetch only once on mount
+    useEffect(() => {
+        const checkEnrollment = async () => {
+            // Only fetch if enrolledCourses is empty or null
+            if (!enrolledCourses || enrolledCourses.length === 0) {
+                try {
+                    await getEnrolledCourses(1, 10);
+                } catch (error) {
+                    console.error('Error fetching enrolled courses:', error);
+                }
+            }
+        };
+        checkEnrollment();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // Only run once on mount
+
+    // Update enrollment status when enrolled courses change
+    useEffect(() => {
+        if (enrolledCourses && courseId) {
+            const enrolled = enrolledCourses.some((course: any) => course._id === courseId || course.courseId === courseId);
+            setIsEnrolled(enrolled);
+        }
+    }, [enrolledCourses, courseId]);
+
+    // Handle enrollment button click
+    const handleEnrollClick = () => {
+        setShowEnrollDialog(true);
+    };
+
+    // Handle enrollment confirmation
+    const handleConfirmEnrollment = async () => {
+        setIsEnrolling(true);
+        try {
+            await enrollInCourse(courseId);
+            setIsEnrolled(true);
+            setShowEnrollDialog(false);
+            // Show success toast
+            setToastMessage({
+                title: 'Enrollment Successful!',
+                message: `You have successfully enrolled in ${selectedCourse?.courseName || 'this course'}.`,
+                variant: 'success'
+            });
+            setShowToast(true);
+        } catch (error: any) {
+            console.error('Enrollment failed:', error);
+            setShowEnrollDialog(false);
+            // Show error toast
+            setToastMessage({
+                title: 'Enrollment Failed',
+                message: error?.message || 'Failed to enroll in course. Please try again.',
+                variant: 'error'
+            });
+            setShowToast(true);
+        } finally {
+            setIsEnrolling(false);
+        }
+    };
 
     // Format date helper
     const formatDate = (dateString: string) => {
@@ -191,8 +262,19 @@ export default function SingleCoursePage({ courseId }: SingleCoursePageProps): R
                                     <p className={`${styles.priceAmount} text-3xl font-bold mb-2`}>
                                         ${price}
                                     </p>
-                                    <button className={`${styles.enrollButton} w-full py-3 rounded-lg font-semibold text-base`}>
-                                        Enroll Now
+                                    <button
+                                        onClick={handleEnrollClick}
+                                        disabled={isEnrolled || isEnrolling}
+                                        className={`${isEnrolled ? styles.enrolledButton : styles.enrollButton} w-full py-3 rounded-lg font-semibold text-base flex items-center justify-center gap-2`}
+                                    >
+                                        {isEnrolled ? (
+                                            <>
+                                                <CheckCircle2 className="w-5 h-5" />
+                                                Already Enrolled
+                                            </>
+                                        ) : (
+                                            'Enroll Now'
+                                        )}
                                     </button>
                                 </div>
                             </div>
@@ -388,11 +470,21 @@ export default function SingleCoursePage({ courseId }: SingleCoursePageProps): R
                                         </div>
 
                                         <div className="space-y-3">
-                                            <button className={`${styles.enrollButton} w-full py-3.5 rounded-lg font-bold text-base`}>
-                                                Enroll Now
-                                            </button>
-                                            <button className={`${styles.secondaryButton} w-full py-3.5 rounded-lg font-semibold text-base`}>
-                                                Add to Cart
+                                            <button
+                                                onClick={handleEnrollClick}
+                                                disabled={isEnrolled || isEnrolling}
+                                                className={`${isEnrolled ? styles.enrolledButton : styles.enrollButton} w-full py-3.5 rounded-lg font-bold text-base flex items-center justify-center gap-2`}
+                                            >
+                                                {isEnrolled ? (
+                                                    <>
+                                                        <CheckCircle2 className="w-5 h-5" />
+                                                        Already Enrolled
+                                                    </>
+                                                ) : isEnrolling ? (
+                                                    'Processing...'
+                                                ) : (
+                                                    'Enroll Now'
+                                                )}
                                             </button>
                                         </div>
 
@@ -402,10 +494,7 @@ export default function SingleCoursePage({ courseId }: SingleCoursePageProps): R
                                                 This course includes:
                                             </h3>
                                             <div className="space-y-3">
-                                                <div className={`${styles.includeItem} flex items-center gap-3 text-sm`}>
-                                                    <Clock className="w-4 h-4 flex-shrink-0" />
-                                                    <span>{duration} on-demand content</span>
-                                                </div>
+                                                
                                                 <div className={`${styles.includeItem} flex items-center gap-3 text-sm`}>
                                                     <Download className="w-4 h-4 flex-shrink-0" />
                                                     <span>Downloadable resources</span>
@@ -425,17 +514,7 @@ export default function SingleCoursePage({ courseId }: SingleCoursePageProps): R
                                             </div>
                                         </div>
 
-                                        {/* Share buttons */}
-                                        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                                            <div className="flex items-center justify-center gap-4">
-                                                <button className={`${styles.shareButton} p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors`}>
-                                                    <Share2 className="w-5 h-5" />
-                                                </button>
-                                                <button className={`${styles.shareButton} p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors`}>
-                                                    <Heart className="w-5 h-5" />
-                                                </button>
-                                            </div>
-                                        </div>
+                                    
                                     </div>
                                 </div>
                             </div>
@@ -443,6 +522,31 @@ export default function SingleCoursePage({ courseId }: SingleCoursePageProps): R
                     </div>
                 </div>
             </section>
+
+            {/* Enrollment Confirmation Dialog */}
+            <AlertDialog
+                isOpen={showEnrollDialog}
+                onClose={() => setShowEnrollDialog(false)}
+                onConfirm={handleConfirmEnrollment}
+                title="Confirm Enrollment"
+                description={`Are you sure you want to enroll in "${courseName}"?\n\nYou will be charged $${price} for this course.`}
+                confirmText="Enroll Now"
+                cancelText="Cancel"
+                variant="info"
+                icon={<GraduationCap className="w-12 h-12" />}
+                isLoading={isEnrolling}
+            />
+
+            {/* Toast Notification */}
+            <Toast
+                isVisible={showToast}
+                onClose={() => setShowToast(false)}
+                title={toastMessage.title}
+                message={toastMessage.message}
+                variant={toastMessage.variant}
+                duration={5000}
+                position="top-right"
+            />
         </div>
     );
 }
