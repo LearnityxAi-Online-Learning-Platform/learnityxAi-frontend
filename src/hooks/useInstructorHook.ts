@@ -31,8 +31,18 @@ export const useInstructor = () => {
     return await dispatch(deleteCourse(courseId)).unwrap();
   };
 
-  const handleGetInstructorCourses = async (page: number = 1, size: number = 10) => {
-    return await dispatch(getInstructorCourses({ page, size })).unwrap();
+  const handleGetInstructorCourses = async (
+    page: number = 1,
+    size: number = 10,
+    filters?: {
+      name?: string;
+      category?: string;
+      tool?: string;
+      duration?: string;
+      includeInactive?: boolean;
+    }
+  ) => {
+    return await dispatch(getInstructorCourses({ page, size, filters })).unwrap();
   };
 
   const handleGetCourseById = async (courseId: string) => {

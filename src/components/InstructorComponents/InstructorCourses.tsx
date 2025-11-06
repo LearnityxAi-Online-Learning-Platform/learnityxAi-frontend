@@ -179,7 +179,32 @@ export default function InstructorCourses() {
   // Fetch courses from API
   const fetchCourses = async (page: number = 1) => {
     try {
-      await getInstructorCourses(page, pagination.pageSize);
+      // Build filters object only with values that are set
+      const filters: {
+        name?: string;
+        category?: string;
+        tool?: string;
+        duration?: string;
+        includeInactive?: boolean;
+      } = {};
+
+      if (searchQuery && searchQuery.trim()) {
+        filters.name = searchQuery.trim();
+      }
+      if (selectedCategory && selectedCategory.trim()) {
+        filters.category = selectedCategory.trim();
+      }
+      if (selectedTool && selectedTool.trim()) {
+        filters.tool = selectedTool.trim();
+      }
+      if (selectedDuration && selectedDuration.trim()) {
+        filters.duration = selectedDuration.trim();
+      }
+
+      // Always include inactive courses
+      filters.includeInactive = true;
+
+      await getInstructorCourses(page, pagination.pageSize, filters);
     } catch (err) {
       console.error("Error fetching courses:", err);
       setToastMessage({
@@ -201,12 +226,25 @@ export default function InstructorCourses() {
     fetchCourses(1);
   };
 
-  const handleClearFilters = () => {
+  const handleClearFilters = async () => {
+    // Clear all filter states
     setSearchQuery("");
     setSelectedCategory("");
     setSelectedTool("");
     setSelectedDuration("");
-    fetchCourses(1);
+
+    // Fetch courses without any filters (pass empty filters object)
+    try {
+      await getInstructorCourses(1, pagination.pageSize, { includeInactive: true });
+    } catch (err) {
+      console.error("Error fetching courses:", err);
+      setToastMessage({
+        title: 'Error',
+        message: 'Failed to fetch courses. Please try again.',
+        variant: 'error'
+      });
+      setShowToast(true);
+    }
   };
 
   const handlePageChange = (page: number) => {
