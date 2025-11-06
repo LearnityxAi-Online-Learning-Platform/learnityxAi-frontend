@@ -44,48 +44,35 @@ const ratingOptions = [
     { label: "3.0 & above", value: 3.0 }
 ];
 
-// LocalStorage cache keys for filter options
-const CACHE_KEYS = {
-    CATEGORIES: 'course_filter_categories',
-    TOOLS: 'course_filter_tools',
-    DURATIONS: 'course_filter_durations',
-} as const;
+// Fallback data for filter options if API fails
+const FALLBACK_CATEGORIES = [
+    'Web Development',
+    'Mobile Development',
+    'Data Science',
+    'Machine Learning',
+    'Artificial Intelligence',
+    'Cloud Computing',
+    'Cybersecurity',
+    'DevOps'
+];
 
-const CACHE_EXPIRATION_HOURS = 24;
+const FALLBACK_TOOLS = [
+    'JavaScript',
+    'Python',
+    'React',
+    'Node.js',
+    'Docker',
+    'AWS',
+    'Git',
+    'MongoDB'
+];
 
-// Helper functions for localStorage caching
-const getCachedData = (key: string): string[] | null => {
-    try {
-        const cached = localStorage.getItem(key);
-        if (!cached) return null;
-
-        const { data, timestamp } = JSON.parse(cached);
-        const expirationTime = CACHE_EXPIRATION_HOURS * 60 * 60 * 1000; // Convert to milliseconds
-        const isExpired = Date.now() - timestamp > expirationTime;
-
-        if (isExpired) {
-            localStorage.removeItem(key);
-            return null;
-        }
-
-        return data;
-    } catch (error) {
-        console.error(`Error reading cache for ${key}:`, error);
-        return null;
-    }
-};
-
-const setCachedData = (key: string, data: string[]): void => {
-    try {
-        const cacheObject = {
-            data,
-            timestamp: Date.now(),
-        };
-        localStorage.setItem(key, JSON.stringify(cacheObject));
-    } catch (error) {
-        console.error(`Error setting cache for ${key}:`, error);
-    }
-};
+const FALLBACK_DURATIONS = [
+    '4 weeks',
+    '8 weeks',
+    '12 weeks',
+    '6 months'
+];
 
 export default function AllCoursesPage(): React.JSX.Element {
     const router = useRouter();
@@ -116,35 +103,17 @@ export default function AllCoursesPage(): React.JSX.Element {
     const [durations, setDurations] = useState<string[]>([]);
     const [filterOptionsLoading, setFilterOptionsLoading] = useState(true);
 
-    // Fetch filter options on component mount
+    // Fetch filter options on component mount - directly from backend without caching
     useEffect(() => {
         const fetchFilterOptions = async () => {
             setFilterOptionsLoading(true);
 
             try {
-                // Fetch all filter options in parallel
+                // Fetch all filter options directly from backend in parallel
                 const [categoriesData, toolsData, durationsData] = await Promise.all([
-                    (async () => {
-                        const cached = getCachedData(CACHE_KEYS.CATEGORIES);
-                        if (cached) return cached;
-                        const data = await courseService.getCategories();
-                        setCachedData(CACHE_KEYS.CATEGORIES, data);
-                        return data;
-                    })(),
-                    (async () => {
-                        const cached = getCachedData(CACHE_KEYS.TOOLS);
-                        if (cached) return cached;
-                        const data = await courseService.getTools();
-                        setCachedData(CACHE_KEYS.TOOLS, data);
-                        return data;
-                    })(),
-                    (async () => {
-                        const cached = getCachedData(CACHE_KEYS.DURATIONS);
-                        if (cached) return cached;
-                        const data = await courseService.getDurations();
-                        setCachedData(CACHE_KEYS.DURATIONS, data);
-                        return data;
-                    })()
+                    courseService.getCategories(),
+                    courseService.getTools(),
+                    courseService.getDurations()
                 ]);
 
                 // Update all states at once
@@ -154,9 +123,9 @@ export default function AllCoursesPage(): React.JSX.Element {
             } catch (error) {
                 console.error('Error fetching filter options:', error);
                 // Fallback to default values if API fails
-                setCategories(['All Categories', 'Web Development', 'Data Science', 'Mobile Development']);
-                setTools(['All Tools', 'JavaScript', 'Python', 'React', 'Node.js']);
-                setDurations(['4 weeks', '8 weeks', '12 weeks']);
+                setCategories(['All Categories', ...FALLBACK_CATEGORIES]);
+                setTools(['All Tools', ...FALLBACK_TOOLS]);
+                setDurations(FALLBACK_DURATIONS);
             } finally {
                 setFilterOptionsLoading(false);
             }

@@ -98,22 +98,12 @@ export interface ApiSuccessResponse<T> {
 }
 
 class CourseService {
-  private readonly CACHE_KEYS = {
-    RECOMMENDATIONS: 'course_recommendations',
-    ALL_COURSES: 'all_courses',
-    COURSE_DETAIL: (id: string) => `course_detail_${id}`,
-    COURSES_BY_CATEGORY: (category: string) => `courses_category_${category}`,
-  };
-
-  private readonly CACHE_EXPIRATION = {
-    RECOMMENDATIONS: 1440, // 24 hours (since it uses AI and costs money)
-    COURSES: 60, // 1 hour
-    COURSE_DETAIL: 30, // 30 minutes
-  };
+  // Note: Caching has been removed - all data is fetched directly from backend
+  // Backend handles rate limiting and caching strategies
 
   /**
-   * Get course recommendations with intelligent caching
-   * This method prioritizes cache to reduce expensive API calls
+   * Get course recommendations directly from backend
+   * Backend handles rate limiting and caching
    */
   async getRecommendations(options?: {
     forceRefresh?: boolean;
@@ -121,143 +111,66 @@ class CourseService {
     page?: number;
     size?: number;
   }): Promise<RecommendationResponse> {
-    const cacheKey = options?.userId
-      ? `${this.CACHE_KEYS.RECOMMENDATIONS}_${options.userId}`
-      : this.CACHE_KEYS.RECOMMENDATIONS;
-
-    return localStorageCache.getOrFetch<RecommendationResponse>(
+    const response = await axiosInstance.get<ApiSuccessResponse<RecommendationResponse>>(
+      '/api/recommendations',
       {
-        key: cacheKey,
-        expirationMinutes: this.CACHE_EXPIRATION.RECOMMENDATIONS,
-        version: '1.0',
-      },
-      async () => {
-        const response = await axiosInstance.get<ApiSuccessResponse<RecommendationResponse>>(
-          '/api/recommendations',
-          {
-            params: {
-              userId: options?.userId,
-              page: options?.page || 1,
-              size: options?.size || 10
-            }
-          }
-        );
-        return response.data.data;
-      },
-      {
-        forceRefresh: options?.forceRefresh,
-        backgroundRefresh: true, // Auto-refresh in background when cache is old
+        params: {
+          userId: options?.userId,
+          page: options?.page || 1,
+          size: options?.size || 10
+        }
       }
     );
+    return response.data.data;
   }
 
   /**
-   * Force refresh recommendations (call this when user explicitly requests)
+   * Refresh recommendations (alias for getRecommendations for backward compatibility)
    */
   async refreshRecommendations(userId?: string): Promise<RecommendationResponse> {
-    return this.getRecommendations({ forceRefresh: true, userId });
+    return this.getRecommendations({ userId });
   }
 
   /**
-   * Get all courses with optional caching
+   * Get all courses directly from backend
    */
-  async getAllCourses(params?: GetCoursesParams, useCache = true): Promise<{
+  async getAllCourses(params?: GetCoursesParams, useCache = false): Promise<{
     courses: Course[];
     total: number;
     page: number;
     totalPages: number;
   }> {
-    const cacheKey = `${this.CACHE_KEYS.ALL_COURSES}_${JSON.stringify(params || {})}`;
-
-    if (!useCache) {
-      const response = await axiosInstance.get<ApiSuccessResponse<{
-        courses: Course[];
-        total: number;
-        page: number;
-        totalPages: number;
-      }>>('/api/courses', { params });
-      return response.data.data;
-    }
-
-    return localStorageCache.getOrFetch(
-      {
-        key: cacheKey,
-        expirationMinutes: this.CACHE_EXPIRATION.COURSES,
-        version: '1.0',
-      },
-      async () => {
-        const response = await axiosInstance.get<ApiSuccessResponse<{
-          courses: Course[];
-          total: number;
-          page: number;
-          totalPages: number;
-        }>>('/api/courses', { params });
-        return response.data.data;
-      },
-      {
-        backgroundRefresh: true,
-      }
-    );
+    // useCache parameter kept for backward compatibility but ignored
+    const response = await axiosInstance.get<ApiSuccessResponse<{
+      courses: Course[];
+      total: number;
+      page: number;
+      totalPages: number;
+    }>>('/api/courses', { params });
+    return response.data.data;
   }
 
   /**
-   * Get course by ID with caching
+   * Get course by ID directly from backend
    */
-  async getCourseById(id: string, useCache = true): Promise<Course> {
-    if (!useCache) {
-      const response = await axiosInstance.get<ApiSuccessResponse<{ course: Course }>>(
-        `/api/courses/${id}`
-      );
-      return response.data.data.course;
-    }
-
-    return localStorageCache.getOrFetch(
-      {
-        key: this.CACHE_KEYS.COURSE_DETAIL(id),
-        expirationMinutes: this.CACHE_EXPIRATION.COURSE_DETAIL,
-        version: '1.0',
-      },
-      async () => {
-        const response = await axiosInstance.get<ApiSuccessResponse<{ course: Course }>>(
-          `/api/courses/${id}`
-        );
-        return response.data.data.course;
-      },
-      {
-        backgroundRefresh: true,
-      }
+  async getCourseById(id: string, useCache = false): Promise<Course> {
+    // useCache parameter kept for backward compatibility but ignored
+    const response = await axiosInstance.get<ApiSuccessResponse<{ course: Course }>>(
+      `/api/courses/${id}`
     );
+    return response.data.data.course;
   }
 
   /**
-   * Get courses by category with caching
+   * Get courses by category directly from backend
    */
-  async getCoursesByCategory(category: string, useCache = true): Promise<Course[]> {
-    if (!useCache) {
-      const response = await axiosInstance.get<ApiSuccessResponse<{ courses: Course[] }>>(
-        '/api/courses',
-        { params: { category } }
-      );
-      return response.data.data.courses;
-    }
-
-    return localStorageCache.getOrFetch(
-      {
-        key: this.CACHE_KEYS.COURSES_BY_CATEGORY(category),
-        expirationMinutes: this.CACHE_EXPIRATION.COURSES,
-        version: '1.0',
-      },
-      async () => {
-        const response = await axiosInstance.get<ApiSuccessResponse<{ courses: Course[] }>>(
-          '/api/courses',
-          { params: { category } }
-        );
-        return response.data.data.courses;
-      },
-      {
-        backgroundRefresh: true,
-      }
+  async getCoursesByCategory(category: string, useCache = false): Promise<Course[]> {
+    // useCache parameter kept for backward compatibility but ignored
+    const response = await axiosInstance.get<ApiSuccessResponse<{ courses: Course[] }>>(
+      '/api/courses',
+      { params: { category } }
     );
+    return response.data.data.courses;
   }
 
   /**
@@ -308,51 +221,43 @@ class CourseService {
   }
 
   /**
-   * Clear all course-related cache
+   * Clear all course-related cache (deprecated - no longer uses cache)
    */
   clearCache(): void {
-    localStorageCache.clearByPrefix('course_');
+    // No-op: caching removed, backend handles everything
+    console.warn('clearCache() is deprecated - caching has been removed');
   }
 
   /**
-   * Clear recommendations cache only
+   * Clear recommendations cache only (deprecated - no longer uses cache)
    */
   clearRecommendationsCache(userId?: string): void {
-    const cacheKey = userId
-      ? `${this.CACHE_KEYS.RECOMMENDATIONS}_${userId}`
-      : this.CACHE_KEYS.RECOMMENDATIONS;
-    localStorageCache.remove(cacheKey);
+    // No-op: caching removed, backend handles everything
+    console.warn('clearRecommendationsCache() is deprecated - caching has been removed');
   }
 
   /**
-   * Clear specific course cache
+   * Clear specific course cache (deprecated - no longer uses cache)
    */
   clearCourseCache(courseId: string): void {
-    localStorageCache.remove(this.CACHE_KEYS.COURSE_DETAIL(courseId));
+    // No-op: caching removed, backend handles everything
+    console.warn('clearCourseCache() is deprecated - caching has been removed');
   }
 
   /**
-   * Get cache status for debugging
+   * Get cache status for debugging (deprecated - no longer uses cache)
    */
   getCacheStatus(userId?: string): {
     hasRecommendations: boolean;
     recommendationsAge: number | null;
     shouldRefresh: boolean;
   } {
-    const cacheKey = userId
-      ? `${this.CACHE_KEYS.RECOMMENDATIONS}_${userId}`
-      : this.CACHE_KEYS.RECOMMENDATIONS;
-
+    // Return empty status since caching is removed
+    console.warn('getCacheStatus() is deprecated - caching has been removed');
     return {
-      hasRecommendations: localStorageCache.has({
-        key: cacheKey,
-        expirationMinutes: this.CACHE_EXPIRATION.RECOMMENDATIONS,
-      }),
-      recommendationsAge: localStorageCache.getAge(cacheKey),
-      shouldRefresh: localStorageCache.shouldRefresh({
-        key: cacheKey,
-        expirationMinutes: this.CACHE_EXPIRATION.RECOMMENDATIONS,
-      }),
+      hasRecommendations: false,
+      recommendationsAge: null,
+      shouldRefresh: false,
     };
   }
 
