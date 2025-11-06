@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   BookOpen,
   Users,
@@ -26,6 +26,8 @@ import {
   Tooltip,
 } from "recharts";
 import styles from "./InstructorComponents.module.scss";
+import { useInstructor } from "@/hooks/useInstructorHook";
+import Toast from "../ui/Toast";
 
 interface DashboardData {
   instructor: {
@@ -71,77 +73,86 @@ interface DashboardData {
 }
 
 export default function MobileDashboard() {
+  const { dashboardStats, loading: statsLoading } = useInstructor();
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeChart, setActiveChart] = useState<"pie" | "bar">("pie");
 
+  // Toast state (kept for potential future use, but not used for fetch errors since parent handles that)
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState({
+    title: '',
+    message: '',
+    variant: 'error' as 'success' | 'error'
+  });
+
+  // Sync dashboard data from Redux (data is fetched by parent DashboardStats component)
   useEffect(() => {
-    setTimeout(() => {
-      setDashboardData({
-        instructor: {
-          name: "Jane Instructor",
-          email: "cpriyadasun@gmail.com",
-        },
-        overview: {
-          totalCourses: 2,
-          totalStudents: 1,
-          averageRating: 4,
-          totalRevenue: 89.99,
-        },
-        topCourses: {
-          mostPopular: {
-            courseId: "69055847ebcd89cbc8eecee9",
-            courseName: "Complete Python Programming - Updated",
-            enrolledStudents: 1,
-          },
-          highestRated: {
-            courseId: "69055847ebcd89cbc8eecee9",
-            courseName: "Complete Python Programming - Updated",
-            rating: 4,
-            totalRatings: 1,
-          },
-        },
-        coursesByCategory: {
-          "Web Development": {
-            count: 2,
-            totalEnrolled: 1,
-          },
-        },
-        allCourses: [
-          {
-            courseId: "69055847ebcd89cbc8eecee9",
-            courseName: "Complete Python Programming - Updated",
-            courseCategory: "Web Development",
-            enrolledStudents: 1,
-            rating: 4,
-            totalRatings: 1,
-            price: 89.99,
-            startingDate: "2024-02-01T00:00:00.000Z",
-            duration: "12 weeks",
-          },
-          {
-            courseId: "6909651a4a31f9aea645d58c",
-            courseName: "Complete Python Programming",
-            courseCategory: "Web Development",
-            enrolledStudents: 0,
-            rating: 0,
-            totalRatings: 0,
-            price: 99.99,
-            startingDate: "2024-02-01T00:00:00.000Z",
-            duration: "12 weeks",
-          },
-        ],
-      });
-      setLoading(false);
-    }, 500);
-  }, []);
+    if (dashboardStats) {
+      setDashboardData(dashboardStats as unknown as DashboardData);
+    }
+  }, [dashboardStats]);
+
+  // Sync loading state
+  useEffect(() => {
+    setLoading(statsLoading);
+  }, [statsLoading]);
 
   if (loading || !dashboardData) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p className="text-sm text-text-secondary">Loading...</p>
+      <div className="w-full space-y-4 animate-pulse">
+        {/* Stats Cards Skeleton */}
+        <div className="grid grid-cols-2 gap-3">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className={`rounded-xl border p-3 ${styles.statsCard}`}>
+              <div className={`w-8 h-8 rounded-lg ${styles.statsIcon} opacity-30 mb-2`}></div>
+              <div className={`w-16 h-6 rounded mb-1 ${styles.skeletonBox}`}></div>
+              <div className={`w-20 h-3 rounded ${styles.skeletonBox}`}></div>
+            </div>
+          ))}
+        </div>
+
+        {/* Chart Skeleton */}
+        <div className={`rounded-xl border p-4 ${styles.chartCard}`}>
+          <div className="flex items-center justify-between mb-3">
+            <div className={`w-40 h-5 rounded ${styles.skeletonBox}`}></div>
+            <div className={`w-20 h-8 rounded ${styles.skeletonBox}`}></div>
+          </div>
+          <div className={`w-full h-[250px] rounded ${styles.skeletonChart}`}></div>
+        </div>
+
+        {/* Top Courses Skeleton */}
+        <div className="space-y-3">
+          {[1, 2].map((i) => (
+            <div key={i} className={`rounded-xl border p-4 ${styles.courseCard}`}>
+              <div className="flex items-center justify-between mb-2">
+                <div className={`w-32 h-4 rounded ${styles.skeletonBox}`}></div>
+                <div className={`w-4 h-4 rounded ${styles.skeletonBox}`}></div>
+              </div>
+              <div className={`w-3/4 h-5 rounded mb-2 ${styles.skeletonBox}`}></div>
+              <div className={`w-24 h-3 rounded ${styles.skeletonBox}`}></div>
+            </div>
+          ))}
+        </div>
+
+        {/* All Courses Skeleton */}
+        <div className={`rounded-xl border p-4 ${styles.chartCard}`}>
+          <div className={`w-24 h-5 rounded mb-3 ${styles.skeletonBox}`}></div>
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className={`rounded-lg border p-3 ${styles.courseCard}`}>
+                <div className="flex justify-between mb-2">
+                  <div className={`w-2/3 h-4 rounded ${styles.skeletonBox}`}></div>
+                  <div className={`w-12 h-4 rounded ${styles.skeletonBox}`}></div>
+                </div>
+                <div className={`w-16 h-3 rounded mb-2 ${styles.skeletonBox}`}></div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className={`w-full h-3 rounded ${styles.skeletonBox}`}></div>
+                  <div className={`w-full h-3 rounded ${styles.skeletonBox}`}></div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -149,11 +160,13 @@ export default function MobileDashboard() {
 
   const { overview, topCourses, coursesByCategory, allCourses } = dashboardData;
 
-  const categoryChartData = Object.entries(coursesByCategory).map(([category, data]) => ({
-    name: category,
-    courses: data.count,
-    students: data.totalEnrolled,
-  }));
+  const categoryChartData = coursesByCategory
+    ? Object.entries(coursesByCategory).map(([category, data]) => ({
+        name: category,
+        courses: data.count,
+        students: data.totalEnrolled,
+      }))
+    : [];
 
   const COLORS = [
     "#4169E1",
@@ -321,15 +334,21 @@ export default function MobileDashboard() {
             </div>
             <ChevronRight className="w-4 h-4 text-gray-400" />
           </div>
-          <h4 className={`font-semibold text-sm mb-2 line-clamp-2 ${styles.courseTitle}`}>
-            {topCourses.mostPopular.courseName}
-          </h4>
-          <div className="flex items-center gap-1.5 text-xs">
-            <Users className="w-3.5 h-3.5" />
-            <span className={styles.courseInfo}>
-              {topCourses.mostPopular.enrolledStudents} students
-            </span>
-          </div>
+          {topCourses?.mostPopular ? (
+            <>
+              <h4 className={`font-semibold text-sm mb-2 line-clamp-2 ${styles.courseTitle}`}>
+                {topCourses.mostPopular.courseName}
+              </h4>
+              <div className="flex items-center gap-1.5 text-xs">
+                <Users className="w-3.5 h-3.5" />
+                <span className={styles.courseInfo}>
+                  {topCourses.mostPopular.enrolledStudents} students
+                </span>
+              </div>
+            </>
+          ) : (
+            <p className={`text-xs ${styles.courseInfo}`}>No courses available yet</p>
+          )}
         </div>
 
         {/* Highest Rated */}
@@ -343,20 +362,26 @@ export default function MobileDashboard() {
             </div>
             <ChevronRight className="w-4 h-4 text-gray-400" />
           </div>
-          <h4 className={`font-semibold text-sm mb-2 line-clamp-2 ${styles.courseTitle}`}>
-            {topCourses.highestRated.courseName}
-          </h4>
-          <div className="flex items-center gap-3 text-xs">
-            <div className="flex items-center gap-1">
-              <Star className={`w-3.5 h-3.5 ${styles.courseRating}`} fill="currentColor" />
-              <span className={`font-medium ${styles.courseRating}`}>
-                {topCourses.highestRated.rating}
-              </span>
-            </div>
-            <span className={styles.courseInfo}>
-              ({topCourses.highestRated.totalRatings} ratings)
-            </span>
-          </div>
+          {topCourses?.highestRated ? (
+            <>
+              <h4 className={`font-semibold text-sm mb-2 line-clamp-2 ${styles.courseTitle}`}>
+                {topCourses.highestRated.courseName}
+              </h4>
+              <div className="flex items-center gap-3 text-xs">
+                <div className="flex items-center gap-1">
+                  <Star className={`w-3.5 h-3.5 ${styles.courseRating}`} fill="currentColor" />
+                  <span className={`font-medium ${styles.courseRating}`}>
+                    {topCourses.highestRated.rating}
+                  </span>
+                </div>
+                <span className={styles.courseInfo}>
+                  ({topCourses.highestRated.totalRatings} ratings)
+                </span>
+              </div>
+            </>
+          ) : (
+            <p className={`text-xs ${styles.courseInfo}`}>No rated courses available yet</p>
+          )}
         </div>
       </div>
 
@@ -365,8 +390,9 @@ export default function MobileDashboard() {
         <h3 className={`text-base font-bold mb-3 pb-2 border-b ${styles.chartTitle}`}>
           All Courses
         </h3>
-        <div className="space-y-3">
-          {allCourses.map((course) => (
+        {allCourses && allCourses.length > 0 ? (
+          <div className="space-y-3">
+            {allCourses.map((course) => (
             <div
               key={course.courseId}
               className={`rounded-lg border p-3 ${styles.courseCard}`}
@@ -415,7 +441,23 @@ export default function MobileDashboard() {
             </div>
           ))}
         </div>
+        ) : (
+          <div className={`p-4 rounded-lg border ${styles.courseCard} text-center`}>
+            <p className={`text-xs ${styles.courseInfo}`}>No courses available yet</p>
+          </div>
+        )}
       </div>
+
+      {/* Toast Notification */}
+      <Toast
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+        title={toastMessage.title}
+        message={toastMessage.message}
+        variant={toastMessage.variant}
+        duration={3000}
+        position="top-right"
+      />
     </div>
   );
 }

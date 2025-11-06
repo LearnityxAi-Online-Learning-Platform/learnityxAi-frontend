@@ -7,6 +7,7 @@ import {
   getInstructorCourses,
   getInstructorCourseById,
   toggleCourseStatus,
+  getDashboardStats as getDashboardStatsAction,
   clearInstructorError,
   clearCurrentInstructorCourse,
 } from '../store/slices/instructorSlice';
@@ -14,7 +15,7 @@ import { CreateCoursePayload, UpdateCoursePayload } from '../types/instructorTyp
 
 export const useInstructor = () => {
   const dispatch = useAppDispatch();
-  const { courses, currentCourse, pagination, loading, error } = useAppSelector(
+  const { courses, currentCourse, pagination, loading, error, dashboardStats } = useAppSelector(
     (state) => state.instructor
   );
 
@@ -42,6 +43,10 @@ export const useInstructor = () => {
     return await dispatch(toggleCourseStatus({ courseId, isActive })).unwrap();
   };
 
+  const handleGetDashboardStats = async () => {
+    return await dispatch(getDashboardStatsAction()).unwrap();
+  };
+
   const handleClearError = () => {
     dispatch(clearInstructorError());
   };
@@ -56,12 +61,14 @@ export const useInstructor = () => {
     pagination,
     loading,
     error,
+    dashboardStats,
     createCourse: handleCreateCourse,
     updateCourse: handleUpdateCourse,
     deleteCourse: handleDeleteCourse,
     getInstructorCourses: handleGetInstructorCourses,
     getCourseById: handleGetCourseById,
     toggleCourseStatus: handleToggleCourseStatus,
+    getDashboardStats: handleGetDashboardStats,
     clearError: handleClearError,
     clearCurrentCourse: handleClearCurrentCourse,
   };

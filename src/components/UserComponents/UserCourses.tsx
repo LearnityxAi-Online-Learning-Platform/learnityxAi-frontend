@@ -158,6 +158,10 @@ export default function UserCourses() {
         setCurrentPage(page);
     };
 
+    const handleCourseClick = (courseId: string) => {
+        router.push(`/courses/${courseId}`);
+    };
+
     return (
         <div className={`min-h-screen py-6 sm:py-8 lg:py-12 ${styles.profilePage}`}>
             <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -214,7 +218,8 @@ export default function UserCourses() {
                         {courses.map((course) => (
                             <div
                                 key={course._id}
-                                className={`${styles.courseCard} rounded-2xl overflow-hidden transition-all duration-300`}
+                                onClick={() => handleCourseClick(course._id)}
+                                className={`${styles.courseCard} rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer`}
                             >
                                 {/* Course Image */}
                                 <div className={styles.courseImageContainer}>
@@ -288,7 +293,10 @@ export default function UserCourses() {
                                         </div>
                                         <div className={styles.courseActions}>
                                             <button
-                                                onClick={() => handleRateClick(course)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleRateClick(course);
+                                                }}
                                                 className={styles.rateBtn}
                                                 title="Rate this course"
                                             >
@@ -296,7 +304,10 @@ export default function UserCourses() {
                                                 <span>Rate</span>
                                             </button>
                                             <button
-                                                onClick={() => handleUnenrollClick(course)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleUnenrollClick(course);
+                                                }}
                                                 className={styles.unenrollBtn}
                                                 title="Unenroll from course"
                                             >

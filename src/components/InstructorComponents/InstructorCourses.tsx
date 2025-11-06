@@ -20,8 +20,10 @@ import {
 import styles from "./InstructorComponents.module.scss";
 import Pagination from "../ui/Pagination";
 import AlertDialog from "../ui/AlertDialog";
-import { useToast } from "../ui/useToast";
+import Toast from "../ui/Toast";
 import CustomSelect from "./CustomSelect";
+import { useInstructor } from "@/hooks/useInstructorHook";
+import courseService from "@/services/courseService";
 
 interface Course {
   _id: string;
@@ -69,61 +71,28 @@ interface ApiResponse {
   };
 }
 
-const COURSE_CATEGORIES = [
-  "Web Development",
-  "Mobile Development",
-  "Data Science",
-  "Machine Learning",
-  "Artificial Intelligence",
-  "Cloud Computing",
-  "Cybersecurity",
-  "DevOps",
-  "Blockchain",
-  "Game Development",
-  "UI/UX Design",
-  "Digital Marketing",
-  "Business Analytics",
-  "Programming Languages",
-  "Database Management",
-];
-
-const TOOLS_OPTIONS = [
-  "VS Code",
-  "Git",
-  "GitHub",
-  "Docker",
-  "Kubernetes",
-  "Jenkins",
-  "PostgreSQL",
-  "MongoDB",
-  "MySQL",
-  "Redis",
-  "Python",
-  "Django",
-  "React",
-  "Node.js",
-];
-
-const DURATION_OPTIONS = [
-  "4 weeks",
-  "6 weeks",
-  "8 weeks",
-  "10 weeks",
-  "12 weeks",
-  "16 weeks",
-  "20 weeks",
-  "24 weeks",
-  "6 months",
-  "9 months",
-  "12 months",
-];
-
 export default function InstructorCourses() {
   const router = useRouter();
-  const { success, error, ToastComponent } = useToast();
+  const {
+    courses: instructorCourses,
+    pagination: instructorPagination,
+    loading: instructorLoading,
+    getInstructorCourses,
+    deleteCourse: deleteCourseAction,
+    toggleCourseStatus: toggleCourseStatusAction
+  } = useInstructor();
 
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filterOptions, setFilterOptions] = useState({
+    categories: [] as string[],
+    tools: [] as string[],
+    durations: [] as string[]
+  });
+
+  // Toast state
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState({ title: '', message: '', variant: 'success' as 'success' | 'error' });
   const [pagination, setPagination] = useState<PaginationData>({
     currentPage: 1,
     pageSize: 10,
@@ -160,139 +129,68 @@ export default function InstructorCourses() {
     course: null as Course | null,
   });
 
+  // Fetch filter options on mount
+  useEffect(() => {
+    const fetchFilterOptions = async () => {
+      try {
+        const [categoriesData, toolsData, durationsData] = await Promise.all([
+          courseService.getCategories(),
+          courseService.getTools(),
+          courseService.getDurations()
+        ]);
+        setFilterOptions({
+          categories: categoriesData,
+          tools: toolsData,
+          durations: durationsData
+        });
+      } catch (err) {
+        console.error('Error fetching filter options:', err);
+      }
+    };
+    fetchFilterOptions();
+  }, []);
+
+  // Sync courses from Redux store
+  useEffect(() => {
+    if (instructorCourses) {
+      setCourses(instructorCourses as unknown as Course[]);
+    }
+  }, [instructorCourses]);
+
+  // Sync pagination from Redux store
+  useEffect(() => {
+    if (instructorPagination) {
+      setPagination({
+        currentPage: instructorPagination.currentPage || 1,
+        pageSize: instructorPagination.pageSize || 10,
+        totalCourses: instructorPagination.totalCourses || 0,
+        totalPages: instructorPagination.totalPages || 1,
+        hasNextPage: instructorPagination.hasNextPage || false,
+        hasPrevPage: instructorPagination.hasPrevPage || false,
+      });
+    }
+  }, [instructorPagination]);
+
+  // Sync loading state
+  useEffect(() => {
+    setLoading(instructorLoading);
+  }, [instructorLoading]);
+
   // Fetch courses from API
   const fetchCourses = async (page: number = 1) => {
-    setLoading(true);
     try {
-      // Build query parameters
-      const params = new URLSearchParams({
-        page: page.toString(),
-        pageSize: pagination.pageSize.toString(),
-      });
-
-      if (searchQuery) params.append("search", searchQuery);
-      if (selectedCategory) params.append("category", selectedCategory);
-      if (selectedTool) params.append("tool", selectedTool);
-      if (selectedDuration) params.append("duration", selectedDuration);
-
-      // TODO: Replace with actual API endpoint
-      // const response = await fetch(`/api/instructor/courses?${params}`);
-      // const data: ApiResponse = await response.json();
-
-      // Mock data for demonstration
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const mockData: ApiResponse = {
-        success: true,
-        message: "Instructor courses retrieved successfully",
-        data: {
-          courses: [
-            {
-              _id: "6909651a4a31f9aea645d58c",
-              courseName: "Complete Python Programming",
-              courseCategory: "Web Development",
-              instructorId: "690553d08deac7a86c92c678",
-              instructorName: "Jane Instructor",
-              description:
-                "Learn Python from basics to advanced topics including Django and Flask",
-              whatYouWillLearn: [
-                "Master Python from scratch",
-                "Master Django from scratch",
-                "Master Flask from scratch",
-                "Master REST APIs from scratch",
-              ],
-              rating: 4.5,
-              totalRatings: 10,
-              numberOfUserEnrolled: 25,
-              skills: ["Python", "Django", "Flask", "REST APIs"],
-              tools: ["Python", "Django", "PostgreSQL", "Git"],
-              startingDate: "2024-02-01T00:00:00.000Z",
-              duration: "12 weeks",
-              price: 99.99,
-              courseFlyerURL: "https://example.com/python-course-flyer.jpg",
-              isActive: true,
-              enrolledStudents: [],
-              createdAt: "2025-11-04T02:29:46.957Z",
-              updatedAt: "2025-11-04T02:29:46.957Z",
-            },
-            {
-              _id: "69055847ebcd89cbc8eecee9",
-              courseName: "Complete Python Programming - Updated",
-              courseCategory: "Web Development",
-              instructorId: "690553d08deac7a86c92c678",
-              instructorName: "Jane Instructor",
-              description:
-                "Learn Python from basics to advanced topics including Django and Flask",
-              whatYouWillLearn: [
-                "Master Python from scratch",
-                "Master Django from scratch",
-              ],
-              rating: 4,
-              totalRatings: 1,
-              numberOfUserEnrolled: 1,
-              skills: ["Python", "Django", "Flask", "REST APIs"],
-              tools: ["Python", "Django", "PostgreSQL", "Git"],
-              startingDate: "2024-02-01T00:00:00.000Z",
-              duration: "12 weeks",
-              price: 89.99,
-              courseFlyerURL: "https://example.com/python-course-flyer.jpg",
-              isActive: true,
-              enrolledStudents: [
-                {
-                  _id: "690555578deac7a86c92c6b0",
-                  firstName: "student",
-                  lastName: "galle",
-                  email: "premasirikb1@gmail.com",
-                },
-              ],
-              createdAt: "2025-11-01T00:45:59.350Z",
-              updatedAt: "2025-11-01T00:55:40.445Z",
-            },
-            {
-              _id: "69055847ebcd89cbc8eecef0",
-              courseName: "Inactive Test Course",
-              courseCategory: "Data Science",
-              instructorId: "690553d08deac7a86c92c678",
-              instructorName: "Jane Instructor",
-              description:
-                "This is an inactive course for testing reactivation",
-              whatYouWillLearn: [
-                "Test reactivation feature",
-              ],
-              rating: 3.5,
-              totalRatings: 5,
-              numberOfUserEnrolled: 10,
-              skills: ["Testing"],
-              tools: ["Python"],
-              startingDate: "2024-02-01T00:00:00.000Z",
-              duration: "8 weeks",
-              price: 49.99,
-              courseFlyerURL: "https://example.com/test-course-flyer.jpg",
-              isActive: false,
-              enrolledStudents: [],
-              createdAt: "2025-11-01T00:45:59.350Z",
-              updatedAt: "2025-11-01T00:55:40.445Z",
-            },
-          ],
-          pagination: {
-            currentPage: page,
-            pageSize: 10,
-            totalCourses: 3,
-            totalPages: 1,
-            hasNextPage: false,
-            hasPrevPage: false,
-          },
-        },
-      };
-
-      setCourses(mockData.data.courses);
-      setPagination(mockData.data.pagination);
+      await getInstructorCourses(page, pagination.pageSize);
     } catch (err) {
       console.error("Error fetching courses:", err);
-      error("Failed to fetch courses. Please try again.");
-    } finally {
-      setLoading(false);
+      setToastMessage({
+        title: 'Error',
+        message: 'Failed to fetch courses. Please try again.',
+        variant: 'error'
+      });
+      setShowToast(true);
     }
   };
+
 
   useEffect(() => {
     fetchCourses(1);
@@ -336,19 +234,23 @@ export default function InstructorCourses() {
     setDeleteDialog((prev) => ({ ...prev, isLoading: true }));
 
     try {
-      // TODO: Replace with actual API call
-      // await fetch(`/api/instructor/courses/${deleteDialog.courseId}`, {
-      //   method: 'DELETE',
-      // });
-
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      success("Course deleted successfully!");
+      await deleteCourseAction(deleteDialog.courseId);
+      setToastMessage({
+        title: 'Success',
+        message: 'Course deleted successfully!',
+        variant: 'success'
+      });
+      setShowToast(true);
       setDeleteDialog({ isOpen: false, courseId: "", courseName: "", isLoading: false });
       fetchCourses(pagination.currentPage);
     } catch (err) {
       console.error("Error deleting course:", err);
-      error("Failed to delete course. Please try again.");
+      setToastMessage({
+        title: 'Error',
+        message: 'Failed to delete course. Please try again.',
+        variant: 'error'
+      });
+      setShowToast(true);
       setDeleteDialog((prev) => ({ ...prev, isLoading: false }));
     }
   };
@@ -367,16 +269,14 @@ export default function InstructorCourses() {
     setDeactivateDialog((prev) => ({ ...prev, isLoading: true }));
 
     try {
-      // TODO: Replace with actual API call
-      // await fetch(`/api/instructor/courses/${deactivateDialog.courseId}/toggle-status`, {
-      //   method: 'PATCH',
-      //   body: JSON.stringify({ isActive: !deactivateDialog.isActive }),
-      // });
-
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
+      await toggleCourseStatusAction(deactivateDialog.courseId, !deactivateDialog.isActive);
       const action = deactivateDialog.isActive ? "deactivated" : "activated";
-      success(`Course ${action} successfully!`);
+      setToastMessage({
+        title: 'Success',
+        message: `Course ${action} successfully!`,
+        variant: 'success'
+      });
+      setShowToast(true);
       setDeactivateDialog({
         isOpen: false,
         courseId: "",
@@ -387,7 +287,12 @@ export default function InstructorCourses() {
       fetchCourses(pagination.currentPage);
     } catch (err) {
       console.error("Error updating course status:", err);
-      error("Failed to update course status. Please try again.");
+      setToastMessage({
+        title: 'Error',
+        message: 'Failed to update course status. Please try again.',
+        variant: 'error'
+      });
+      setShowToast(true);
       setDeactivateDialog((prev) => ({ ...prev, isLoading: false }));
     }
   };
@@ -404,8 +309,6 @@ export default function InstructorCourses() {
 
   return (
     <div className="w-full max-w-full">
-      <ToastComponent />
-
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
         <div>
@@ -458,7 +361,7 @@ export default function InstructorCourses() {
           {/* Category Filter */}
           <div>
             <CustomSelect
-              options={COURSE_CATEGORIES}
+              options={filterOptions.categories}
               value={selectedCategory}
               onChange={setSelectedCategory}
               placeholder="All Categories"
@@ -469,7 +372,7 @@ export default function InstructorCourses() {
           {/* Tool Filter */}
           <div>
             <CustomSelect
-              options={TOOLS_OPTIONS}
+              options={filterOptions.tools}
               value={selectedTool}
               onChange={setSelectedTool}
               placeholder="All Tools"
@@ -480,7 +383,7 @@ export default function InstructorCourses() {
           {/* Duration Filter */}
           <div>
             <CustomSelect
-              options={DURATION_OPTIONS}
+              options={filterOptions.durations}
               value={selectedDuration}
               onChange={setSelectedDuration}
               placeholder="All Durations"
@@ -1113,6 +1016,17 @@ export default function InstructorCourses() {
           </div>
         </div>
       )}
+
+      {/* Toast Notification */}
+      <Toast
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+        title={toastMessage.title}
+        message={toastMessage.message}
+        variant={toastMessage.variant}
+        duration={3000}
+        position="top-right"
+      />
     </div>
   );
 }
