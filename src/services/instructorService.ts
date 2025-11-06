@@ -39,7 +39,7 @@ class InstructorService {
     size: number = 10
   ): Promise<ApiSuccessResponse<InstructorCoursesResponse>> {
     const response = await axiosInstance.get(
-      `/api/courses/instructor/my-courses?page=${page}&size=${size}`
+      `/api/courses/instructor/my-courses?includeInactive=true&page=${page}&size=${size}`
     );
     return response.data;
   }
