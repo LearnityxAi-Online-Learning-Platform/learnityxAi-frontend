@@ -18,10 +18,22 @@ import { useUser } from '@/hooks/useUserHook';
 import { Rating as BaseRating } from '@/types/userTypes';
 
 // Extended Rating type with course details
+interface CourseDetails {
+    _id: string;
+    courseName: string;
+    courseCategory: string;
+    instructorName: string;
+    description: string;
+    rating: number;
+    startingDate: string;
+    duration: string;
+    price: number;
+    courseFlyerURL: string;
+    totalRatings: number;
+}
+
 interface Rating extends Omit<BaseRating, 'courseId'> {
-    courseId: string | { _id: string; [key: string]: any };
-    courseName?: string;
-    courseCategory?: string;
+    courseId: CourseDetails;
 }
 
 export default function UserRatings() {
@@ -36,7 +48,7 @@ export default function UserRatings() {
     } = useUser();
 
     // Cast to extended Rating type (API returns course details)
-    const ratings = reduxRatings as Rating[];
+    const ratings = (reduxRatings as unknown) as Rating[];
 
     // Local state for UI
     const [currentPage, setCurrentPage] = useState(1);
@@ -92,10 +104,8 @@ export default function UserRatings() {
         setIsDeleting(true);
 
         try {
-            // Ensure courseId is a string
-            const courseId = typeof selectedRating.courseId === 'string'
-                ? selectedRating.courseId
-                : (selectedRating.courseId as any)?._id || selectedRating.courseId;
+            // Extract courseId from the courseId object
+            const courseId = selectedRating.courseId._id;
 
             await deleteRating(courseId);
             setToastMessage('Rating deleted successfully');
@@ -124,10 +134,8 @@ export default function UserRatings() {
         setIsSaving(true);
 
         try {
-            // Ensure courseId is a string
-            const courseId = typeof selectedRating.courseId === 'string'
-                ? selectedRating.courseId
-                : (selectedRating.courseId as any)?._id || selectedRating.courseId;
+            // Extract courseId from the courseId object
+            const courseId = selectedRating.courseId._id;
 
             await updateRating({
                 courseId: courseId,
@@ -230,11 +238,11 @@ export default function UserRatings() {
                                         <div className="flex items-center gap-2 mb-2">
                                             <BookOpen size={20} className={styles.ratingIcon} />
                                             <h3 className={styles.ratingCourseTitle}>
-                                                {rating.courseName}
+                                                {rating.courseId.courseName}
                                             </h3>
                                         </div>
                                         <p className={styles.ratingCategory}>
-                                            {rating.courseCategory}
+                                            {rating.courseId.courseCategory}
                                         </p>
                                     </div>
 
@@ -310,7 +318,7 @@ export default function UserRatings() {
                 }}
                 onConfirm={handleDelete}
                 title="Delete Rating"
-                description={`Are you sure you want to delete your rating for "${selectedRating?.courseName}"? This action cannot be undone.`}
+                description={`Are you sure you want to delete your rating for "${selectedRating?.courseId.courseName}"? This action cannot be undone.`}
                 confirmText="Yes, Delete"
                 cancelText="Cancel"
                 variant="danger"
@@ -322,7 +330,7 @@ export default function UserRatings() {
                 <div className={styles.modalBackdrop}>
                     <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
                         <h2 className={styles.modalTitle}>Edit Your Rating</h2>
-                        <p className={styles.modalSubtitle}>{selectedRating.courseName}</p>
+                        <p className={styles.modalSubtitle}>{selectedRating.courseId.courseName}</p>
 
                         {/* Star Rating */}
                         <div className="mb-6">
@@ -380,8 +388,8 @@ export default function UserRatings() {
                 <div className={styles.modalBackdrop} onClick={() => setShowViewDialog(false)}>
                     <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
                         <h2 className={styles.modalTitle}>Rating Details</h2>
-                        <p className={styles.modalSubtitle}>{selectedRating.courseName}</p>
-                        <p className={`${styles.modalCategory} mb-4`}>{selectedRating.courseCategory}</p>
+                        <p className={styles.modalSubtitle}>{selectedRating.courseId.courseName}</p>
+                        <p className={`${styles.modalCategory} mb-4`}>{selectedRating.courseId.courseCategory}</p>
 
                         <div className="mb-6">
                             <label className={styles.formLabel}>Your Rating</label>

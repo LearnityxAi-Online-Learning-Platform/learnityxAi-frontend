@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Star, Clock, TrendingUp, ArrowRight } from 'lucide-react';
+import { useCourse } from '@/hooks/useCourseHook';
 import styles from './HomePageComponents.module.scss';
 
 interface Course {
@@ -24,85 +26,29 @@ interface Course {
 
 export default function RecommendedCourses(): React.JSX.Element {
     const router = useRouter();
+    const { recommendations, recommendationsLoading, getRecommendations } = useCourse();
 
-    // Sample courses data - replace with actual API data
-    const courses: Course[] = [
-        {
-            _id: "1",
-            courseName: "Python for Everybody",
-            courseCategory: "Programming",
-            instructorName: "University of Michigan",
-            description: "Learn Python programming from scratch",
-            rating: 4.8,
-            skills: ["Python", "Programming"],
-            tools: ["Python"],
-            startingDate: "2024-12-01",
-            duration: "8 weeks",
-            price: 799,
-            courseFlyerURL: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-            numberOfUserEnrolled: 150000
-        },
-        {
-            _id: "2",
-            courseName: "Prompt Engineering",
-            courseCategory: "AI & Machine Learning",
-            instructorName: "Vanderbilt University",
-            description: "Master prompt engineering techniques",
-            rating: 4.9,
-            skills: ["AI", "Prompt Engineering"],
-            tools: ["ChatGPT"],
-            startingDate: "2024-12-01",
-            duration: "6 weeks",
-            price: 899,
-            courseFlyerURL: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-            numberOfUserEnrolled: 85000
-        },
-        {
-            _id: "3",
-            courseName: "IBM Data Science",
-            courseCategory: "Data Science",
-            instructorName: "IBM",
-            description: "Professional certificate in data science",
-            rating: 4.7,
-            skills: ["Data Science", "Python", "Machine Learning"],
-            tools: ["Python", "Jupyter"],
-            startingDate: "2024-12-01",
-            duration: "10 weeks",
-            price: 999,
-            courseFlyerURL: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-            numberOfUserEnrolled: 200000
-        },
-        {
-            _id: "4",
-            courseName: "Complete Web Development",
-            courseCategory: "Web Development",
-            instructorName: "John Doe",
-            description: "Learn full-stack web development",
-            rating: 4.6,
-            skills: ["HTML", "CSS", "JavaScript", "React"],
-            tools: ["React", "Node.js"],
-            startingDate: "2024-12-01",
-            duration: "12 weeks",
-            price: 999,
-            courseFlyerURL: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-            numberOfUserEnrolled: 120000
-        },
-        {
-            _id: "5",
-            courseName: "Machine Learning Specialization",
-            courseCategory: "AI & Machine Learning",
-            instructorName: "Stanford University",
-            description: "Deep dive into machine learning",
-            rating: 4.9,
-            skills: ["Machine Learning", "Python", "AI"],
-            tools: ["Python", "TensorFlow"],
-            startingDate: "2024-12-01",
-            duration: "11 weeks",
-            price: 1299,
-            courseFlyerURL: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-            numberOfUserEnrolled: 180000
-        },
-    ];
+    // Fetch recommendations on mount
+    useEffect(() => {
+        getRecommendations();
+    }, [getRecommendations]);
+
+    // Map the API response to match our component's interface
+    const courses: Course[] = (recommendations || []).map((course: any) => ({
+        _id: course._id,
+        courseName: course.courseName || course.title,
+        courseCategory: course.courseCategory || course.category,
+        instructorName: course.instructorName || `${course.instructor?.firstName || ''} ${course.instructor?.lastName || ''}`.trim(),
+        description: course.description,
+        rating: course.rating || 0,
+        skills: course.skills || [],
+        tools: course.tools || [],
+        startingDate: course.startingDate || course.createdAt,
+        duration: course.duration || '8 weeks',
+        price: course.price || 0,
+        courseFlyerURL: course.courseFlyerURL || course.thumbnail || '/placeholder-course.jpg',
+        numberOfUserEnrolled: course.numberOfUserEnrolled || course.enrollmentCount || 0,
+    }));
 
     const formatEnrollment = (count: number): string => {
         if (count >= 1000000) {
@@ -139,7 +85,25 @@ export default function RecommendedCourses(): React.JSX.Element {
 
                 {/* Course Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
-                    {courses.slice(0, 4).map((course) => (
+                    {recommendationsLoading ? (
+                        // Loading skeletons
+                        Array.from({ length: 4 }).map((_, index) => (
+                            <div key={index} className={`${styles.courseCard} rounded-2xl overflow-hidden animate-pulse`}>
+                                <div className="w-full h-44 sm:h-48 lg:h-52 bg-gray-200 dark:bg-gray-700"></div>
+                                <div className="p-4 sm:p-5 space-y-3">
+                                    <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+                                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                                    <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+                                </div>
+                            </div>
+                        ))
+                    ) : courses.length === 0 ? (
+                        <div className="col-span-full text-center py-12">
+                            <p className="text-gray-500 dark:text-gray-400">No recommendations available at this time.</p>
+                        </div>
+                    ) : (
+                        courses.slice(0, 4).map((course) => (
                         <div
                             key={course._id}
                             onClick={() => router.push(`/courses/${course._id}`)}
@@ -212,7 +176,8 @@ export default function RecommendedCourses(): React.JSX.Element {
                                 </div>
                             </div>
                         </div>
-                    ))}
+                        ))
+                    )}
                 </div>
             </div>
         </section>

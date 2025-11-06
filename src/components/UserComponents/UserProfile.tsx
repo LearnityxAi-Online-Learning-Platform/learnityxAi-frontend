@@ -16,7 +16,8 @@ import {
     Clock,
     Save,
     X,
-    AlertCircle
+    AlertCircle,
+    Upload
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuthHook';
 import { useFileUpload } from '@/hooks/useFileUploadHook';
@@ -67,6 +68,7 @@ export default function UserProfile() {
     const [showSuccessToast, setShowSuccessToast] = useState(false);
     const [showErrorToast, setShowErrorToast] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [backendErrorTimestamp, setBackendErrorTimestamp] = useState<number>(0);
 
@@ -167,10 +169,12 @@ export default function UserProfile() {
                 firstName: editedUser.firstName.trim(),
                 lastName: editedUser.lastName.trim(),
                 phone: editedUser.phone,
-                bio: editedUser.bio
+                bio: editedUser.bio,
+                profileImage: editedUser.profileImage
             });
 
             setIsEditing(false);
+            setSuccessMessage('Profile updated successfully!');
             setShowSuccessToast(true);
             // Refresh user profile to get updated data
             await getUserProfile();
@@ -195,10 +199,11 @@ export default function UserProfile() {
             try {
                 const imageUrl = await uploadProfileImage(file);
                 if (imageUrl) {
+                    // Update the edited user state with the new image URL
                     setEditedUser({ ...editedUser, profileImage: imageUrl });
+                    // Don't auto-save - user needs to click "Save Changes" button
+                    setSuccessMessage('Image uploaded successfully! Click "Save Changes" to update your profile.');
                     setShowSuccessToast(true);
-                    // Refresh user profile to get updated image
-                    await getUserProfile();
                 }
             } catch (error: any) {
                 const errMsg = error || 'Failed to upload profile image. Please try again.';
@@ -271,9 +276,22 @@ export default function UserProfile() {
                                     ) : (
                                         <span>{getInitials()}</span>
                                     )}
+
+                                    {/* Upload Progress Overlay */}
+                                    {uploadLoading && (
+                                        <div className={styles.uploadOverlay}>
+                                            <div className={styles.uploadContent}>
+                                                <div className={`${styles.spinner} mx-auto mb-2`} />
+                                                <div className="flex flex-col items-center gap-1">
+                                                    <Upload size={20} className={styles.uploadIcon} />
+                                                    <span className={styles.uploadText}>Uploading...</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                                 {/* Edit Photo Button */}
-                                {isEditing && (
+                                {isEditing && !uploadLoading && (
                                     <label
                                         className={`${styles.editPhotoBtn} absolute bottom-0 right-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer`}
                                     >
@@ -649,7 +667,7 @@ export default function UserProfile() {
             <Toast
                 isVisible={showSuccessToast}
                 onClose={() => setShowSuccessToast(false)}
-                title="Profile updated successfully!"
+                title={successMessage || "Profile updated successfully!"}
                 variant="success"
                 duration={3000}
                 position="top-right"

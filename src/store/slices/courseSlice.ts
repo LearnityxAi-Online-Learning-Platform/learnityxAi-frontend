@@ -63,7 +63,8 @@ export const fetchAllCourses = createAsyncThunk(
   'courses/fetchAllCourses',
   async (params: GetCoursesParams | undefined, { rejectWithValue }) => {
     try {
-      const response = await courseService.getAllCourses(params);
+      // Always fetch directly from backend without cache
+      const response = await courseService.getAllCourses(params, false);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch courses');
@@ -75,7 +76,8 @@ export const fetchCourseById = createAsyncThunk(
   'courses/fetchCourseById',
   async (id: string, { rejectWithValue }) => {
     try {
-      const response = await courseService.getCourseById(id);
+      // Always fetch directly from backend without cache
+      const response = await courseService.getCourseById(id, false);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch course');
@@ -87,7 +89,8 @@ export const fetchCoursesByCategory = createAsyncThunk(
   'courses/fetchCoursesByCategory',
   async (category: string, { rejectWithValue }) => {
     try {
-      const response = await courseService.getCoursesByCategory(category);
+      // Always fetch directly from backend without cache
+      const response = await courseService.getCoursesByCategory(category, false);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch courses by category');
@@ -141,7 +144,7 @@ const courseSlice = createSlice({
       })
       .addCase(fetchRecommendations.fulfilled, (state, action: PayloadAction<RecommendationResponse>) => {
         state.recommendationsLoading = false;
-        state.recommendations = action.payload.recommendations;
+        state.recommendations = action.payload.courses;
         state.recommendationsError = null;
       })
       .addCase(fetchRecommendations.rejected, (state, action) => {
@@ -157,7 +160,7 @@ const courseSlice = createSlice({
       })
       .addCase(refreshRecommendations.fulfilled, (state, action: PayloadAction<RecommendationResponse>) => {
         state.recommendationsLoading = false;
-        state.recommendations = action.payload.recommendations;
+        state.recommendations = action.payload.courses;
         state.recommendationsError = null;
       })
       .addCase(refreshRecommendations.rejected, (state, action) => {
