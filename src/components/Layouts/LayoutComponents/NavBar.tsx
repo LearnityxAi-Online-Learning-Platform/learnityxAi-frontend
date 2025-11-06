@@ -36,6 +36,7 @@ export default function NavBar(): JSX.Element {
     const { user, isAuthenticated, loading, logout } = useAuth();
     const isLoggedIn = isAuthenticated && !!user;
     const isAuthLoading = loading;
+    const isStudent = user?.role === 'student';
 
     const toggleMobileMenu = (): void => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -193,7 +194,7 @@ export default function NavBar(): JSX.Element {
                             </div>
                         ) : (
                             <>
-                                {isLoggedIn ? (
+                                {isLoggedIn && isStudent ? (
                                     <div className="hidden lg:block relative" ref={profileRef}>
                                 <button
                                     onClick={toggleProfile}
@@ -277,7 +278,7 @@ export default function NavBar(): JSX.Element {
                                     </div>
                                 )}
                             </div>
-                                ) : (
+                                ) : !isLoggedIn ? (
                                     <div className="hidden lg:flex items-center gap-2">
                                         <Link
                                             href="/login"
@@ -292,7 +293,7 @@ export default function NavBar(): JSX.Element {
                                             Join for Free
                                         </Link>
                                     </div>
-                                )}
+                                ) : null}
                             </>
                         )}
 
@@ -376,7 +377,7 @@ export default function NavBar(): JSX.Element {
                                 </div>
                             ) : (
                                 <>
-                                    {isLoggedIn ? (
+                                    {isLoggedIn && isStudent ? (
                                 <div className="pb-6 border-b border-white/10">
                                     {/* User Info */}
                                     <div className={`flex items-center gap-3 mb-4 px-2 ${styles.mobileUserInfo}`}>
@@ -437,7 +438,7 @@ export default function NavBar(): JSX.Element {
                                         </button>
                                     </div>
                                 </div>
-                                    ) : (
+                                    ) : !isLoggedIn ? (
                                         <div className="flex flex-col gap-3 pb-6 border-b border-white/10">
                                             <Link
                                                 href="/login"
@@ -454,7 +455,7 @@ export default function NavBar(): JSX.Element {
                                                 Join for Free
                                             </Link>
                                         </div>
-                                    )}
+                                    ) : null}
                                 </>
                             )}
 
