@@ -8,6 +8,7 @@ import {
   fetchCourseById,
   fetchCoursesByCategory,
   searchCourses,
+  fetchSystemReviews,
   clearError,
   clearCourses,
   clearSelectedCourse,
@@ -120,6 +121,16 @@ export const useCourse = () => {
     [dispatch]
   );
 
+  /**
+   * Get system reviews with pagination
+   */
+  const getSystemReviews = useCallback(
+    async (params?: { page?: number; size?: number }) => {
+      return dispatch(fetchSystemReviews(params)).unwrap();
+    },
+    [dispatch]
+  );
+
   return {
     // State
     courses: courseState.courses,
@@ -132,6 +143,11 @@ export const useCourse = () => {
     error: courseState.error,
     recommendationsLoading: courseState.recommendationsLoading,
     recommendationsError: courseState.recommendationsError,
+    systemReviews: courseState.systemReviews,
+    systemReviewsPagination: courseState.systemReviewsPagination,
+    systemReviewsSummary: courseState.systemReviewsSummary,
+    systemReviewsLoading: courseState.systemReviewsLoading,
+    systemReviewsError: courseState.systemReviewsError,
 
     // Actions
     getRecommendations,
@@ -140,6 +156,7 @@ export const useCourse = () => {
     getCourseById,
     getCoursesByCategory,
     searchCoursesQuery,
+    getSystemReviews,
     clearErrors,
     clearCoursesList,
     clearCourse,

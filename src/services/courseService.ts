@@ -97,6 +97,44 @@ export interface ApiSuccessResponse<T> {
   data: T;
 }
 
+// System Review Types
+export interface SystemReview {
+  _id: string;
+  courseId: {
+    _id: string;
+    courseName: string;
+    courseCategory: string;
+    instructorName: string;
+    courseFlyerURL: string;
+  };
+  userId: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    profileImage: string;
+  };
+  rating: number;
+  comment: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SystemReviewsResponse {
+  reviews: SystemReview[];
+  pagination: {
+    currentPage: number;
+    pageSize: number;
+    totalReviews: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
+  summary: {
+    totalReviews: number;
+    averageRating: number;
+  };
+}
+
 class CourseService {
   // Note: Caching has been removed - all data is fetched directly from backend
   // Backend handles rate limiting and caching strategies
@@ -289,6 +327,22 @@ class CourseService {
       '/api/courses/durations'
     );
     return response.data.data.durations;
+  }
+
+  /**
+   * Get all system reviews with pagination
+   */
+  async getSystemReviews(params?: { page?: number; size?: number }): Promise<SystemReviewsResponse> {
+    const response = await axiosInstance.get<ApiSuccessResponse<SystemReviewsResponse>>(
+      '/api/ratings',
+      {
+        params: {
+          page: params?.page || 1,
+          size: params?.size || 10,
+        },
+      }
+    );
+    return response.data.data;
   }
 }
 
