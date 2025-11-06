@@ -114,6 +114,11 @@ function CreateCourseForm() {
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
+  // Upload progress state
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadFileName, setUploadFileName] = useState<string>("");
+
   // Toast state
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState({
@@ -519,8 +524,28 @@ function CreateCourseForm() {
       }
 
       try {
+        // Reset progress and start upload
+        setUploadProgress(0);
+        setIsUploading(true);
+        setUploadFileName(file.name);
+
+        // Simulate progress (since we don't have real progress from backend)
+        const progressInterval = setInterval(() => {
+          setUploadProgress((prev) => {
+            if (prev >= 90) {
+              clearInterval(progressInterval);
+              return 90;
+            }
+            return prev + 10;
+          });
+        }, 200);
+
         // Upload to backend
         const uploadedUrl = await uploadCourseFlyer(file);
+
+        // Complete progress
+        clearInterval(progressInterval);
+        setUploadProgress(100);
 
         if (uploadedUrl) {
           setFormData((prev) => ({
@@ -531,6 +556,13 @@ function CreateCourseForm() {
           // Set preview to uploaded URL
           setImagePreview(uploadedUrl);
 
+          // Wait a bit to show 100% before hiding progress
+          setTimeout(() => {
+            setIsUploading(false);
+            setUploadProgress(0);
+            setUploadFileName("");
+          }, 500);
+
           setToastMessage({
             title: 'Success',
             message: 'Course flyer uploaded successfully!',
@@ -540,6 +572,9 @@ function CreateCourseForm() {
         }
       } catch (err) {
         console.error('Error uploading course flyer:', err);
+        setIsUploading(false);
+        setUploadProgress(0);
+        setUploadFileName("");
         setToastMessage({
           title: 'Error',
           message: 'Failed to upload course flyer. Please try again.',
@@ -1004,19 +1039,44 @@ function CreateCourseForm() {
                     accept="image/*"
                     onChange={handleImageUpload}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    disabled={isUploading}
                   />
                   <div className="flex flex-col items-center gap-3">
                     <div className={`p-4 rounded-full ${styles.uploadIconBg}`}>
-                      <Upload className={`w-8 h-8 ${styles.uploadIcon}`} />
+                      {isUploading ? (
+                        <Loader2 className={`w-8 h-8 animate-spin ${styles.uploadIcon}`} />
+                      ) : (
+                        <Upload className={`w-8 h-8 ${styles.uploadIcon}`} />
+                      )}
                     </div>
                     <div>
                       <p className={`text-sm md:text-base font-medium mb-1 ${styles.uploadText}`}>
-                        Click to upload or drag and drop
+                        {isUploading ? "Uploading..." : "Click to upload or drag and drop"}
                       </p>
                       <p className={`text-xs md:text-sm ${styles.uploadSubtext}`}>
                         PNG, JPG, GIF up to 5MB
                       </p>
                     </div>
+
+                    {/* Upload Progress Indicator */}
+                    {isUploading && (
+                      <div className="w-full max-w-md mt-2">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className={`text-xs font-medium truncate flex-1 mr-2 ${styles.uploadText}`}>
+                            {uploadFileName}
+                          </span>
+                          <span className={`text-xs font-bold ${styles.uploadPercentage}`}>
+                            {uploadProgress}%
+                          </span>
+                        </div>
+                        <div className={`w-full h-2 rounded-full overflow-hidden ${styles.progressBarBg}`}>
+                          <div
+                            className={`h-full rounded-full transition-all duration-300 ease-out ${styles.progressBarFill}`}
+                            style={{ width: `${uploadProgress}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               ) : (

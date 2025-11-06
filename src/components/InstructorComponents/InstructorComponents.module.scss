@@ -798,3 +798,51 @@ select.formInput {
     background-position: 200% 0;
   }
 }
+
+// Upload Progress Indicator Styles
+.uploadPercentage {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.progressBarBg {
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+
+  :global(.dark) & {
+    background-color: rgba(30, 41, 59, 0.5);
+    border-color: rgba(71, 85, 105, 0.3);
+  }
+}
+
+.progressBarFill {
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  box-shadow: 0 2px 8px rgba(65, 105, 225, 0.4);
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      transparent 100%
+    );
+    animation: progressShimmer 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes progressShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

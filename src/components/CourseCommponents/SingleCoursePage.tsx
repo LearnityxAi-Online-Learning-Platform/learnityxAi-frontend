@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { useCourse } from '@/hooks/useCourseHook';
 import { useUser } from '@/hooks/useUserHook';
+import { useAuth } from '@/hooks/useAuthHook';
 import AlertDialog from '@/components/ui/AlertDialog';
 import Toast from '@/components/ui/Toast';
 import styles from './CourseComponents.module.scss';
@@ -35,6 +36,7 @@ interface SingleCoursePageProps {
 export default function SingleCoursePage({ courseId }: SingleCoursePageProps): React.JSX.Element {
     const { selectedCourse, loading, getCourseById } = useCourse();
     const { enrollInCourse, enrolledCourses, getEnrolledCourses, loading: enrollmentLoading } = useUser();
+    const { isAuthenticated, user } = useAuth();
 
     const [showEnrollDialog, setShowEnrollDialog] = useState(false);
     const [isEnrolling, setIsEnrolling] = useState(false);
@@ -49,32 +51,54 @@ export default function SingleCoursePage({ courseId }: SingleCoursePageProps): R
         }
     }, [courseId, getCourseById]);
 
-    // Check if user is already enrolled - fetch only once on mount
+    // Check if user is already enrolled - only for authenticated users
     useEffect(() => {
         const checkEnrollment = async () => {
-            // Only fetch if enrolledCourses is empty or null
-            if (!enrolledCourses || enrolledCourses.length === 0) {
-                try {
-                    await getEnrolledCourses(1, 10);
-                } catch (error) {
-                    console.error('Error fetching enrolled courses:', error);
+            // Only check enrollment if user is authenticated
+            if (isAuthenticated && user) {
+                // Only fetch if enrolledCourses is empty or null
+                if (!enrolledCourses || enrolledCourses.length === 0) {
+                    try {
+                        await getEnrolledCourses(1, 10);
+                    } catch (error) {
+                        console.error('Error fetching enrolled courses:', error);
+                        // Silently fail - user can still view the course
+                    }
                 }
             }
         };
         checkEnrollment();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []); // Only run once on mount
+    }, [isAuthenticated, user]); // Re-run when user authentication status changes
 
     // Update enrollment status when enrolled courses change
     useEffect(() => {
-        if (enrolledCourses && courseId) {
+        if (isAuthenticated && enrolledCourses && courseId) {
             const enrolled = enrolledCourses.some((course: any) => course._id === courseId || course.courseId === courseId);
             setIsEnrolled(enrolled);
+        } else if (!isAuthenticated) {
+            // If user is not authenticated, they are definitely not enrolled
+            setIsEnrolled(false);
         }
-    }, [enrolledCourses, courseId]);
+    }, [enrolledCourses, courseId, isAuthenticated]);
 
     // Handle enrollment button click
     const handleEnrollClick = () => {
+        // Check if user is authenticated before showing enrollment dialog
+        if (!isAuthenticated) {
+            // Show toast message to login first
+            setToastMessage({
+                title: 'Authentication Required',
+                message: 'Please log in to enroll in this course.',
+                variant: 'error'
+            });
+            setShowToast(true);
+            // Redirect to login after a short delay
+            setTimeout(() => {
+                window.location.href = `/login?redirect=/courses/${courseId}`;
+            }, 1500);
+            return;
+        }
         setShowEnrollDialog(true);
     };
 

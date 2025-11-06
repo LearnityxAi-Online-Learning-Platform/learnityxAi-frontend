@@ -10,7 +10,7 @@ export interface CreateCoursePayload {
   startingDate: string;
   duration: string;
   price: number;
-  courseFlyerURL: string;
+  courseFlyerURL?: string;
 }
 
 export interface UpdateCoursePayload {
