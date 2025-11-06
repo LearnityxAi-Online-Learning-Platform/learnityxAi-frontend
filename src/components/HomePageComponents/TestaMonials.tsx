@@ -2,11 +2,13 @@
 
 import React, { useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Quote, Star } from 'lucide-react';
 import { useCourse } from '@/hooks/useCourseHook';
 import styles from './HomePageComponents.module.scss';
 
 export default function Testimonials(): React.JSX.Element {
+    const router = useRouter();
     const {
         systemReviews,
         systemReviewsLoading,
@@ -155,7 +157,10 @@ export default function Testimonials(): React.JSX.Element {
                     <p className={`${styles.ctaText} text-base sm:text-lg font-semibold mb-5`}>
                         Join thousands of learners transforming their careers
                     </p>
-                    <button className={`${styles.ctaButton} px-8 py-4 rounded-xl font-bold text-base sm:text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl`}>
+                    <button
+                        onClick={() => router.push('/role')}
+                        className={`${styles.ctaButton} px-8 py-4 rounded-xl font-bold text-base sm:text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl`}
+                    >
                         Start Your Journey
                     </button>
                 </div>
