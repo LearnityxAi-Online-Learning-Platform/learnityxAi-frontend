@@ -273,7 +273,7 @@ export default function SingleCoursePage({ courseId }: SingleCoursePageProps): R
                                             src={courseFlyerURL}
                                             alt={courseName}
                                             fill
-                                            className="object-cover"
+                                            className="object-fill"
                                             priority
                                         />
                                     ) : (
@@ -462,7 +462,7 @@ export default function SingleCoursePage({ courseId }: SingleCoursePageProps): R
                                                 src={courseFlyerURL}
                                                 alt={courseName}
                                                 fill
-                                                className="object-cover"
+                                                className="object-fill"
                                                 priority
                                             />
                                         ) : (
