@@ -133,7 +133,7 @@ export default function StudentsChoiceCourses(): React.JSX.Element {
                                     src={course.courseFlyerURL}
                                     alt={course.courseName}
                                     fill
-                                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                                        className="object-fill group-hover:scale-110 transition-transform duration-500"
                                 />
 
                                 {/* Category Badge */}

@@ -36,10 +36,43 @@ class InstructorService {
   // Get instructor's courses
   async getInstructorCourses(
     page: number = 1,
-    size: number = 10
+    size: number = 10,
+    filters?: {
+      name?: string;
+      category?: string;
+      tool?: string;
+      duration?: string;
+      includeInactive?: boolean;
+    }
   ): Promise<ApiSuccessResponse<InstructorCoursesResponse>> {
+    // Build query parameters dynamically
+    const params = new URLSearchParams();
+    params.append('page', page.toString());
+    params.append('size', size.toString());
+
+    // Always include inactive courses by default
+    params.append('includeInactive', 'true');
+
+    // Add filters only if they are provided
+    if (filters?.name && filters.name.trim()) {
+      params.append('name', filters.name.trim());
+    }
+    if (filters?.category && filters.category.trim()) {
+      params.append('category', filters.category.trim());
+    }
+    if (filters?.tool && filters.tool.trim()) {
+      params.append('tool', filters.tool.trim());
+    }
+    if (filters?.duration && filters.duration.trim()) {
+      params.append('duration', filters.duration.trim());
+    }
+    // Allow override of includeInactive if explicitly set to false
+    if (filters?.includeInactive === false) {
+      params.set('includeInactive', 'false');
+    }
+
     const response = await axiosInstance.get(
-      `/api/courses/instructor/my-courses?includeInactive=true&page=${page}&size=${size}`
+      `/api/courses/instructor/my-courses?${params.toString()}`
     );
     return response.data;
   }

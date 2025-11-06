@@ -7,27 +7,16 @@ import { useRouter } from 'next/navigation';
 import { Search, Menu, X, ChevronDown, User, BookOpen, Star, LogOut } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle/themeToggle';
 import { useAuth } from '@/hooks/useAuthHook';
+import courseService from '@/services/courseService';
 import styles from './NavBar.module.scss';
-
-interface NavLink {
-    label: string;
-    href: string;
-}
-
-const exploreLinks: NavLink[] = [
-    { label: 'AI & Machine Learning', href: '/explore/ai-ml' },
-    { label: 'Web Development', href: '/explore/web-dev' },
-    { label: 'Data Science', href: '/explore/data-science' },
-    { label: 'Business', href: '/explore/business' },
-    { label: 'Computer Science', href: '/explore/cs' },
-    { label: 'Information Technology', href: '/explore/it' },
-];
 
 export default function NavBar(): JSX.Element {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
     const [isExploreOpen, setIsExploreOpen] = useState<boolean>(false);
     const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [categories, setCategories] = useState<string[]>([]);
+    const [loadingCategories, setLoadingCategories] = useState<boolean>(true);
     const exploreRef = useRef<HTMLDivElement>(null);
     const profileRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
@@ -38,6 +27,31 @@ export default function NavBar(): JSX.Element {
     const isAuthLoading = loading;
     const isStudent = user?.role === 'student';
     const isInstructor = user?.role === 'instructor';
+
+    // Fetch categories from backend on component mount
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const categoriesData = await courseService.getCategories();
+                setCategories(categoriesData);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+                // Fallback categories if API fails
+                setCategories([
+                    'Web Development',
+                    'Data Science',
+                    'Machine Learning',
+                    'Artificial Intelligence',
+                    'Mobile Development',
+                    'Cloud Computing'
+                ]);
+            } finally {
+                setLoadingCategories(false);
+            }
+        };
+
+        fetchCategories();
+    }, []);
 
     const toggleMobileMenu = (): void => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -61,6 +75,13 @@ export default function NavBar(): JSX.Element {
             router.push('/courses');
         }
         setSearchQuery(''); // Clear search after navigation
+    };
+
+    const handleCategoryClick = (category: string): void => {
+        // Navigate to courses page with category filter
+        router.push(`/courses?category=${encodeURIComponent(category)}`);
+        setIsExploreOpen(false);
+        setIsMobileMenuOpen(false);
     };
 
     const handleLogout = async (): Promise<void> => {
@@ -139,20 +160,28 @@ export default function NavBar(): JSX.Element {
                             {/* Explore Dropdown Menu */}
                             {isExploreOpen && (
                                 <div
-                                    className={`absolute top-full left-0 mt-2 min-w-[16rem] rounded-xl p-2 animate-fade-in ${styles.exploreDropdown}`}
+                                    className={`absolute top-full left-0 mt-2 min-w-[16rem] max-h-[400px] overflow-y-auto rounded-xl p-2 animate-fade-in ${styles.exploreDropdown}`}
                                     role="menu"
                                 >
-                                    {exploreLinks.map((link) => (
-                                        <Link
-                                            key={link.href}
-                                            href={link.href}
-                                            className={`block px-4 py-2.5 rounded-lg font-medium transition-all ${styles.dropdownItem}`}
-                                            role="menuitem"
-                                            onClick={() => setIsExploreOpen(false)}
-                                        >
-                                            {link.label}
-                                        </Link>
-                                    ))}
+                                    {loadingCategories ? (
+                                        // Loading skeleton
+                                        <div className="space-y-2">
+                                            {[...Array(6)].map((_, index) => (
+                                                <div key={index} className="h-10 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        categories.map((category) => (
+                                            <button
+                                                key={category}
+                                                onClick={() => handleCategoryClick(category)}
+                                                className={`w-full text-left block px-4 py-2.5 rounded-lg font-medium transition-all ${styles.dropdownItem}`}
+                                                role="menuitem"
+                                            >
+                                                {category}
+                                            </button>
+                                        ))
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -482,19 +511,27 @@ export default function NavBar(): JSX.Element {
                             {/* Explore Section */}
                             <div className={`pb-6 border-b border-white/10 ${styles.mobileSection}`}>
                                 <h3 className="text-xs font-bold uppercase tracking-wider mb-3 opacity-60">
-                                    Explore
+                                    Explore Categories
                                 </h3>
-                                <div className="flex flex-col gap-1">
-                                    {exploreLinks.map((link) => (
-                                        <Link
-                                            key={link.href}
-                                            href={link.href}
-                                            className={`px-4 py-3 rounded-lg font-medium transition-all active:scale-95 min-h-[44px] flex items-center ${styles.mobileLink}`}
-                                            onClick={toggleMobileMenu}
-                                        >
-                                            {link.label}
-                                        </Link>
-                                    ))}
+                                <div className="flex flex-col gap-1 max-h-[300px] overflow-y-auto">
+                                    {loadingCategories ? (
+                                        // Loading skeleton for mobile
+                                        <div className="space-y-2">
+                                            {[...Array(6)].map((_, index) => (
+                                                <div key={index} className="h-12 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        categories.map((category) => (
+                                            <button
+                                                key={category}
+                                                onClick={() => handleCategoryClick(category)}
+                                                className={`px-4 py-3 rounded-lg font-medium transition-all active:scale-95 min-h-[44px] flex items-center w-full text-left ${styles.mobileLink}`}
+                                            >
+                                                {category}
+                                            </button>
+                                        ))
+                                    )}
                                 </div>
                             </div>
 

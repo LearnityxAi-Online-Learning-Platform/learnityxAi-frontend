@@ -6,6 +6,8 @@ import {
   Course,
   RecommendationResponse,
   GetCoursesParams,
+  SystemReview,
+  SystemReviewsResponse,
 } from '@/services/courseService';
 
 export interface CourseState {
@@ -19,6 +21,21 @@ export interface CourseState {
   error: string | null;
   recommendationsLoading: boolean;
   recommendationsError: string | null;
+  systemReviews: SystemReview[];
+  systemReviewsPagination: {
+    currentPage: number;
+    pageSize: number;
+    totalReviews: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  } | null;
+  systemReviewsSummary: {
+    totalReviews: number;
+    averageRating: number;
+  } | null;
+  systemReviewsLoading: boolean;
+  systemReviewsError: string | null;
 }
 
 const initialState: CourseState = {
@@ -32,6 +49,11 @@ const initialState: CourseState = {
   error: null,
   recommendationsLoading: false,
   recommendationsError: null,
+  systemReviews: [],
+  systemReviewsPagination: null,
+  systemReviewsSummary: null,
+  systemReviewsLoading: false,
+  systemReviewsError: null,
 };
 
 // Async Thunks
@@ -106,6 +128,18 @@ export const searchCourses = createAsyncThunk(
       return response;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to search courses');
+    }
+  }
+);
+
+export const fetchSystemReviews = createAsyncThunk(
+  'courses/fetchSystemReviews',
+  async (params: { page?: number; size?: number } | undefined, { rejectWithValue }) => {
+    try {
+      const response = await courseService.getSystemReviews(params);
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch system reviews');
     }
   }
 );
@@ -234,6 +268,24 @@ const courseSlice = createSlice({
       .addCase(searchCourses.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      });
+
+    // Fetch System Reviews
+    builder
+      .addCase(fetchSystemReviews.pending, (state) => {
+        state.systemReviewsLoading = true;
+        state.systemReviewsError = null;
+      })
+      .addCase(fetchSystemReviews.fulfilled, (state, action: PayloadAction<SystemReviewsResponse>) => {
+        state.systemReviewsLoading = false;
+        state.systemReviews = action.payload.reviews;
+        state.systemReviewsPagination = action.payload.pagination;
+        state.systemReviewsSummary = action.payload.summary;
+        state.systemReviewsError = null;
+      })
+      .addCase(fetchSystemReviews.rejected, (state, action) => {
+        state.systemReviewsLoading = false;
+        state.systemReviewsError = action.payload as string;
       });
   },
 });

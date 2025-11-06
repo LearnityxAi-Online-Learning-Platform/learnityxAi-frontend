@@ -57,9 +57,26 @@ export const deleteCourse = createAsyncThunk(
 
 export const getInstructorCourses = createAsyncThunk(
   'instructor/getInstructorCourses',
-  async ({ page, size }: { page?: number; size?: number }, { rejectWithValue }) => {
+  async (
+    {
+      page,
+      size,
+      filters,
+    }: {
+      page?: number;
+      size?: number;
+      filters?: {
+        name?: string;
+        category?: string;
+        tool?: string;
+        duration?: string;
+        includeInactive?: boolean;
+      };
+    },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await instructorService.getInstructorCourses(page, size);
+      const response = await instructorService.getInstructorCourses(page, size, filters);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
