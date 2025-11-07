@@ -131,7 +131,7 @@ export default function Testimonials(): React.JSX.Element {
                                 {/* Avatar */}
                                 <div className={`${styles.avatar} relative w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden shrink-0`}>
                                     <Image
-                                        src={review.userId.profileImage || '/placeholder-avatar.jpg'}
+                                        src={review.userId.profileImage || '/placeholder-avatar.png'}
                                         alt={`${review.userId.firstName} ${review.userId.lastName}`}
                                         fill
                                         className="object-cover"
