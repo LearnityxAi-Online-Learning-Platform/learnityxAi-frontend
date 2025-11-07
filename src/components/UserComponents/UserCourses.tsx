@@ -224,11 +224,15 @@ export default function UserCourses() {
                                 {/* Course Image */}
                                 <div className={styles.courseImageContainer}>
                                     <Image
-                                        src={course.courseFlyerURL}
+                                        src={course.courseFlyerURL || '/placeholder.jpg'}
                                         alt={course.courseName}
                                         width={400}
                                         height={250}
                                         className={styles.courseImage}
+                                        onError={(e) => {
+                                            const target = e.target as HTMLImageElement;
+                                            target.src = '/placeholder.jpg';
+                                        }}
                                     />
                                     <div className={styles.courseCategory}>
                                         {course.courseCategory}
