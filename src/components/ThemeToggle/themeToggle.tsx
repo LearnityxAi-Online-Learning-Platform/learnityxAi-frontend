@@ -3,7 +3,7 @@
 import React from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { Sun, Moon } from 'lucide-react';
-import styles from './ThemeToggle.module.scss';
+import styles from './themeToggle.module.scss';
 
 interface ThemeToggleProps {
     className?: string;
