@@ -436,7 +436,7 @@ export default function InstructorCourses() {
             onClick={handleSearch}
             className={`w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-medium text-sm sm:text-base transition-all ${styles.addButton}`}
           >
-            Apply Filters
+            Search Course
           </button>
           {hasActiveFilters && (
             <button
