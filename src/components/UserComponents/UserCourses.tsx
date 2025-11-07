@@ -238,7 +238,7 @@ export default function UserCourses() {
                                 {/* Course Content */}
                                 <div className={styles.courseContent}>
                                     {/* Course Title & Instructor */}
-                                    <div className="mb-3">
+                                    <div className="mb-4">
                                         <h3 className={styles.courseTitle}>
                                             {course.courseName}
                                         </h3>

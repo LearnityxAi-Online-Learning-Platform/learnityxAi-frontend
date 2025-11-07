@@ -575,7 +575,7 @@ export default function AllCoursesPage(): React.JSX.Element {
                                             src={course.courseFlyerURL}
                                             alt={course.courseName}
                                             fill
-                                            className="object-cover group-hover:scale-110 transition-transform duration-500"
+                                            className="object-fill group-hover:scale-110 transition-transform duration-500"
                                         />
 
                                         {/* Category Badge */}
@@ -599,7 +599,7 @@ export default function AllCoursesPage(): React.JSX.Element {
                                         </p>
 
                                         {/* Course Name */}
-                                        <h3 className={`${styles.courseName} text-base sm:text-lg font-bold mb-3 line-clamp-2 leading-tight min-h-12 sm:min-h-14`}>
+                                        <h3 className={`${styles.courseName} text-base sm:text-lg font-bold pb-5 mb-5 line-clamp-2 leading-tight min-h-12 sm:min-h-14`}>
                                             {course.courseName}
                                         </h3>
 
