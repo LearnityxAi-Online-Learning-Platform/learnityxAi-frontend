@@ -148,7 +148,7 @@ export default function AllCoursesPage(): React.JSX.Element {
         startingDate: course.startingDate || course.createdAt,
         duration: typeof course.duration === 'string' ? course.duration : `${course.duration} weeks`,
         price: course.price || 0,
-        courseFlyerURL: course.courseFlyerURL || course.thumbnail || '/placeholder-course.jpg',
+        courseFlyerURL: course.courseFlyerURL || course.thumbnail || '/placeholder.jpg',
         numberOfUserEnrolled: course.numberOfUserEnrolled || course.enrollmentCount || 0,
     }));
 
@@ -572,10 +572,14 @@ export default function AllCoursesPage(): React.JSX.Element {
                                     <div className="relative w-full h-44 sm:h-48 lg:h-52 overflow-hidden">
                                         <div className={`${styles.imageOverlay} absolute inset-0 z-10`}></div>
                                         <Image
-                                            src={course.courseFlyerURL}
+                                            src={course.courseFlyerURL || '/placeholder.jpg'}
                                             alt={course.courseName}
                                             fill
                                             className="object-fill group-hover:scale-110 transition-transform duration-500"
+                                            onError={(e) => {
+                                                const target = e.target as HTMLImageElement;
+                                                target.src = '/placeholder.jpg';
+                                            }}
                                         />
 
                                         {/* Category Badge */}
