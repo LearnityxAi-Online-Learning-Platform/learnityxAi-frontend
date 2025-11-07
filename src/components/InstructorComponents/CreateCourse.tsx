@@ -48,49 +48,6 @@ interface ValidationErrors {
   courseFlyer?: string;
 }
 
-// Skills options (frontend only, not from backend)
-const SKILLS_OPTIONS = [
-  "Python",
-  "JavaScript",
-  "TypeScript",
-  "React",
-  "Node.js",
-  "Django",
-  "Flask",
-  "FastAPI",
-  "Express",
-  "MongoDB",
-  "PostgreSQL",
-  "MySQL",
-  "Redis",
-  "Docker",
-  "Kubernetes",
-  "AWS",
-  "Azure",
-  "GCP",
-  "REST APIs",
-  "GraphQL",
-  "HTML",
-  "CSS",
-  "Tailwind CSS",
-  "Bootstrap",
-  "Vue.js",
-  "Angular",
-  "Next.js",
-  "React Native",
-  "Flutter",
-  "Swift",
-  "Kotlin",
-  "Java",
-  "C++",
-  "C#",
-  "Go",
-  "Rust",
-  "PHP",
-  "Ruby",
-  "Ruby on Rails",
-];
-
 function CreateCourseForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -110,6 +67,7 @@ function CreateCourseForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(isEditMode);
   const [currentLearnItem, setCurrentLearnItem] = useState("");
+  const [currentSkillItem, setCurrentSkillItem] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -419,7 +377,7 @@ function CreateCourseForm() {
     }
   };
 
-  const handleMultiSelect = (name: "skills" | "tools", value: string) => {
+  const handleMultiSelect = (name: "tools", value: string) => {
     setFormData((prev) => {
       const currentValues = prev[name];
       const newValues = currentValues.includes(value)
@@ -494,6 +452,64 @@ function CreateCourseForm() {
       return {
         ...prev,
         whatYouWillLearn: newItems,
+      };
+    });
+  };
+
+  const addSkillItem = () => {
+    if (currentSkillItem.trim()) {
+      if (currentSkillItem.trim().length < 2) {
+        setToastMessage({
+          title: 'Validation Error',
+          message: 'Skill must be at least 2 characters long',
+          variant: 'error'
+        });
+        setShowToast(true);
+        return;
+      }
+      if (currentSkillItem.trim().length > 50) {
+        setToastMessage({
+          title: 'Validation Error',
+          message: 'Skill must not exceed 50 characters',
+          variant: 'error'
+        });
+        setShowToast(true);
+        return;
+      }
+
+      setFormData((prev) => {
+        const newItems = [...prev.skills, currentSkillItem.trim()];
+
+        // Validate the field after update
+        const fieldError = validateField("skills", newItems);
+        setValidationErrors((prevErrors) => ({
+          ...prevErrors,
+          skills: fieldError,
+        }));
+
+        return {
+          ...prev,
+          skills: newItems,
+        };
+      });
+      setCurrentSkillItem("");
+    }
+  };
+
+  const removeSkillItem = (index: number) => {
+    setFormData((prev) => {
+      const newItems = prev.skills.filter((_, i) => i !== index);
+
+      // Validate the field after update
+      const fieldError = validateField("skills", newItems);
+      setValidationErrors((prevErrors) => ({
+        ...prevErrors,
+        skills: fieldError,
+      }));
+
+      return {
+        ...prev,
+        skills: newItems,
       };
     });
   };
@@ -667,6 +683,8 @@ function CreateCourseForm() {
             price: "",
             courseFlyer: null,
           });
+          setCurrentLearnItem("");
+          setCurrentSkillItem("");
           setImagePreview(null);
           setValidationErrors({});
           setTouched({});
@@ -870,38 +888,59 @@ function CreateCourseForm() {
               <Award className={`w-5 h-5 ${styles.formIcon}`} />
             </div>
             <h2 className={`text-lg md:text-xl font-bold ${styles.formTitle}`}>
-              Skills *
+              Skills
             </h2>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {SKILLS_OPTIONS.map((skill) => (
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={currentSkillItem}
+                onChange={(e) => setCurrentSkillItem(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addSkillItem();
+                  }
+                }}
+                placeholder="e.g., Python, JavaScript, React (min 2 chars)"
+                className={`flex-1 px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 transition-all ${styles.formInput}`}
+              />
               <button
-                key={skill}
                 type="button"
-                onClick={() => handleMultiSelect("skills", skill)}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                  formData.skills.includes(skill)
-                    ? styles.selectedChip
-                    : styles.chip
-                }`}
+                onClick={addSkillItem}
+                className={`px-4 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${styles.addButton}`}
               >
-                {skill}
+                <Plus className="w-5 h-5" />
+                <span className="hidden sm:inline">Add</span>
               </button>
-            ))}
-          </div>
-
-          {validationErrors.skills && (
-            <p className="mt-2 text-sm text-red-600">{validationErrors.skills}</p>
-          )}
-
-          {formData.skills.length > 0 && (
-            <div className={`mt-4 p-3 rounded-lg ${styles.selectedCount}`}>
-              <span className="text-sm font-medium">
-                {formData.skills.length} skill{formData.skills.length !== 1 ? "s" : ""} selected (min 2, max 15)
-              </span>
             </div>
-          )}
+
+            {validationErrors.skills && (
+              <p className="text-sm text-red-600">{validationErrors.skills}</p>
+            )}
+
+            {formData.skills.length > 0 && (
+              <div className="space-y-2">
+                {formData.skills.map((item, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-center justify-between gap-3 p-3 rounded-lg ${styles.listItem}`}
+                  >
+                    <span className="flex-1 text-sm">{item}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeSkillItem(index)}
+                      className={`p-1.5 rounded-md transition-all ${styles.removeButton}`}
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Tools */}
@@ -1084,7 +1123,7 @@ function CreateCourseForm() {
                   <img
                     src={imagePreview}
                     alt="Course flyer preview"
-                    className="w-full h-48 md:h-64 object-cover"
+                    className="w-full h-auto"
                   />
                   <button
                     type="button"
@@ -1123,6 +1162,7 @@ function CreateCourseForm() {
                 courseFlyer: null,
               });
               setCurrentLearnItem("");
+              setCurrentSkillItem("");
               setImagePreview(null);
             }}
             className={`px-6 py-3 rounded-lg font-medium transition-all ${styles.cancelButton}`}
