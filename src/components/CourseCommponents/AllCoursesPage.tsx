@@ -18,6 +18,7 @@ import {
 import { useCourse } from '@/hooks/useCourseHook';
 import Pagination from '@/components/ui/Pagination';
 import courseService from '@/services/courseService';
+import { useDebounce } from '@/lib/debounce';
 import styles from './CourseComponents.module.scss';
 
 interface Course {
@@ -69,7 +70,7 @@ const FALLBACK_DURATIONS = [
 export default function AllCoursesPage(): React.JSX.Element {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const { courses: apiCourses, total, page: currentPage, totalPages, loading, getAllCourses, searchCoursesQuery } = useCourse();
+    const { courses: apiCourses, total, page: currentPage, totalPages, loading, searchCoursesQuery } = useCourse();
 
     // Initialize search from URL query params
     const urlSearch = searchParams.get('search') || '';
@@ -80,13 +81,21 @@ export default function AllCoursesPage(): React.JSX.Element {
     const [selectedCategory, setSelectedCategory] = useState(urlCategory || 'All Categories');
     const [selectedTool, setSelectedTool] = useState(urlTools || 'All Tools');
     const [selectedDuration, setSelectedDuration] = useState('All Durations');
+    const [minPrice, setMinPrice] = useState<number | ''>('');
+    const [maxPrice, setMaxPrice] = useState<number | ''>('');
     const [sortBy, setSortBy] = useState<'price' | 'enrollmentCount' | 'createdAt'>('enrollmentCount');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
     const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+
+    // Debounced values for search and price filters
+    const debouncedSearchQuery = useDebounce(searchQuery, 500); // 500ms delay
+    const debouncedMinPrice = useDebounce(minPrice, 800); // 800ms delay
+    const debouncedMaxPrice = useDebounce(maxPrice, 800); // 800ms delay
     const [expandedSections, setExpandedSections] = useState({
         categories: true,
         tools: false,
-        duration: false
+        duration: false,
+        price: false
     });
 
     // Dynamic filter options from API with localStorage caching
@@ -163,22 +172,27 @@ export default function AllCoursesPage(): React.JSX.Element {
             // Pass the exact duration value from the endpoint (e.g., "6 weeks", "3 months", "Self-paced")
             params.duration = selectedDuration;
         }
-        if (searchQuery.trim()) {
-            params.search = searchQuery.trim();
+        if (debouncedMinPrice !== '' && debouncedMinPrice > 0) {
+            params.minPrice = debouncedMinPrice;
+        }
+        if (debouncedMaxPrice !== '' && debouncedMaxPrice > 0) {
+            params.maxPrice = debouncedMaxPrice;
         }
 
         try {
-            await getAllCourses(params);
+            // Always use search endpoint for AllCoursesPage
+            // The search endpoint can handle filters even without a search query
+            await searchCoursesQuery(debouncedSearchQuery.trim() || '', params);
         } catch (error) {
             console.error('Failed to fetch courses:', error);
         }
     };
 
-    // Fetch courses on mount and when filters change
+    // Fetch courses on mount and when debounced filters change
     useEffect(() => {
         fetchCourses(1);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedCategory, selectedTool, selectedDuration, sortBy, sortOrder, searchQuery]);
+    }, [selectedCategory, selectedTool, selectedDuration, debouncedMinPrice, debouncedMaxPrice, sortBy, sortOrder, debouncedSearchQuery]);
 
     // Handle URL search and category param changes
     useEffect(() => {
@@ -256,6 +270,8 @@ export default function AllCoursesPage(): React.JSX.Element {
         setSelectedCategory('All Categories');
         setSelectedTool('All Tools');
         setSelectedDuration('All Durations');
+        setMinPrice('');
+        setMaxPrice('');
         setSortBy('enrollmentCount');
         setSortOrder('desc');
         // Clear URL params
@@ -266,7 +282,9 @@ export default function AllCoursesPage(): React.JSX.Element {
         searchQuery !== '' ||
         selectedCategory !== 'All Categories' ||
         selectedTool !== 'All Tools' ||
-        selectedDuration !== 'All Durations';
+        selectedDuration !== 'All Durations' ||
+        minPrice !== '' ||
+        maxPrice !== '';
 
     return (
         <div className={`${styles.allCoursesPage} min-h-screen py-6 sm:py-8 lg:py-12`}>
@@ -337,6 +355,9 @@ export default function AllCoursesPage(): React.JSX.Element {
                                 {selectedCategory !== 'All Categories' && <span className="ml-2">• Category: {selectedCategory}</span>}
                                 {selectedTool !== 'All Tools' && <span className="ml-2">• Tool: {selectedTool}</span>}
                                 {selectedDuration !== 'All Durations' && <span className="ml-2">• Duration: {selectedDuration}</span>}
+                                {(minPrice !== '' || maxPrice !== '') && (
+                                    <span className="ml-2">• Price: {minPrice !== '' ? `$${minPrice}` : '$0'} - {maxPrice !== '' ? `$${maxPrice}` : 'Any'}</span>
+                                )}
                             </div>
                             <button
                                 onClick={clearAllFilters}
@@ -466,6 +487,53 @@ export default function AllCoursesPage(): React.JSX.Element {
                                                     {duration}
                                                 </button>
                                             ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Price Range Filter */}
+                                <div>
+                                    <button
+                                        onClick={() => toggleSection('price')}
+                                        className="w-full flex items-center justify-between mb-3"
+                                    >
+                                        <span className={`${styles.filterSubLabel} text-sm font-semibold`}>
+                                            Price Range
+                                        </span>
+                                        {expandedSections.price ? (
+                                            <ChevronUp className="w-4 h-4" />
+                                        ) : (
+                                            <ChevronDown className="w-4 h-4" />
+                                        )}
+                                    </button>
+                                    {expandedSections.price && (
+                                        <div className="flex flex-col sm:flex-row gap-3">
+                                            <div className="flex-1">
+                                                <label className={`${styles.filterSubLabel} text-xs mb-1 block`}>
+                                                    Min Price ($)
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    placeholder="0"
+                                                    value={minPrice}
+                                                    onChange={(e) => setMinPrice(e.target.value === '' ? '' : Number(e.target.value))}
+                                                    className={`${styles.searchInput} w-full px-3 py-2 rounded-lg text-sm`}
+                                                />
+                                            </div>
+                                            <div className="flex-1">
+                                                <label className={`${styles.filterSubLabel} text-xs mb-1 block`}>
+                                                    Max Price ($)
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    placeholder="Any"
+                                                    value={maxPrice}
+                                                    onChange={(e) => setMaxPrice(e.target.value === '' ? '' : Number(e.target.value))}
+                                                    className={`${styles.searchInput} w-full px-3 py-2 rounded-lg text-sm`}
+                                                />
+                                            </div>
                                         </div>
                                     )}
                                 </div>
