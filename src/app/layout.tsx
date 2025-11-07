@@ -40,6 +40,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/logo/logo.png" type="image/png" />
+        <link rel="shortcut icon" href="/logo/logo.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/logo/logo.png" />
         {/* Blocking script to prevent flash and apply theme instantly */}
         <script
           dangerouslySetInnerHTML={{
