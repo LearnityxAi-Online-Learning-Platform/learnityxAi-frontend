@@ -73,7 +73,7 @@ export default function Pagination({
         <div className={`${styles.paginationContainer} flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6`}>
             {/* Results Info - Left */}
             <div className={`${styles.pageInfo} text-sm order-2 sm:order-1`}>
-                Showing <strong>{startRange}-{endRange}</strong> of <strong>{totalCourses}</strong> courses
+                Showing <strong>{startRange}-{endRange}</strong> of <strong>{totalCourses}</strong> course
             </div>
 
             {/* Pagination Buttons - Center */}

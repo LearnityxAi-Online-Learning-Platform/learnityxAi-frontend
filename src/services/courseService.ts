@@ -181,11 +181,23 @@ class CourseService {
     // useCache parameter kept for backward compatibility but ignored
     const response = await axiosInstance.get<ApiSuccessResponse<{
       courses: Course[];
-      total: number;
-      page: number;
-      totalPages: number;
+      pagination: {
+        currentPage: number;
+        pageSize: number;
+        totalCourses: number;
+        totalPages: number;
+        hasNextPage: boolean;
+        hasPrevPage: boolean;
+      };
     }>>('/api/courses', { params });
-    return response.data.data;
+
+    // Map the response to match the expected format
+    return {
+      courses: response.data.data.courses,
+      total: response.data.data.pagination.totalCourses,
+      page: response.data.data.pagination.currentPage,
+      totalPages: response.data.data.pagination.totalPages,
+    };
   }
 
   /**
@@ -217,14 +229,30 @@ class CourseService {
   async searchCourses(searchQuery: string, params?: GetCoursesParams): Promise<{
     courses: Course[];
     total: number;
+    page: number;
+    totalPages: number;
   }> {
     const response = await axiosInstance.get<ApiSuccessResponse<{
       courses: Course[];
-      total: number;
+      pagination: {
+        currentPage: number;
+        pageSize: number;
+        totalCourses: number;
+        totalPages: number;
+        hasNextPage: boolean;
+        hasPrevPage: boolean;
+      };
     }>>('/api/courses/search', {
       params: { search: searchQuery, ...params },
     });
-    return response.data.data;
+
+    // Map the response to match the expected format
+    return {
+      courses: response.data.data.courses,
+      total: response.data.data.pagination.totalCourses,
+      page: response.data.data.pagination.currentPage,
+      totalPages: response.data.data.pagination.totalPages,
+    };
   }
 
   /**

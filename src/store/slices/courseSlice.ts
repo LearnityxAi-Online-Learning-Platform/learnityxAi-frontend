@@ -263,6 +263,8 @@ const courseSlice = createSlice({
         state.loading = false;
         state.courses = action.payload.courses;
         state.total = action.payload.total;
+        state.page = action.payload.page;
+        state.totalPages = action.payload.totalPages;
         state.error = null;
       })
       .addCase(searchCourses.rejected, (state, action) => {
