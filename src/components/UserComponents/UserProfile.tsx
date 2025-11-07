@@ -319,7 +319,7 @@ export default function UserProfile() {
 
                             {/* Status Indicators */}
                             <div className={`${styles.statusContainer} space-y-3 mb-6 p-4 rounded-xl`}>
-                                <div className={`flex items-center justify-center gap-2 text-sm ${user.isEmailVerified ? styles.verified : styles.unverified}`}>
+                                {/* <div className={`flex items-center justify-center gap-2 text-sm ${user.isEmailVerified ? styles.verified : styles.unverified}`}>
                                     {user.isEmailVerified ? (
                                         <>
                                             <CheckCircle size={16} />
@@ -331,7 +331,7 @@ export default function UserProfile() {
                                             <span>Email Not Verified</span>
                                         </>
                                     )}
-                                </div>
+                                </div> */}
                                 <div className={`flex items-center justify-center gap-2 text-sm ${user.isActive ? styles.active : styles.inactive}`}>
                                     {user.isActive ? (
                                         <>
