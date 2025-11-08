@@ -139,12 +139,12 @@ export default function RecommendedCourses(): React.JSX.Element {
                             {/* Course Content */}
                             <div className={`${styles.courseContent} p-4 sm:p-5`}>
                                 {/* Instructor */}
-                                <p className={`${styles.instructorName} text-xs font-semibold pb-8 mb-2 uppercase tracking-wider`}>
+                                <p className={`${styles.instructorName} text-xs font-semibold mb-2 uppercase tracking-wider`}>
                                     {course.instructorName}
                                 </p>
 
                                 {/* Course Name */}
-                                <h3 className={`${styles.courseName} text-base sm:text-lg font-bold mb-3 line-clamp-2 leading-tight min-h-12 sm:min-h-14`}>
+                                    <h3 className={`${styles.courseName} text-base sm:text-lg font-bold pb-8  mb-3 line-clamp-2 leading-tight min-h-12 sm:min-h-14`}>
                                     {course.courseName}
                                 </h3>
 
