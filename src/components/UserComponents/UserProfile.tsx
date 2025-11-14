@@ -213,11 +213,10 @@ export default function UserProfile() {
         }
     };
 
-    const handleDeleteAccount = async () => {
+    const handleDeleteAccount = async (password?: string) => {
         try {
-            // deleteAccount expects a password
-            // The AlertDialog component will handle password input
-            await deleteAccount({ password: '' }); // Password should come from the dialog
+            // deleteAccount expects a password from the AlertDialog component
+            await deleteAccount({ password: password || '' });
             setShowDeleteDialog(false);
             // Redirect to home page after account deletion
             window.location.href = '/';

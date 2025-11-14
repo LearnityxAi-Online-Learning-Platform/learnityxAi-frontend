@@ -7,7 +7,7 @@ import styles from './AlertDialog.module.scss';
 interface AlertDialogProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: () => void;
+    onConfirm: (password?: string) => void;
     title: string;
     description: string;
     confirmText?: string;
@@ -63,7 +63,7 @@ export default function AlertDialog({
 
         // Clear any errors and proceed
         setError('');
-        onConfirm();
+        onConfirm(requirePassword ? password : undefined);
     };
 
     const handleCancel = () => {

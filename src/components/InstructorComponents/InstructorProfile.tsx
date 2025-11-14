@@ -224,12 +224,12 @@ export default function InstructorProfile() {
     });
   };
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = async (password?: string) => {
     setDeleteDialog((prev) => ({ ...prev, isLoading: true }));
 
     try {
-      // deleteAccount expects a password - the AlertDialog component handles password input
-      await deleteAccount({ password: '' }); // Password comes from the dialog
+      // deleteAccount expects a password from the AlertDialog component
+      await deleteAccount({ password: password || '' });
 
       setToastMessage({
         title: 'Success',
