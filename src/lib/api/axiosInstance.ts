@@ -30,8 +30,7 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Skip auto-redirect for auth endpoints (login, register, etc.)
-    // These should handle their own errors and show messages to the user
+    // Skip auto-redirect for auth endpoints
     const authEndpoints = ['/api/auth/login', '/api/auth/register', '/api/auth/forgot-password', '/api/auth/verify-otp', '/api/auth/reset-password'];
     const isAuthEndpoint = authEndpoints.some(endpoint => originalRequest.url?.includes(endpoint));
 
